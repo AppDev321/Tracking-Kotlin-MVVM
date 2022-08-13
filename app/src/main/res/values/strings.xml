@@ -1,0 +1,53 @@
+<!--
+  Copyright 2014 Google, Inc
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">AFJ Tracking</string>
+
+    <string name="launch_activity">Launch activity</string>
+    <string name="location_unknown">Location unknown</string>
+    <string name="location_updates_label">Location Updates</string>
+
+    <string name="permission_rationale">Location permission is needed for core functionality</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+    <string name="settings">Settings</string>
+    <string name="ok">OK</string>
+    <string name="request_location_updates">Start Service</string>
+    <string name="remove_location_updates">Stop Service</string>
+
+    <string name="location_updated">Location Updated: %1$s</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="nav_header_subtitle">Tracking/Inspection Application</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_data_found">No Record Found</string>
+    <string name="menu_tracking">Track Location</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_fuel_fill">Fuel Filling Form</string>
+    <string name="menu_report_fill">Report Form</string>
+    <string name="menu_shift_form">My Shift</string>
+    <string name="menu_weekly_inspection">Inspections</string>
+    <string name="menu_weekly_inspection_form">Inspection</string>
+    <string name="menu_map">Map</string>
+    <string name="title_daily_inspection_check">Daily Inspection</string>
+    <string name="vdi_desc">Please fill out this form BEFORE your shift, thank you.\nTyre Pressure + Tread Depth checks MUST be carried out and submitted every day.\nNOTES: - Tyre pressures should be 60PSI - Tread depth should be 2MM or ABOVE  Please seek assistance from OPERATIONS or MAINTENANCE staff, if you encounter any difficulties or if any of the vehicular roadworthy conditions (mentioned above) have not been met.</string>
+
+
+
+
+</resources>

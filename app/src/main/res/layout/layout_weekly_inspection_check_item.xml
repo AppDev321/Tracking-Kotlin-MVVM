@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="checkList"
+            type="com.example.afjtracking.model.responses.WeeklyInspectionCheck" />
+
+    </data>
+
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/container_btn"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_5sdp">
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Check No:"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_body_normal_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txt_inspection_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:text="@{`` + checkList.checkNo}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_body_normal_size" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:orientation="horizontal"
+                            android:visibility="@{checkList.imRef == null ? View.VISIBLE:View.GONE}">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Imf Ref:"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_body_normal_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtImfReg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_5sdp"
+                                android:text="@{`` + checkList.imRef}"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_body_normal_size" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_5sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Item Inspected:"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_body_normal_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txt_inspect_item_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:text="@{checkList.name}"
+
+                            android:textSize="@dimen/text_body_normal_size" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_5sdp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Inspection Code *"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/text_body_normal_size"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/radioCheckGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"></RadioGroup>
+
+                        <RelativeLayout
+                            android:id="@+id/comment_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_50sdp"
+                            android:layout_gravity="left"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@drawable/box_round_corner"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/_5sdp"
+                            android:visibility="visible">
+
+                            <EditText
+                                android:id="@+id/edComment"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@android:color/transparent"
+                                android:gravity="center_vertical"
+                                android:hint="Enter your comments"
+                                android:inputType="text|textMultiLine"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_body_normal_size" />
+
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:id="@+id/container_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="right"
+            android:orientation="horizontal"
+            android:padding="@dimen/_5sdp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnPreviousCehck"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="@dimen/btn_height"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/box_round_corner"
+                android:text="Previous"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/btnNextCheck"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="@dimen/btn_height"
+                android:background="@drawable/box_round_corner"
+                android:text="Next"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</layout>

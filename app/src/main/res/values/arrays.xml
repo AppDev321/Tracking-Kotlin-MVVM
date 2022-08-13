@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <string-array name="weekly_inspection_type">
+
+        <item>initial-safety-inspection</item>
+        <item>weekly-safety-check</item>
+        <item>pre-mot-inspection</item>
+
+    </string-array>
+
+
+
+
+
+</resources>

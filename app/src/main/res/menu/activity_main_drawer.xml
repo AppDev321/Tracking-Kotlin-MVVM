@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/tracking"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Tracking" />
+        <item
+            android:id="@+id/nav_vdi_inspection_list"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/title_daily_inspection_check" />
+        <item
+            android:id="@+id/nav_weekly_inspection"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_weekly_inspection" />
+        <item
+            android:id="@+id/nav_fuel_form"
+            android:icon="@drawable/ic_menu_gallery"
+            android:visible="true"
+            android:title="@string/menu_fuel_fill" />
+        <item
+            android:id="@+id/nav_report_form"
+            android:icon="@drawable/ic_menu_gallery"
+            android:visible="true"
+            android:title="@string/menu_report_fill" />
+
+
+    </group>
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Logout" />
+
+
+    </group>
+</menu>

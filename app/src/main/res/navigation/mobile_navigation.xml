@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/tracking">
+
+    <fragment
+        android:id="@+id/tracking"
+        android:name="com.example.afjtracking.view.fragment.home.TrackingFragment"
+        android:label="@string/menu_tracking"
+        tools:layout="@layout/fragment_traking" >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_pts_inspection_form"
+        android:name="com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm"
+        android:label="@string/title_daily_inspection_check"
+        tools:layout="@layout/fragment_daily_inpsection_form" />
+
+
+
+    <fragment
+        android:id="@+id/nav_psv_inspection_form"
+        android:name="com.example.afjtracking.view.fragment.vehicle_daily_inspection.PSVInspectionForm"
+        android:label="@string/title_daily_inspection_check"
+        tools:layout="@layout/fragment_daily_inpsection_form" />
+
+    <fragment
+        android:id="@+id/nav_vdi_inspection_list"
+        android:name="com.example.afjtracking.view.fragment.vehicle_daily_inspection.DailyInspectionList"
+        android:label="@string/title_daily_inspection_check"
+        tools:layout="@layout/fragment_weekly_inspection_list" />
+
+
+    <fragment
+        android:id="@+id/nav_vdi_inspection_create"
+        android:name="com.example.afjtracking.view.fragment.vehicle_daily_inspection.DailyInspectionForm"
+        android:label="@string/title_daily_inspection_check"
+        tools:layout="@layout/fragment_vdi_create_inspection" />
+
+
+    <fragment
+        android:id="@+id/nav_daily_inspection_review"
+        android:name="com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment"
+        android:label="@string/title_daily_inspection_check"
+        tools:layout="@layout/fragment_vdi_create_inspection" />
+
+
+
+    <fragment
+        android:id="@+id/nav_weekly_inspection"
+        android:name="com.example.afjtracking.view.fragment.vehicle_weekly_inspection.WeeklyInspectionList"
+        android:label="@string/menu_weekly_inspection"
+        tools:layout="@layout/fragment_weekly_inspection_list" />
+
+
+    <fragment
+        android:id="@+id/nav_create_weekly_inspection"
+        android:name="com.example.afjtracking.view.fragment.vehicle_weekly_inspection.WeeklyInspectionCreateForm"
+        android:label="@string/menu_weekly_inspection"
+        tools:layout="@layout/fragment_weekly_create_inspection" />
+
+
+    <fragment
+        android:id="@+id/nav_weekly_inspection_form"
+        android:name="com.example.afjtracking.view.fragment.vehicle_weekly_inspection.WeeklyInspectionForm"
+        android:label="@string/menu_weekly_inspection_form"
+        tools:layout="@layout/fragment_weekly_inspection_form" />
+
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.afjtracking.view.fragment.home.MapsFragment"
+        android:label="@string/menu_map"
+        tools:layout="@layout/fragment_maps" >
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/nav_fuel_login_form"
+        android:name="com.example.afjtracking.view.fragment.fuel.FuelAuthFragment"
+        android:label="@string/menu_fuel_fill"
+        tools:layout="@layout/fragment_fuel_login" />
+
+    <fragment
+        android:id="@+id/nav_fuel_form"
+        android:name="com.example.afjtracking.view.fragment.fuel.FuelFormFragment"
+        android:label="@string/menu_fuel_fill"
+        tools:layout="@layout/fragment_fuel_from" />
+
+
+    <fragment
+        android:id="@+id/nav_report_form"
+        android:name="com.example.afjtracking.view.fragment.fuel.ReportFormFragment"
+        android:label="@string/menu_report_fill"
+        tools:layout="@layout/fragment_fuel_from" />
+
+
+
+</navigation>
