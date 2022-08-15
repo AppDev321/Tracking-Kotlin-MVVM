@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/_5sdp">
+    <RelativeLayout
+        android:id="@+id/btnDatePicker"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_gravity="left"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="@drawable/box_round_corner"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="1-10-0108"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_calander"
+
+            android:textColor="@color/black" />
+
+    </RelativeLayout>
+</LinearLayout>

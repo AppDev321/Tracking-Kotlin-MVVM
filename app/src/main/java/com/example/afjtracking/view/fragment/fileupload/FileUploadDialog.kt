@@ -56,6 +56,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     private val MULTIPLE_PERMISSIONS = 10
     lateinit var btnFileChoose: LinearLayout
     lateinit var btnCameraChoose: LinearLayout
+     var  isImageDialogPick = true
 
 
     var permissions =
@@ -74,7 +75,9 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             uniqueFileId: String,
             inpsectionType: String,
             fieldName: String,
-            isDocumentPickShow: Boolean
+            isDocumentPickShow: Boolean,
+            isImageDialog :Boolean = true
+
         ) =
             FileUploadDialog().apply {
                 this.listnerUploadDialog = fileUploadListner
@@ -82,6 +85,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 this.inpsectionType = inpsectionType
                 this.fieldName = fieldName
                 this.isDocumentPickShow = isDocumentPickShow
+                this.isImageDialogPick = isImageDialogPick
             }
     }
 
@@ -140,7 +144,6 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 if (progressBar.progress == 0) {
                     dismiss()
                 } else if (progressBar.progress > 1 && progressBar.progress == 100) {
-                    //  ApplicationUtils.writeLogs("File uploadedddd........")
                     dismiss()
                 } else {
                     mBaseActivity.toast("Please wait file is uploading...")
@@ -233,14 +236,27 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     }
 
     fun openDocumentPicker() {
-        val intent = AFJUtils.getCustomFileChooserIntent(
-            AFJUtils.IMAGE,
-            AFJUtils.DOC,
-            AFJUtils.DOCX,
-            AFJUtils.XLS,
-            AFJUtils.PDF,
-            AFJUtils.TEXT
-        )
+        val intent =
+            if(isImageDialogPick)
+            {
+                AFJUtils.getCustomFileChooserIntent(
+                AFJUtils.IMAGE  )
+
+            }else
+            {
+                AFJUtils.getCustomFileChooserIntent(
+                    AFJUtils.IMAGE,
+                    AFJUtils.DOC,
+                    AFJUtils.DOCX,
+                    AFJUtils.XLS,
+                    AFJUtils.PDF,
+                    AFJUtils.TEXT
+                )
+            }
+
+
+
+
         val i = Intent.createChooser(intent, "File")
         startActivityForResult(i, 2001)
     }
@@ -332,7 +348,8 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             val uploadTableData = TableUploadFile(
                 filetype,
                 inpsectionType,
-                file.extension, file.path,
+                file.extension,
+                file.path,
                 uploadID,
                 fieldName,
                 0,
@@ -366,18 +383,9 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             if (result.resultCode == Activity.RESULT_OK) {
 
                 try {
-
                     val uri = Uri.parse(currentPhotoPath)
-
-
-                    val fileName =
-                        getFileName(uri)
-
-                    fileIsOpened(
-                        fileName,
-                        mBaseActivity.contentResolver.openInputStream(uri)!!, true, File(currentPhotoPath)
-                    )
-
+                    val fileName =getFileName(uri)
+                    fileIsOpened( fileName,mBaseActivity.contentResolver.openInputStream(uri)!!, true, File(currentPhotoPath)  )
                 } catch (ex: java.lang.Exception) {
                     mBaseActivity.toast(ex.toString())
                 }

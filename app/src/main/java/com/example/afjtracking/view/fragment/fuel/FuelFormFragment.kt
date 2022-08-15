@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentFuelFromBinding
-import com.example.afjtracking.model.requests.SaveFuelFormRequest
+import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.FuelForm
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.model.responses.Vehicle
@@ -216,7 +216,7 @@ binding.btnPreviousCehck.setOnClickListener{
                 }
                 if (isAllRequired) {
 
-                    val request = SaveFuelFormRequest()
+                    val request = SaveFormRequest()
                     request.fuelForm=fuelList
                    fuelViewModel.saveFuelForm(request,mBaseActivity)
 

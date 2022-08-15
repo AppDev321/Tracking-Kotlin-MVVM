@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.databinding.FragmentWeeklyCreateInspectionBinding
@@ -27,7 +26,7 @@ class WeeklyInspectionCreateForm : Fragment() {
     var year = 0
     var month = 0
     var day = 0
-    lateinit var datePicker: DatePicker
+
     lateinit var calendar: Calendar
     override fun onAttach(context: Context) {
         super.onAttach(context)

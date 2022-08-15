@@ -4,11 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.afjtracking.model.requests.SaveFuelFormRequest
-import com.example.afjtracking.model.responses.GetReportFormResponse
-import com.example.afjtracking.model.responses.LocationResponse
-import com.example.afjtracking.model.responses.ReportForm
-import com.example.afjtracking.model.responses.Vehicle
+import com.example.afjtracking.model.requests.SaveFormRequest
+import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
 import com.example.afjtracking.room.model.TableAPIData
@@ -35,9 +32,13 @@ class ReportViewModel : ViewModel() {
     val apiUploadStatus: LiveData<Boolean> = _dataUploaded
 
 
-    val _reportForm = MutableLiveData<List<ReportForm> >()
-    val getReportForm: LiveData<List<ReportForm> > = _reportForm
+    val _reportForm = MutableLiveData<List<InspectionForm> >()
+    val getReportForm: LiveData<List<InspectionForm> > = _reportForm
 
+
+
+    val _reportData = MutableLiveData<ReportData>()
+    val getReportData: LiveData<ReportData > = _reportData
 
 
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -94,7 +95,7 @@ class ReportViewModel : ViewModel() {
                             )
                             ApiDataRepo.insertData(context!!, apiTableAPIData)
 
-
+                            _reportData.postValue(response.body()!!.data!!)
                             _vehicle.postValue(response.body()!!.data!!.vehicle!!)
 
                             _reportForm.postValue(response.body()!!.data!!.reportForm)
@@ -145,7 +146,7 @@ class ReportViewModel : ViewModel() {
 
                     _vehicle.postValue(resp.vehicle!!)
                     _reportForm.postValue(resp.reportForm)
-
+                    _reportData.postValue(resp)
 
                 } else {
                     var errors = ""
@@ -168,10 +169,10 @@ class ReportViewModel : ViewModel() {
 
 
 
-    fun saveFuelForm(form: SaveFuelFormRequest, context: Context?) {
+    fun saveReportForm(form: SaveFormRequest, context: Context?) {
         getInstance(context)
         _dialogShow.postValue(true)
-        apiInterface!!.saveFuelForm(form)
+        apiInterface!!.saveReportForm(form)
             .enqueue(object : Callback<LocationResponse?> {
                 override fun onResponse(
                     call: Call<LocationResponse?>,

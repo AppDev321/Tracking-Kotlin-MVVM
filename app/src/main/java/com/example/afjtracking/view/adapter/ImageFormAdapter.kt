@@ -30,7 +30,9 @@ class ImageFormAdapter(
     private val requestType: String,
     private val uploadId: String,
     private val mContext: AppCompatActivity,
-    private var imageList: ArrayList<InspectionForm>
+
+    private var imageList: ArrayList<InspectionForm>,
+    private val mShowGallaryPicker: Boolean =false,
 ) : RecyclerView.Adapter<ImageFormAdapter.ImageItemViewHolder>() {
 
 
@@ -59,7 +61,6 @@ class ImageFormAdapter(
         val data = imageList[position]
 
         holder.itemImageView.txtImageHeading.text = data.title
-
         holder.itemImageView.imgPreview.visibility = View.GONE
         holder.itemImageView.imgAdd.visibility = View.VISIBLE
         holder.itemImageView.imgDel.visibility = View.GONE
@@ -69,7 +70,7 @@ class ImageFormAdapter(
             .setOnClickListener {
 
                 val dialog = FileUploadDialog.newInstance(
-                    isDocumentPickShow = false,
+                    isDocumentPickShow = mShowGallaryPicker,
                     inpsectionType = requestType, //This will be change after
                     uniqueFileId = uploadId,
                     fieldName = data.fieldName!!,
@@ -82,6 +83,7 @@ class ImageFormAdapter(
 
                             data.value = uploadId
                             listners.onPreviewGenerated(data, holder.adapterPosition)
+
                             Glide.with(mContext)
                                 .load(path)
                                 .placeholder(
@@ -138,12 +140,20 @@ class ImageFormAdapter(
 
     }
 
+     fun addRows(data:InspectionForm)
+    {
+        imageList.add(data)
+        notifyDataSetChanged()
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
     inner class ImageItemViewHolder(val itemImageView: LayoutImageBoxBinding) :
         RecyclerView.ViewHolder(itemImageView.root) {
 
     }
+
+
 
     interface ImageFormListner {
         fun onPreviewGenerated(uploadForm: InspectionForm, position: Int)

@@ -56,12 +56,13 @@ interface ApiInterface {
     fun getFuelForm():Call<GetFuelFormResponse?>
 
     @POST("vehicles/save-fuel-form")
-    fun saveFuelForm(@Body body:SaveFuelFormRequest):Call<LocationResponse?>
+    fun saveFuelForm(@Body body:SaveFormRequest):Call<LocationResponse?>
 
     @GET("vehicles/get-reporting-form")
     fun getReportForm():Call<GetReportFormResponse?>
 
-
+    @POST("vehicles/save-reporting-form")
+    fun saveReportForm(@Body body:SaveFormRequest):Call<LocationResponse?>
 
     @POST("update-fcm-token")
     fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest):Call<LocationResponse?>

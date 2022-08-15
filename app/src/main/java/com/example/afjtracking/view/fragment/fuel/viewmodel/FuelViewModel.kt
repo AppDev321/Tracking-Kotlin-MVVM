@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.afjtracking.model.requests.LoginRequest
-import com.example.afjtracking.model.requests.SaveFuelFormRequest
+import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.FuelForm
 import com.example.afjtracking.model.responses.GetFuelFormResponse
 import com.example.afjtracking.model.responses.LocationResponse
@@ -128,7 +128,7 @@ class FuelViewModel : ViewModel() {
 
     }
 
-    fun saveFuelForm(form: SaveFuelFormRequest, context: Context?) {
+    fun saveFuelForm(form: SaveFormRequest, context: Context?) {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.saveFuelForm(form)

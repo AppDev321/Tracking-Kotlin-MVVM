@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/layout_create_inspection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/txtInspectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_heading_body_size"
+            android:textStyle="bold" />
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:layout_below="@+id/txtInspectionTitle"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+
+                <LinearLayout
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:id="@+id/layout_vdi_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"></LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_bottom"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="right"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnPreviousCehck"
+                        android:layout_width="@dimen/btn_width"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:background="@drawable/box_round_corner"
+                        android:text="Cancel"
+                        android:textColor="@color/black"
+                        android:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/btnSubmit"
+                        android:layout_width="@dimen/btn_width"
+                        android:layout_height="@dimen/btn_height"
+                        android:background="@drawable/box_round_corner"
+                        android:text="Submit"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/txtErrorMsg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Stat"
+        android:padding="@dimen/_10sdp"
+        android:textSize="@dimen/text_body_normal_size" />
+
+</RelativeLayout>
+

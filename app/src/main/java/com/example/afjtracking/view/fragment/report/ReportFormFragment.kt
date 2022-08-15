@@ -1,10 +1,11 @@
 package com.example.afjtracking.view.fragment.fuel
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Environment
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -12,29 +13,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.afjtracking.R
-import com.example.afjtracking.databinding.FragmentFuelFromBinding
-import com.example.afjtracking.model.responses.ReportForm
-import com.example.afjtracking.model.responses.UploadFileAPiResponse
+import com.example.afjtracking.databinding.FragmentReportFromBinding
+import com.example.afjtracking.model.requests.SaveFormRequest
+import com.example.afjtracking.model.responses.InspectionForm
 import com.example.afjtracking.model.responses.Vehicle
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.CustomDropDownAdapter
-import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
-import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
+import com.example.afjtracking.view.adapter.FileFormAdapter
+import com.example.afjtracking.view.adapter.ImageFormAdapter
 import com.example.afjtracking.view.fragment.fuel.viewmodel.ReportViewModel
 import com.google.android.material.snackbar.Snackbar
-import java.io.File
+import java.sql.Time
+import java.text.Format
+import java.text.SimpleDateFormat
+import java.util.*
 
-class ReportFormFragment : Fragment(){
 
-    private var _binding: FragmentFuelFromBinding? = null
+class ReportFormFragment : Fragment() {
+
+    private var _binding: FragmentReportFromBinding? = null
     private val binding get() = _binding!!
 
     var storedData: ArrayList<StoreReportFormData> = arrayListOf()
@@ -44,14 +50,24 @@ class ReportFormFragment : Fragment(){
     val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
     var requestType = ""
 
-    var imageForm: ArrayList<ReportForm> = arrayListOf()
+    var imageForm: ArrayList<InspectionForm> = arrayListOf()
     var formIndex: ArrayList<Int> = arrayListOf()
     var isOdoMeterErrorFound = false
     var lastOdoReading = 0
     var odoReadingError = ""
     lateinit var txtErrorMsg: TextView
 
-     var vehicle:Vehicle = Vehicle()
+    var vehicle: Vehicle = Vehicle()
+    var uploadPhotoCount = 1
+    var uploadFileCount = 1
+    lateinit var imageFormAdapter: ImageFormAdapter
+    var reportDate: String = ""
+    var imageUploadLimit = 0
+    var uploadFileLimit = 1
+
+
+    var fileForm: ArrayList<InspectionForm> = arrayListOf()
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,7 +84,7 @@ class ReportFormFragment : Fragment(){
     ): View {
 
         reportViewModel = ViewModelProvider(this).get(ReportViewModel::class.java)
-        _binding = FragmentFuelFromBinding.inflate(inflater, container, false)
+        _binding = FragmentReportFromBinding.inflate(inflater, container, false)
 
         val root: View = binding.root
         txtErrorMsg = binding.txtErrorMsg
@@ -82,12 +98,21 @@ class ReportFormFragment : Fragment(){
         reportViewModel.getReportFormRequest(mBaseActivity)
 
 
+        reportViewModel.getReportData.observe(viewLifecycleOwner)
+        {
+
+            uploadFileLimit = it.fileUploadLimit!!
+            requestType = it.requestName!!
+            imageUploadLimit = it.imageUploadLimit!!
+        }
+
+
         reportViewModel.getReportForm.observe(viewLifecycleOwner) {
             if (it != null) {
 
-                try {
+           try {
 
-                showReportFormField(it)
+                    showReportFormField(it)
 
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())
@@ -108,18 +133,18 @@ class ReportFormFragment : Fragment(){
             if (it != null) {
                 mBaseActivity.toast(it, false)
                 mBaseActivity.showProgressDialog(false)
-                binding.txtErrorMsg.visibility = View.VISIBLE
+               // binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
-                binding.layoutCreateInspection.visibility = View.GONE
+               // binding.layoutCreateInspection.visibility = View.GONE
                 reportViewModel.errorsMsg.value = null
             }
         })
 
-        reportViewModel.apiUploadStatus.observe(viewLifecycleOwner,{
-            if(it)
-            {
+        reportViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
+            if (it) {
                 mBaseActivity.onBackPressed()
-                mBaseActivity.showSnackMessage("Request saved",  requireView()
+                mBaseActivity.showSnackMessage(
+                    "Request saved", requireView()
                 )
             }
         })
@@ -131,46 +156,30 @@ class ReportFormFragment : Fragment(){
     }
 
 
-    fun showReportFormField(fuelList: List<ReportForm>) {
+    fun showReportFormField(formList: List<InspectionForm>) {
 
         binding.layoutCreateInspection.visibility = View.VISIBLE
         binding.txtErrorMsg.visibility = View.GONE
 
         binding.txtInspectionTitle.text = "Report Form"
 
-        val odoReading =  vehicle.odometerReading
-        lastOdoReading =   if(odoReading!!.isEmpty()) 0 else odoReading.toInt()
-        odoReadingError= "Cannot less than previous reading $lastOdoReading"
+        val odoReading = vehicle.odometerReading
+        lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
+        odoReadingError = "Cannot less than previous reading $lastOdoReading"
 
-        for (i in fuelList!!.indices) {
-            val formData = fuelList[i]
-            try {
+        for (i in formList!!.indices) {
+            val formData = formList[i]
+         try {
                 createViewChecks(formData.type!!.uppercase(), formData, i)
-            } catch (e: Exception) {
-                mBaseActivity.writeExceptionLogs(e.toString())
-            }
+         } catch (e: Exception) {
+           mBaseActivity.writeExceptionLogs(e.toString())
+        }
         }
 
-       /* //Create Form data
-        if (imageForm.size > 0) {
-            val layoutManager = GridLayoutManager(mBaseActivity, 3)
-            binding.recImageContainer.layoutManager = layoutManager
-            val imageFormAdapter =
-                ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
-            imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
 
-                    val index = formIndex[positon]
-                    imageForm[positon] = uploadForm
-                    storedData[index].formData = uploadForm
-                }
-            })
-            binding.recImageContainer.adapter = imageFormAdapter
-        }*/
-
-binding.btnPreviousCehck.setOnClickListener{
-    mBaseActivity.onBackPressed()
-}
+        binding.btnPreviousCehck.setOnClickListener {
+            mBaseActivity.onBackPressed()
+        }
         binding.btnSubmit.setOnClickListener {
 
             var isAllImageUploaded = true
@@ -196,10 +205,10 @@ binding.btnPreviousCehck.setOnClickListener{
             if (isAllImageUploaded  && isOdoMeterErrorFound == false) {
                 var isAllRequired = true
                 for (i in storedData.indices) {
-                    fuelList[i].value = storedData[i].formData!!.value
+                    formList[i].value = storedData[i].formData!!.value
 
                     if (storedData[i].formData?.required == true) {
-                        if (fuelList[i].value!!.isEmpty() == true) {
+                        if (formList[i].value!!.isEmpty() == true) {
 
                             mBaseActivity.showSnackMessage(
                                 "Please enter ${storedData[i].formData!!.title}",
@@ -213,10 +222,10 @@ binding.btnPreviousCehck.setOnClickListener{
                 }
                 if (isAllRequired) {
 
-                 /*   val request = SaveFuelFormRequest()
-                    request.fuelForm=fuelList
-                   reportViewModel.saveFuelForm(request,mBaseActivity)
-*/
+                    val request = SaveFormRequest()
+                    request.uploadID = uniqueUploadId
+                    request.reportForm = formList
+                    reportViewModel.saveReportForm(request, mBaseActivity)
 
 
                 }
@@ -237,7 +246,7 @@ binding.btnPreviousCehck.setOnClickListener{
     }
 
 
-    fun createViewChecks(uiType: String, formData: ReportForm, position: Int) {
+    fun createViewChecks(uiType: String, formData: InspectionForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
         when (uiType) {
             "TEXT" -> {
@@ -316,14 +325,14 @@ binding.btnPreviousCehck.setOnClickListener{
             "MULTILINE" -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 containerChecks.addView(view)
 
 
                 view = layoutInflater.inflate(R.layout.layout_multiline_comment_view, null)
-                var inputText = view.findViewById<EditText>(R.id.edMultiline)
+                val inputText = view.findViewById<EditText>(R.id.edMultiline)
                 inputText.hint = formData.comment
 
                 val dataStore = StoreReportFormData(inputText, formData)
@@ -360,161 +369,292 @@ binding.btnPreviousCehck.setOnClickListener{
             }
 
 
-            "OPTION"->
-            {
+            "OPTION" -> {
 
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                val view = layoutInflater.inflate(R.layout.layout_spinner_view, null)
+                val textTitleLable = view.findViewById<TextView>(R.id.spLable)
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 textTitleLable.setTextColor(Color.BLACK)
-                containerChecks.addView(view)
-                view = layoutInflater.inflate(R.layout.layout_spinner_view, null)
                 val spinnerView = view.findViewById<Spinner>(R.id.spOption)
-                spinnerView.setOnItemSelectedListener(object: AdapterView.OnItemSelectedListener{
+                spinnerView.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                     AFJUtils.writeLogs(formData.options[p2].fieldName.toString())
+                        //AFJUtils.writeLogs(formData.options[p2].fieldName.toString())
+                        for (i in storedData.indices) {
+                            if (storedData[i].formData!!.inputNo == formData.inputNo) {
+                                storedData[i].formData!!.value =
+                                    formData.options[p2].fieldName.toString()
+                            }
+                        }
                     }
+
                     override fun onNothingSelected(p0: AdapterView<*>?) {
                     }
                 })
-                val aa = CustomDropDownAdapter(mBaseActivity, formData.options)
-                spinnerView.setAdapter(aa)
+                val adapter = CustomDropDownAdapter(mBaseActivity, formData.options)
+                spinnerView.setAdapter(adapter)
                 containerChecks.addView(view)
 
-            }
-
-
-
-            "FILE" -> {
-                // "FILE" -> {
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                textTitleLable.setTextColor(Color.BLACK)
-                containerChecks.addView(view)
-
-
-                view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textDescLable = view.findViewById<TextView>(R.id.text_label)
-                textDescLable.setTypeface(null, Typeface.NORMAL)
-                textDescLable.text = formData.comment
-
-                containerChecks.addView(view)
-
-
-                view = layoutInflater.inflate(R.layout.layout_file_choose_box, null)
-                val imagePath = view.findViewById<TextView>(R.id.txtImagePath)
-                val btnPickImage = view.findViewById<Button>(R.id.btnPickImage)
-
-
-                btnPickImage.setOnClickListener {
-                    val dialog = FileUploadDialog.newInstance(
-                        isDocumentPickShow = true,
-                        inpsectionType = requestType, //This will be change after
-                        uniqueFileId = uniqueUploadId,
-                        fieldName = formData.fieldName!!,
-                        fileUploadListner = (object : UploadDialogListener {
-                            override fun onUploadCompleted(completedData: UploadFileAPiResponse) {
-
-                            }
-
-                            override fun onFilePathReceived(path: String) {
-                                imagePath.text = path
-                                formData.value = uniqueUploadId
-                            }
-
-                        })
-                    )
-                    dialog.isCancelable = false
-                    dialog.show(mBaseActivity.supportFragmentManager, null)
-
-                }
 
                 val dataStore = StoreReportFormData(null, formData)
                 storedData.add(dataStore)
-                containerChecks.addView(view)
 
             }
+
             "IMAGE" -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                val titleLabel = view.findViewById<TextView>(R.id.text_label)
+                titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                titleLabel.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
+
+
+                imageForm.add(InspectionForm(fieldName = "image"))
+                // createMultipleImageView()
+                view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
+                val layoutManager = GridLayoutManager(mBaseActivity, 3)
+                val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
+                recImageContainer.layoutManager = layoutManager
+                val imageFormAdapter =
+                    ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm, true)
+                imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
+                    override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
+                        imageForm[positon] = uploadForm
+
+                    }
+                })
+
+                recImageContainer.adapter = imageFormAdapter
+
+
+                val textTitleLable = view.findViewById<Button>(R.id.button)
+                textTitleLable.text = "Add More Photo"
                 textTitleLable.setTextColor(Color.BLACK)
-                //  containerChecks.addView(view)
+                textTitleLable.visibility = View.VISIBLE
+                textTitleLable.setOnClickListener {
+                    if (uploadPhotoCount < imageUploadLimit) {
+                        imageForm.add(InspectionForm(fieldName = "image"))
+                        imageFormAdapter.notifyItemInserted(imageForm.size);
+                        recImageContainer.smoothScrollToPosition(imageForm.size);
+                        uploadPhotoCount++
+                    } else {
+                        textTitleLable.visibility = View.GONE
+                    }
+
+                }
+                containerChecks.addView(view)
+                containerChecks.addView(addSpaceView())
+
+            }
 
 
-                view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textDescLable = view.findViewById<TextView>(R.id.text_label)
-                textDescLable.setTypeface(null, Typeface.NORMAL)
-                textDescLable.text = formData.comment
+            "FILE" -> {
 
-                //  containerChecks.addView(view)
-
-
-                view = layoutInflater.inflate(R.layout.layout_image_box, null)
-                val imagePreview = view.findViewById<ImageView>(R.id.img_preview)
-                val btnPickImage = view.findViewById<ImageView>(R.id.img_add)
-                val btnImageDel = view.findViewById<ImageView>(R.id.img_del)
-                imagePreview.visibility = View.GONE
-                btnPickImage.visibility = View.VISIBLE
-                btnImageDel.visibility = View.GONE
+                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
+                val titleLabel = view.findViewById<TextView>(R.id.text_label)
+                titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                titleLabel.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
 
 
-
-
-                btnPickImage.setOnClickListener {
-                    val dialog = FileUploadDialog.newInstance(
-                        isDocumentPickShow = false,
-                        inpsectionType = requestType, //This will be change after
-                        uniqueFileId = uniqueUploadId,
-                        fieldName = formData.fieldName!!,
-                        fileUploadListner = (object : UploadDialogListener {
-                            override fun onUploadCompleted(completedData: UploadFileAPiResponse) {
-
-                            }
-
-                            override fun onFilePathReceived(path: String) {
-
-                                formData.value = uniqueUploadId
-
-
-                                Glide.with(view.context)
-                                    .load(path)
-                                    .placeholder(
-                                        AppCompatResources.getDrawable(
-                                            view.context,
-                                            R.drawable.ic_launch
-                                        )
-                                    )
-
-                                    .into(imagePreview)
-                                btnPickImage.visibility = View.GONE
-                                btnImageDel.visibility = View.VISIBLE
-                                imagePreview.visibility = View.VISIBLE
-                            }
-
-                        })
+                fileForm.add(InspectionForm(fieldName = "file", title = "Filename"))
+                // createMultipleImageView()
+                view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
+                val layoutManager = LinearLayoutManager(mBaseActivity)
+                val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
+                recImageContainer.layoutManager = layoutManager
+                val fileFormAdapter =
+                    FileFormAdapter(
+                        requestType,
+                        uniqueUploadId,
+                        mBaseActivity,
+                        fileForm,
+                        true
                     )
-                    dialog.isCancelable = false
-                    dialog.show(mBaseActivity.supportFragmentManager, null)
+                fileFormAdapter.setImageFormListner(object : FileFormAdapter.ImageFormListner {
+                    override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
+                        fileForm[positon] = uploadForm
+
+
+                    }
+                })
+
+                recImageContainer.adapter = fileFormAdapter
+
+
+                val textTitleLable = view.findViewById<Button>(R.id.button)
+                textTitleLable.text = "Add More Files"
+                textTitleLable.setTextColor(Color.BLACK)
+                textTitleLable.visibility = View.VISIBLE
+                textTitleLable.setOnClickListener {
+                    if (uploadFileCount < uploadFileLimit) {
+                        fileForm.add(InspectionForm(fieldName = "file", title = "File"))
+                        fileFormAdapter.notifyItemInserted(fileForm.size);
+                        recImageContainer.smoothScrollToPosition(fileForm.size);
+                        uploadFileCount++
+                    } else {
+                        textTitleLable.visibility = View.GONE
+                    }
 
                 }
-                btnImageDel.setOnClickListener {
-                    btnImageDel.visibility = View.GONE
-                    btnPickImage.visibility = View.VISIBLE
-                    imagePreview.visibility = View.GONE
-                }
+                containerChecks.addView(view)
+                containerChecks.addView(addSpaceView())
 
-                //val dataStore = StoreFormData(null, formData)
-                //storedData.add(dataStore)
-                // containerChecks.addView(view)
+            }
+
+
+            "MULTISELECT" -> {
+
+
+
+                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
+                val titleLabel = view.findViewById<TextView>(R.id.text_label)
+                titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                titleLabel.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
+                containerChecks.addView(addSpaceView())
+
+
 
                 val dataStore = StoreReportFormData(null, formData)
                 storedData.add(dataStore)
-                imageForm.add(formData)
-                formIndex.add(position)
 
+
+                var arrayChecks = arrayListOf<String>()
+                for (i in formData.options.indices) {
+                    val data = formData.options[i]
+                    val checkBox = CheckBox(mBaseActivity)
+                    checkBox.text = data.title
+                    checkBox.isChecked = false
+                    arrayChecks.add(data.fieldName.toString())
+                    checkBox.setOnCheckedChangeListener(object :
+                        CompoundButton.OnCheckedChangeListener {
+                        override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
+                            if (!isChecked) {
+                                arrayChecks[i] = ""
+                            } else {
+                                arrayChecks[i] = data.fieldName.toString()
+                            }
+
+                            for (i in storedData.indices) {
+                                if (storedData[i].formData!!.inputNo == formData.inputNo) {
+                                        var checkValue= ""
+                                    for (z in arrayChecks.indices) {
+                                        if(arrayChecks[z].isNotEmpty())
+                                        {
+                                            if(checkValue.isNotEmpty())
+                                                  checkValue = checkValue + "," + arrayChecks[z]
+                                            else
+                                                checkValue = arrayChecks[z]
+                                        }
+                                    }
+
+                                    storedData[i].formData!!.value = checkValue
+                                    AFJUtils.writeLogs(checkValue)
+
+
+                                }
+                            }
+                        }
+
+                    })
+                    containerChecks.addView(checkBox)
+                }
+
+                containerChecks.addView(addSpaceView())
+            }
+
+
+            "DATETIME" -> {
+
+                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                textTitleLable.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
+
+                containerChecks.addView(addSpaceView())
+                view = layoutInflater.inflate(R.layout.layout_date_time_view, null)
+                val txtDate = view.findViewById<TextView>(R.id.txtDate)
+                val btnDatePicker = view.findViewById<RelativeLayout>(R.id.btnDatePicker)
+                containerChecks.addView(view)
+
+                var year = 0
+                var month = 0
+                var day = 0
+
+                var mHour: Int
+                var mMinute: Int
+
+
+                lateinit var datePicker: DatePicker
+                lateinit var calendar: Calendar
+                calendar = Calendar.getInstance();
+                year = calendar.get(Calendar.YEAR);
+
+                month = calendar.get(Calendar.MONTH)
+                day = calendar.get(Calendar.DAY_OF_MONTH)
+
+
+                reportDate = "$year-${month + 1}-$day"
+
+
+                val c = Calendar.getInstance()
+                mHour = c[Calendar.HOUR_OF_DAY]
+                mMinute = c[Calendar.MINUTE]
+                reportDate = reportDate + " " + getTime(mHour, mMinute)
+                txtDate.text = reportDate
+                formData.value = reportDate
+
+                btnDatePicker.setOnClickListener {
+
+                    DatePickerDialog(
+                        mBaseActivity,
+                        object : DatePickerDialog.OnDateSetListener {
+                            override fun onDateSet(
+                                p0: DatePicker?,
+                                year: Int,
+                                month: Int,
+                                day: Int
+                            ) {
+
+                                reportDate = "$year-${month + 1}-$day"
+                                txtDate.text = reportDate
+
+
+                                // Get Current Time
+                                val c = Calendar.getInstance()
+                                mHour = c[Calendar.HOUR_OF_DAY]
+                                mMinute = c[Calendar.MINUTE]
+
+
+                                val timePickerDialog = TimePickerDialog(
+                                    mBaseActivity,
+                                    OnTimeSetListener { view, hourOfDay, minute ->
+                                        reportDate = reportDate + " " + getTime(hourOfDay, minute)
+                                        txtDate.text = reportDate
+
+                                        for (i in storedData.indices) {
+                                            if (storedData[i].formData!!.inputNo == formData.inputNo) {
+                                                storedData[i].formData!!.value = reportDate
+                                            }
+                                        }
+
+                                    },
+                                    mHour,
+                                    mMinute,
+                                    false
+                                )
+                                timePickerDialog.show()
+                            }
+
+                        }, year, month, day
+                    ).show()
+
+                }
+
+                val dataStore = StoreReportFormData(null, formData)
+                storedData.add(dataStore)
             }
             else -> {
                 AFJUtils.writeLogs("not thing to create view")
@@ -524,19 +664,33 @@ binding.btnPreviousCehck.setOnClickListener{
 
     }
 
-    private fun getPhotoFile(fileName: String): File {
-        val directoryStorage = mBaseActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(fileName, ".jpg", directoryStorage)
+
+    private fun addSpaceView(): View {
+        // Create Space programmatically.
+        val tv = Space(mBaseActivity)
+        val layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            30
+        )
+        tv.layoutParams = layoutParams
+
+        return tv
+
     }
 
 
-
+    private fun getTime(hr: Int, min: Int): String {
+        val tme = Time(hr, min, 0)
+        val formatter: Format
+        formatter = SimpleDateFormat("H:mm")
+        return formatter.format(tme)
+    }
 }
 
 
 data class StoreReportFormData(
     val editText: EditText? = null,
-    var formData: ReportForm? = null
+    var formData: InspectionForm? = null
 
 
 )

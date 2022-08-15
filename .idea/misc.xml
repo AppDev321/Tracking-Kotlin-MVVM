@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/drawable/ic_menu_camera.xml" value="0.2555" />
         <entry key="app/src/main/res/drawable/ic_report_cross.xml" value="0.1665" />
         <entry key="app/src/main/res/layout-land/activity_login.xml" value="0.3145833333333333" />
+        <entry key="app/src/main/res/layout-land/layout_button_view.xml" value="0.68671875" />
         <entry key="app/src/main/res/layout-land/layout_multiline_comment_view.xml" value="0.68671875" />
         <entry key="app/src/main/res/layout/activity_location.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.335" />
@@ -29,6 +30,7 @@
         <entry key="app/src/main/res/layout/fragment_fuel_login.xml" value="0.228125" />
         <entry key="app/src/main/res/layout/fragment_inspection_list.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.29010416666666666" />
+        <entry key="app/src/main/res/layout/fragment_report_from.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/fragment_shift_list.xml" value="0.22154779969650987" />
         <entry key="app/src/main/res/layout/fragment_shifts.xml" value="0.22154779969650987" />
         <entry key="app/src/main/res/layout/fragment_slideshow.xml" value="0.1" />
@@ -44,14 +46,19 @@
         <entry key="app/src/main/res/layout/item_daily_pts_inspection_check.xml" value="0.335" />
         <entry key="app/src/main/res/layout/item_shift.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_shift_detail.xml" value="0.22154779969650987" />
+        <entry key="app/src/main/res/layout/layout_button_view.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/layout_daily_inspection_check.xml" value="0.1875" />
+        <entry key="app/src/main/res/layout/layout_date_time_view.xml" value="0.2496793501496366" />
+        <entry key="app/src/main/res/layout/layout_date_time_vieww.xml" value="0.1470713980333476" />
         <entry key="app/src/main/res/layout/layout_edit_text_view.xml" value="0.125" />
-        <entry key="app/src/main/res/layout/layout_file_choose_box.xml" value="0.15078125" />
+        <entry key="app/src/main/res/layout/layout_file_choose_box.xml" value="0.165" />
         <entry key="app/src/main/res/layout/layout_file_upload_box.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/layout/layout_image_box.xml" value="0.165" />
         <entry key="app/src/main/res/layout/layout_image_choose_box.xml" value="0.30416666666666664" />
+        <entry key="app/src/main/res/layout/layout_image_more_view.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/layout_inspection_list.xml" value="0.165" />
         <entry key="app/src/main/res/layout/layout_multiline_comment_view.xml" value="0.45625" />
+        <entry key="app/src/main/res/layout/layout_recycler_veiw.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/layout_spinner_row.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/layout_spinner_view.xml" value="0.45625" />
         <entry key="app/src/main/res/layout/layout_text_view.xml" value="0.30416666666666664" />

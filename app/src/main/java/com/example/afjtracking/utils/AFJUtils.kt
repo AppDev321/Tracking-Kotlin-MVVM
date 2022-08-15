@@ -16,11 +16,14 @@
 package com.example.afjtracking.utils
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Location
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Display
 import android.view.View
 import android.view.animation.*
 import android.view.inputmethod.InputMethodManager
@@ -144,7 +147,12 @@ object AFJUtils {
             .apply()
     }
 
-
+    fun getScreenWidth(activity: Activity): Float {
+        val display: Display = activity.windowManager.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        display.getMetrics(outMetrics)
+        return outMetrics.widthPixels.toFloat()
+    }
 
     fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

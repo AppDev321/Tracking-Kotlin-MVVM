@@ -95,7 +95,7 @@
         android:id="@+id/nav_report_form"
         android:name="com.example.afjtracking.view.fragment.fuel.ReportFormFragment"
         android:label="@string/menu_report_fill"
-        tools:layout="@layout/fragment_fuel_from" />
+        tools:layout="@layout/fragment_report_from" />
 
 
 

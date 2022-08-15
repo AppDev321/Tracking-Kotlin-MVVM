@@ -17,7 +17,7 @@ data class GetReportFormResponse(
 
 data class ReportData(
 
-    @SerializedName("report_form"        ) var reportForm       : ArrayList<ReportForm> = arrayListOf(),
+    @SerializedName("report_form"        ) var reportForm       : ArrayList<InspectionForm> = arrayListOf(),
     @SerializedName("vehicle"            ) var vehicle          : Vehicle?              = Vehicle(),
     @SerializedName("image_required"     ) var imageRequired    : Boolean?              = null,
     @SerializedName("file_required"      ) var fileRequired     : Boolean?              = null,
@@ -25,28 +25,5 @@ data class ReportData(
     @SerializedName("file_upload_limit"  ) var fileUploadLimit  : Int?                  = null,
     @SerializedName("request_name"       ) var requestName      : String?               = null
 
-
-)
-
-data class ReportForm (
-
-    @SerializedName("input_no"   ) var inputNo   : Int?               = null,
-    @SerializedName("title"      ) var title     : String?            = null,
-    @SerializedName("field_name" ) var fieldName : String?            = null,
-    @SerializedName("type"       ) var type      : String?            = null,
-    @SerializedName("accept"     ) var accept    : String?            = null,
-    @SerializedName("required"   ) var required  : Boolean?           = null,
-    @SerializedName("comment"    ) var comment   : String?            = null,
-    @SerializedName("value"      ) var value     : String?            = null,
-    @SerializedName("options"    ) var options   : ArrayList<Options> = arrayListOf()
-
-)
-
-
-data class Options (
-
-    @SerializedName("option"     ) var option    : Int?    = null,
-    @SerializedName("title"      ) var title     : String? = null,
-    @SerializedName("field_name" ) var fieldName : String? = null
 
 )

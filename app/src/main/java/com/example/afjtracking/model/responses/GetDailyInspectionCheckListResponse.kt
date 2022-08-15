@@ -171,9 +171,23 @@ data class InspectionForm(
     @SerializedName("comment") var comment: String? = null,
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
-    @SerializedName("value") var value: String? = null
+    @SerializedName("value") var value: String? = null,
+    @SerializedName("options") var options   : ArrayList<Options> = arrayListOf(),
 
-) : Parcelable
+
+): Parcelable
+
+
+@Parcelize
+data class Options (
+
+    @SerializedName("option"     ) var option    : Int?    = null,
+    @SerializedName("title"      ) var title     : String? = null,
+    @SerializedName("field_value" ) var fieldName : String? = null
+
+): Parcelable
+
+
 
 @Parcelize
 data class PSVCheck(
