@@ -3,18 +3,18 @@ package com.example.afjtracking.utils
 import java.util.concurrent.TimeUnit
 
 object Constants {
- //  const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
-   //const val FAILED_API_TAG = "vmi808920.contaboserver.net"
+   const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
+   const val FAILED_API_TAG = "vmi808920.contaboserver.net"
 
 
-const val BASE_URL ="http://192.168.1.8:80/api/"
- const val FAILED_API_TAG = "192.168.1.8:80"
+//const val BASE_URL ="http://192.168.1.21:8000/api/"
+// const val FAILED_API_TAG = "192.168.1.21:8000"
 
     const val WORKER_SERVICE_TIME: Long = 15
     val TIME_WORKER_SERVICE_UNIT = TimeUnit.MINUTES
 
     var FILE_QUERY_LIMIT = 5
-    var API_RETRY_COUNT = 10
+    var API_RETRY_COUNT = 1
     var FILE_UPLOAD_UNIQUE_ID = "" + System.currentTimeMillis()
 
 
@@ -45,6 +45,6 @@ const val BASE_URL ="http://192.168.1.8:80/api/"
     val DAILY_INSPECTION_LIST= "vehicles/daily-inspection/all"
     val REPORT_FORM= "vehicles/get-reporting-form"
 
- //Predefined Value of Nullable
- val NULL_DEFAULT_VALUE= "N/A"
+    //Predefined Value of Nullable
+    val NULL_DEFAULT_VALUE= "N/A"
 }

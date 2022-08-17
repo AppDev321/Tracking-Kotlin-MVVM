@@ -29,6 +29,7 @@ import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutFileUploadBoxBinding
 import com.example.afjtracking.room.model.TableUploadFile
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.BitmapUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.fileupload.viewmodel.FileUploadModel
 import org.apache.commons.io.IOUtils
@@ -97,13 +98,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             null, false
         )
 
+
         _fileUploadViewModel = ViewModelProvider(this).get(FileUploadModel::class.java)
 
 
         val mView: View = dialogBinding.root
-
-
-
         initViews(mView)
         setMyListeners()
 
@@ -320,15 +319,15 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
     private fun fileIsOpened(
         fileName: String,
-        content: InputStream,
+        inputStream: InputStream,
         isImageUpload: Boolean,
         originalFile :File?
     ) {
         try {
             val file = File(requireContext().cacheDir, fileName)
             val outputStream = FileOutputStream(file)
-            IOUtils.copy(content, outputStream)
-            content.close()
+            IOUtils.copy(inputStream, outputStream)
+            inputStream.close()
             containerUpload.visibility = View.VISIBLE
             txtFileName.text = fileName
             // btnDone.visibility = View.GONE
@@ -336,11 +335,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             var filetype = "image"
             if (!isImageUpload) {
                 filetype = "application"
-                listnerUploadDialog.onFilePathReceived(file.path)
+                listnerUploadDialog.onFilePathReceived(file!!.path)
             }
             else
             {
-                listnerUploadDialog.onFilePathReceived(file.path)
+                listnerUploadDialog.onFilePathReceived(file!!.path)
               //  listnerUploadDialog.onFilePathReceived(originalFile!!.path)
             }
 
@@ -376,28 +375,27 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         }
     }
 
-    // You can do the assignment inside onAttach or onCreate, i.e, before the activity is displayed
+//For android oreo device
     private var openCameraActivityResultLauncher =
         registerForActivityResult(StartActivityForResult())
         { result ->
             if (result.resultCode == Activity.RESULT_OK) {
 
                 try {
-                    val uri = Uri.parse(currentPhotoPath)
-                    val fileName =getFileName(uri)
-                    fileIsOpened( fileName,mBaseActivity.contentResolver.openInputStream(uri)!!, true, File(currentPhotoPath)  )
+                    sendFileToServer(currentPhotoPath)
                 } catch (ex: java.lang.Exception) {
                     mBaseActivity.toast(ex.toString())
                 }
             }
         }
-
+//For below oreio devices
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         try {
             when (val result = tryHandleOpenDocumentResult(requestCode, resultCode, data)) {
                 OpenFileResult.DifferentResult, OpenFileResult.OpenFileWasCancelled -> {
+                   // mBaseActivity.toast("Different type file / File was cancelled")
                 }
                 OpenFileResult.ErrorOpeningFile -> mBaseActivity.toast("error opening file")
                 is OpenFileResult.FileWasOpened -> {
@@ -405,24 +403,28 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 }
             }
             if (requestCode == 101) {
-
-                val uri = Uri.parse(currentPhotoPath)
-                val fileName =
-                    getFileName(uri) //mBaseActivity.contentResolver.queryFileName(contentUri)
-
-                fileIsOpened(
-                    fileName,
-                    mBaseActivity.contentResolver.openInputStream(uri)!!, true,File(currentPhotoPath)
-                )
-
+                sendFileToServer(currentPhotoPath)
             }
-
-
         } catch (ex: java.lang.Exception) {
             mBaseActivity.toast(ex.toString())
         }
     }
 
+    fun sendFileToServer(currentPhotoPath: String)
+    {
+        var uri = Uri.parse(currentPhotoPath)
+         val fileName =  getFileName(uri) //mBaseActivity.contentResolver.queryFileName(contentUri)
+        val file =  BitmapUtils.getCompressedImageFile(File(uri.path),mBaseActivity)
+        uri = Uri.fromFile(file)
+        //val   fileName = getFileName(uri)
+        val photoUri = Uri.parse(currentPhotoPath)
+        fileIsOpened(
+            fileName,
+            mBaseActivity.contentResolver.openInputStream(uri)!!,
+            true,
+            file//File(currentPhotoPath)
+        )
+    }
 
     override fun onProgressUpdate(progress: Int) {
 
@@ -461,7 +463,8 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     var currentPhotoPath = ""
     private fun getImageFile(): File {
         val imageFileName = "JPEG"
-        val storageDir: File = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        val storageDir: File =
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             requireActivity().filesDir
         } else {
             File(
@@ -478,8 +481,8 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     }
 
     sealed class OpenFileResult {
-        object OpenFileWasCancelled : OpenFileResult()
         data class FileWasOpened(val fileName: String, val content: InputStream) : OpenFileResult()
+        object OpenFileWasCancelled : OpenFileResult()
         object ErrorOpeningFile : OpenFileResult()
         object DifferentResult : OpenFileResult()
     }

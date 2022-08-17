@@ -1,20 +1,22 @@
 package com.example.afjtracking.view.activity.viewmodel
 
 import android.content.Context
-import android.os.Build
+import android.content.DialogInterface
+import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.afjtracking.model.requests.DeviceDetail
+import com.example.afjtracking.databinding.FragmentDeviceFormBinding
 import com.example.afjtracking.model.requests.LoginRequest
 import com.example.afjtracking.model.responses.LoginResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
 import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class LoginViewModel : ViewModel() {
     @JvmField
@@ -66,29 +68,38 @@ class LoginViewModel : ViewModel() {
             return userMutableLiveData!!
         }
 
+
+
+    fun getDeviceDetailDialog(view: View)
+    {
+
+        val builder = AlertDialog.Builder(view.context)
+        val dialogBinding: FragmentDeviceFormBinding =
+            FragmentDeviceFormBinding.inflate(
+                LayoutInflater.from(view.context),
+                null, false
+            )
+        val mView: View = dialogBinding.root
+        dialogBinding.deviceInfo = AFJUtils.getDeviceDetail()
+
+
+        builder.setCancelable(false)
+        builder.setView(mView)
+        builder.setNegativeButton(android.R.string.no, object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface, p1: Int) {
+                dialog.dismiss()
+            }
+
+        })
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+    }
+
+
     fun onClick(view: View?) {
 
-        var deviceData = DeviceDetail()
-        deviceData.brand = Build.BRAND
-        deviceData.model = Build.MODEL
-        deviceData.androidVersion = Build.VERSION.RELEASE
-        deviceData.deviceID = Constants.DEVICE_ID
-        /*deviceData.macBluetooth = android.provider.Settings.Secure.getString( view!!.context.contentResolver, "bluetooth_address")
-        val telephonyManager = view!!.context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        deviceData.imeiSim = if (Build.VERSION.SDK_INT >= 26) {
-
-               try{
-                   telephonyManager.imei
-               }catch (e :Exception)
-               {
-                   deviceData.deviceID
-               }
-
-            } else {
-                telephonyManager.deviceId
-            }
-*/
-
+        var deviceData = AFJUtils.getDeviceDetail()
 
 
 

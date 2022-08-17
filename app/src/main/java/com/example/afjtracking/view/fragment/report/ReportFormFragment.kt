@@ -131,7 +131,7 @@ class ReportFormFragment : Fragment() {
         // Add observer for score
         reportViewModel.errorsMsg.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                mBaseActivity.toast(it, false)
+                mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
                // binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()

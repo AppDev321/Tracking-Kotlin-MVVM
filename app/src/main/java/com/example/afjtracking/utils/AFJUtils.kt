@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Location
+import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
@@ -31,6 +32,7 @@ import androidx.annotation.AnimRes
 import androidx.core.content.FileProvider
 import androidx.work.*
 import com.example.afjtracking.R
+import com.example.afjtracking.model.requests.DeviceDetail
 import com.example.afjtracking.service.worker.APIWorker
 import com.example.afjtracking.service.worker.LocationWorker
 import com.example.afjtracking.service.worker.UploadWorker
@@ -384,6 +386,34 @@ object AFJUtils {
             .setPrettyPrinting().create()
         return gsonPretty.fromJson(key,clazz)
 
+    }
+
+
+    fun getDeviceDetail():DeviceDetail
+    {
+        var deviceData = DeviceDetail()
+        deviceData.brand = Build.BRAND
+        deviceData.model = Build.MODEL
+        deviceData.androidVersion = Build.VERSION.RELEASE
+        deviceData.deviceID = Constants.DEVICE_ID
+/*deviceData.macBluetooth = android.provider.Settings.Secure.getString( view!!.context.contentResolver, "bluetooth_address")
+        val telephonyManager = view!!.context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        deviceData.imeiSim = if (Build.VERSION.SDK_INT >= 26) {
+
+               try{
+                   telephonyManager.imei
+               }catch (e :Exception)
+               {
+                   deviceData.deviceID
+               }
+
+            } else {
+                telephonyManager.deviceId
+            }
+*/
+
+
+        return deviceData
     }
 
 }

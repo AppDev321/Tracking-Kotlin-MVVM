@@ -13,9 +13,9 @@
 -->
 
 <resources>
-    <color name="colorPrimary">#004AB8</color>
-    <color name="colorPrimaryDark">#004AB8</color>
-    <color name="colorAccent">#004AB8</color>
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#03A9F4</color>
+    <color name="colorAccent">#03A9F4</color>
     <color name="light_blue">#D4E0F3</color>
 
 
