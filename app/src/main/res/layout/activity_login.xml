@@ -28,6 +28,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
+                android:backgroundTint="@color/colorPrimary"
                 android:background="@drawable/blue_bg">
 
                 <LinearLayout
@@ -184,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/blue_border_rounded_cornwe"
                 android:gravity="center"

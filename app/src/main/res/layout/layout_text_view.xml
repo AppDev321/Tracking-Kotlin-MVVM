@@ -7,4 +7,4 @@
     android:text="Mileage *"
     android:textColor="@color/black"
     android:textSize="@dimen/text_body_normal_size"
-    android:textStyle="bold" />
+    android:textStyle="normal" />
