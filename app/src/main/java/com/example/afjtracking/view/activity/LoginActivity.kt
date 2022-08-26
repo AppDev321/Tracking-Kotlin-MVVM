@@ -26,10 +26,10 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         checkPermissionState()
         val token = AFJUtils.getUserToken(this@LoginActivity)
-        if (! token!!.isEmpty()) {
+       /* if (! token!!.isEmpty()) {
             finish()
             startActivity(Intent(this@LoginActivity, NavigationDrawerActivity::class.java))
-        }
+        }*/
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         binding = DataBindingUtil.setContentView(this@LoginActivity, R.layout.activity_login)
         binding.setLifecycleOwner(this)

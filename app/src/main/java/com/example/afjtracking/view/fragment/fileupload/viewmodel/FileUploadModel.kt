@@ -87,7 +87,7 @@ class FileUploadModel() : ViewModel() {
         bodyBuilder.addFormDataPart(
             "file",
             file.name,
-            file.asRequestBody("$fileUploadData.fileType/*".toMediaTypeOrNull())
+            file.asRequestBody("${fileUploadData.fileType}/*".toMediaTypeOrNull())
         )
         //bodyBuilder.addFormDataPart("video", file.name, file.asRequestBody("video/*".toMediaTypeOrNull()))
 

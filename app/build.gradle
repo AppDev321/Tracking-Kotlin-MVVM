@@ -7,6 +7,9 @@ plugins {
 }
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
+def dateFormat = new Date().format('dd-MMM-yyyy')
+
+
 android {
     compileSdk 32
 
@@ -21,11 +24,13 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        setProperty("archivesBaseName", "AFJ_Tracking-v"+versionName+"-"+dateFormat)
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
     compileOptions {
@@ -54,6 +59,8 @@ android {
     }
 
 }
+
+
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.0'

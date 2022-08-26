@@ -11,6 +11,7 @@
         android:layout_marginTop="@dimen/_5sdp"
         android:background="@drawable/box_round_corner"
         android:orientation="horizontal"
+
         android:padding="@dimen/_5sdp">
 
         <TextView

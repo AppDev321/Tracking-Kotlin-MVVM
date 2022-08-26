@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.os.Environment
-import com.example.afjtracking.R
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -62,9 +61,9 @@ object BitmapUtils {
             // here i override the original image file
             val folder = File(
                 Environment.getExternalStorageDirectory().toString()
-                        + "/" +
-                        mContext.resources.getString(
-                R.string.app_name))
+                        + "/" +Environment.DIRECTORY_DCIM)
+                        /*mContext.resources.getString(
+                R.string.app_name))*/
 
 
 
