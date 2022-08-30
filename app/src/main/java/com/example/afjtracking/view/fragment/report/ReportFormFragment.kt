@@ -409,7 +409,7 @@ class ReportFormFragment : Fragment() {
                 containerChecks.addView(view)
 
 
-                imageForm.add(InspectionForm(fieldName = "image"))
+                imageForm.add(InspectionForm(fieldName = "image_$uploadPhotoCount"))
                 // createMultipleImageView()
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = GridLayoutManager(mBaseActivity, 3)

@@ -156,7 +156,7 @@ class TrackingViewModel : ViewModel() {
 
                 override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
                     val exception = t.toString()
-         mErrorsMsg!!.postValue(exception)
+                 mErrorsMsg!!.postValue(exception)
 
 
 

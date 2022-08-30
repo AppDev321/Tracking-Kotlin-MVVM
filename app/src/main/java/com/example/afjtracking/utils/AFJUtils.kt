@@ -18,14 +18,19 @@ package com.example.afjtracking.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Context.WINDOW_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Point
 import android.location.Location
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.*
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AnimRes
@@ -38,6 +43,9 @@ import com.example.afjtracking.service.worker.LocationWorker
 import com.example.afjtracking.service.worker.UploadWorker
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.gson.GsonBuilder
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -52,7 +60,7 @@ object AFJUtils {
     const val KEY_API_STATUS = "background_service_status"
 
 
-     fun setAnimation(
+    fun setAnimation(
         @AnimRes id: Int,
         interpolator: Interpolator?,
         fillAfter: Boolean,
@@ -69,8 +77,7 @@ object AFJUtils {
     }
 
 
-    fun startInAnimation(context: Context,view : View)
-    {
+    fun startInAnimation(context: Context, view: View) {
         view.startAnimation(
             setAnimation(
                 R.anim.fade_in,
@@ -81,8 +88,7 @@ object AFJUtils {
         )
     }
 
-    fun startOutAnimation(context: Context,view : View)
-    {
+    fun startOutAnimation(context: Context, view: View) {
         view.startAnimation(
             setAnimation(
                 R.anim.fade_in,
@@ -135,7 +141,6 @@ object AFJUtils {
     }
 
 
-
     fun getAPICountStatus(context: Context): Int {
         return getPrefs(context)
             .getInt(KEY_API_STATUS, 0)
@@ -160,7 +165,6 @@ object AFJUtils {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
-
 
 
     fun getPrefs(context: Context): SharedPreferences {
@@ -278,27 +282,25 @@ object AFJUtils {
        WorkManager.getInstance(context).enqueue(locationPeriodicWorkRequest)
  */
 
-      //  if(isWorkEverScheduledBefore(context,"uploadFile")) {
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                "uploadFile",
-                ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest
-            )
+        //  if(isWorkEverScheduledBefore(context,"uploadFile")) {
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "uploadFile",
+            ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest
+        )
 
-     //   }
+        //   }
 
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                "apiData",
-                ExistingPeriodicWorkPolicy.REPLACE, apiPeriodicWorkRequest
-            )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "apiData",
+            ExistingPeriodicWorkPolicy.REPLACE, apiPeriodicWorkRequest
+        )
 
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                "location",
-                ExistingPeriodicWorkPolicy.REPLACE, locationPeriodicWorkRequest
-            )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "location",
+            ExistingPeriodicWorkPolicy.REPLACE, locationPeriodicWorkRequest
+        )
 
     }
-
-
 
 
     private fun isWorkEverScheduledBefore(context: Context, tag: String): Boolean {
@@ -319,14 +321,10 @@ object AFJUtils {
     }
 
 
-
-
-
-
     fun setOneTimeWorkRequest(context: Context) {
 
         val constrains = Constraints.Builder()
-          //  .setRequiresCharging(true)
+            //  .setRequiresCharging(true)
             .setRequiredNetworkType(NetworkType.CONNECTED).build()
 
         val workerRequest =
@@ -339,15 +337,14 @@ object AFJUtils {
 
     }
 
-    fun convertServerDateTime(date: String,is24Hour :Boolean): String {
+    fun convertServerDateTime(date: String, is24Hour: Boolean): String {
         val inputDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
-        if(is24Hour) {
+        if (is24Hour) {
             val requiredSdf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
             return requiredSdf.format(sourceSdf.parse(date))
-        }
-        else
-        { val requiredSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        } else {
+            val requiredSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             return requiredSdf.format(sourceSdf.parse(date))
         }
     }
@@ -372,25 +369,22 @@ object AFJUtils {
     }
 
 
-
-
-
-    fun <T> convertObjectToJson(objectClass: T) : String {
+    fun <T> convertObjectToJson(objectClass: T): String {
         val gsonPretty = GsonBuilder()
             .setPrettyPrinting().create()
         return gsonPretty.toJson(objectClass)
     }
 
-    fun <T> convertStringToObject( key: String,clazz: Class<T>): T {
+    fun <T> convertStringToObject(key: String, clazz: Class<T>): T {
         val gsonPretty = GsonBuilder()
             .setPrettyPrinting().create()
-        return gsonPretty.fromJson(key,clazz)
+        return gsonPretty.fromJson(key, clazz)
 
     }
 
 
-    fun getDeviceDetail():DeviceDetail
-    {
+
+    fun getDeviceDetail(): DeviceDetail {
         var deviceData = DeviceDetail()
         deviceData.brand = Build.BRAND
         deviceData.model = Build.MODEL

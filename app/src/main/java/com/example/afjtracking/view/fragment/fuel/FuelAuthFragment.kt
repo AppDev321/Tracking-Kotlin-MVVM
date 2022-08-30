@@ -51,7 +51,7 @@ class FuelAuthFragment : Fragment() {
         binding.fuelViewModel = fuelViewModel
 
 
-        fuelViewModel.user.observe(mBaseActivity) { loginUser ->
+        fuelViewModel.user.observe(viewLifecycleOwner) { loginUser ->
             if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).strEmailAddress)) {
                 binding.txtEmailAddress.error = "Enter an E-Mail Address"
                 binding.txtEmailAddress.requestFocus()

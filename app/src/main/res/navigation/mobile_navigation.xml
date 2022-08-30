@@ -97,6 +97,14 @@
         android:label="@string/menu_report_fill"
         tools:layout="@layout/fragment_report_from" />
 
+
+    <fragment
+        android:id="@+id/nav_attendance_form"
+        android:name="com.example.afjtracking.view.fragment.attendance.AttendanceFragment"
+        android:label="@string/menu_attendance"
+        tools:layout="@layout/fragment_attandence_scan" />
+
+
     <fragment
         android:id="@+id/nav_device_info"
         android:name="com.example.afjtracking.view.fragment.device.DeviceInfoFragment"

@@ -43,6 +43,14 @@ class LocationResponse {
 
         @SerializedName("isCompleted" )
         var isCompleted : Boolean? = null
+
+
+        @SerializedName("code" )
+        var attendanceCode : String? = null
+
+        @SerializedName("expires_after" )
+        var expireCodeSecond : Int? = null
+
         //*********************
     }
 }

@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AFJ_Tracking.iml" filepath="$PROJECT_DIR$/.idea/modules/AFJ_Tracking.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.unitTest.iml" />
     </modules>
   </component>
 </project>

@@ -40,6 +40,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_fuel_fill">Fuel Filling Form</string>
     <string name="menu_report_fill">Report Form</string>
+    <string name="menu_attendance">Attendance</string>
     <string name="menu_device_info">Device Info</string>
     <string name="menu_shift_form">My Shift</string>
     <string name="menu_weekly_inspection">Inspections</string>

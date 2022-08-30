@@ -67,7 +67,8 @@ interface ApiInterface {
     @POST("update-fcm-token")
     fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest):Call<LocationResponse?>
 
-
+    @POST("attendance/get-qr-code")
+    fun getAttendanceQRCode(@Body body: FCMRegistrationRequest): Call<LocationResponse?>
 
 
 }
