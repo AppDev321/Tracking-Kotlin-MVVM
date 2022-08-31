@@ -227,7 +227,6 @@ class ReportFormFragment : Fragment() {
                     request.reportForm = formList
                     reportViewModel.saveReportForm(request, mBaseActivity)
 
-
                 }
             }
             else
@@ -428,7 +427,7 @@ class ReportFormFragment : Fragment() {
 
 
                 val textTitleLable = view.findViewById<Button>(R.id.button)
-                textTitleLable.text = "Add More Photo"
+                textTitleLable.text = "Add Photo"
                 textTitleLable.setTextColor(Color.BLACK)
                 textTitleLable.visibility = View.VISIBLE
                 textTitleLable.setOnClickListener {

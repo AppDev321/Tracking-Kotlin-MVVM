@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
+import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
+import java.lang.Exception
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,7 +28,7 @@ class AttendanceFragment : Fragment() {
     private val attendanceVM get() = _attendanceVM!!
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
-     lateinit var timer:CountDownTimer
+    var timer:CountDownTimer? = null
         override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
@@ -59,25 +61,36 @@ class AttendanceFragment : Fragment() {
         })
 
         binding.txtTimeExpire.setText("Please wait QR Code is generating")
-        attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                binding.idIVQrcode.setImageBitmap(attendanceVM.getQrCodeBitmap(it.qrCode))
 
-                attendanceVM._attendanceResponse.value=null
-                 timer = object: CountDownTimer(1000 * it.timeOut.toLong(), 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                        binding.txtTimeExpire.text = "Your QR Code will refresh in ${millisUntilFinished/1000} seconds"
-                    }
 
-                    override fun onFinish() {
-                        attendanceVM.getAttendanceData(mBaseActivity)
-                    }
-                }
-                timer.start()
+      try {
+          attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
+              if (it != null) {
+                  binding.idIVQrcode.setImageBitmap(attendanceVM.getQrCodeBitmap(it.qrCode,mBaseActivity))
 
-            }
+                  attendanceVM._attendanceResponse.value=null
+                  timer = object: CountDownTimer(1000 * it.timeOut.toLong(), 1000) {
+                      override fun onTick(millisUntilFinished: Long) {
+                          binding.txtTimeExpire.text = "Your QR Code will refresh in ${millisUntilFinished/1000} seconds"
+                      }
 
-        })
+                      override fun onFinish() {
+                          attendanceVM.getAttendanceData(mBaseActivity)
+                          timer = null
+                      }
+                  }
+                  if(timer != null)
+                      timer?.start()
+
+              }
+
+          })
+      }
+      catch (e:Exception)
+      {
+          AFJUtils.writeLogs(e.toString())
+      }
+
 
 
         return root
@@ -88,7 +101,7 @@ class AttendanceFragment : Fragment() {
         _binding = null
         if(timer != null)
         {
-            timer.cancel()
+            timer!!.cancel()
 
         }
     }

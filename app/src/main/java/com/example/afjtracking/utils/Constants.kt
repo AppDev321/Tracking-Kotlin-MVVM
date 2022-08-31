@@ -7,7 +7,7 @@ object Constants {
    // const val FAILED_API_TAG = "vmi808920.contaboserver.net"
 
     const val BASE_URL ="http://192.168.1.21:8000/api/"
-   const val FAILED_API_TAG = "192.168.1.21:8000"
+    const val FAILED_API_TAG = "192.168.1.21:8000"
 
     const val WORKER_SERVICE_TIME: Long = 15
     val TIME_WORKER_SERVICE_UNIT = TimeUnit.MINUTES
