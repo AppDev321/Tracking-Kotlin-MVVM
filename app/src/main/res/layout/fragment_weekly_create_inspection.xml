@@ -4,165 +4,173 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:padding="@dimen/_5sdp">
+        android:background="@color/all_app_bg"
+        android:orientation="vertical">
 
 
         <TextView
 
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
             android:text="Inspection Information"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
 
             android:textSize="@dimen/text_heading_body_size"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@color/black" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="Inspection Type*"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_body_normal_size" />
+          />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_gravity="left"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/box_round_corner"
-            android:gravity="right"
-            android:padding="@dimen/_2sdp">
-
-            <Spinner
-                android:id="@+id/spInspectionType"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:entries="@array/weekly_inspection_type"
-
-                />
-        </LinearLayout>
-
-
-        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="Inspection Date*"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_body_normal_size" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/_6sdp">
 
-        <RelativeLayout
-            android:id="@+id/btnDatePicker"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_gravity="left"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/box_round_corner"
-            android:orientation="horizontal"
-            android:padding="@dimen/_5sdp">
 
             <TextView
-                android:id="@+id/txtDate"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="1-10-0108"
-                android:textColor="@color/black" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="right"
-                android:layout_margin="@dimen/_2sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:gravity="center_vertical"
-                android:src="@drawable/ic_calander"
-
-                android:textColor="@color/black" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="Odometer Reading*"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_body_normal_size" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_gravity="left"
-            android:layout_marginTop="@dimen/_5sdp"
-
-            android:background="@drawable/box_round_corner"
-
-            android:orientation="horizontal"
-            android:padding="@dimen/_5sdp">
-
-            <EditText
-                android:id="@+id/edOdoReading"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:gravity="center_vertical"
-                android:hint="Enter Odometer Reading"
-                android:inputType="number"
-                android:singleLine="true"
-
-                android:textColor="@color/black" />
-
-
-        </RelativeLayout>
-
-
-        <LinearLayout
-            android:gravity="center_horizontal"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnCancel"
-                android:layout_width="@dimen/_100sdp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/light_grey"
-                android:background="@drawable/blue_fill__rounded_color"
-                android:gravity="center"
-                android:text="Cancel"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_body_normal_size"
-                />
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:text="Inspection Type*"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_body_normal_size" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:id="@+id/btnSave"
-                android:layout_width="@dimen/_100sdp"
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/box_round_corner"
+                android:gravity="right"
+                android:padding="@dimen/_2sdp">
+
+                <Spinner
+                    android:id="@+id/spInspectionType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:entries="@array/weekly_inspection_type"
+
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Inspection Date*"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_body_normal_size" />
 
-                android:background="@drawable/blue_fill__rounded_color"
-                android:gravity="center"
-                android:text="Create"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/text_body_normal_size"
-                />
+            <RelativeLayout
+                android:id="@+id/btnDatePicker"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/box_round_corner"
+                android:orientation="horizontal"
+                android:padding="@dimen/_5sdp">
 
+                <TextView
+                    android:id="@+id/txtDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="1-10-0108"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right"
+                    android:layout_margin="@dimen/_2sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/ic_calander"
+
+                    android:textColor="@color/black" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Odometer Reading*"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_body_normal_size" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/_5sdp"
+
+                android:background="@drawable/box_round_corner"
+
+                android:orientation="horizontal"
+                android:padding="@dimen/_5sdp">
+
+                <EditText
+                    android:id="@+id/edOdoReading"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="Enter Odometer Reading"
+                    android:inputType="number"
+                    android:singleLine="true"
+
+                    android:textColor="@color/black" />
+
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ripple_bg_button"
+                    android:backgroundTint="@color/white"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:text="Cancel"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_body_normal_size" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:background="@drawable/ripple_bg_button"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+
+                    android:gravity="center"
+                    android:text="Create"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_body_normal_size" />
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </layout>

@@ -4,29 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="@dimen/_5sdp">
+    android:background="@color/all_app_bg"
+   >
 
     <TextView
         android:id="@+id/txtInspectionTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_heading_body_size"
-        android:textStyle="bold" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnAddInspection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Add Inspection"
-        android:textColor="@color/white" />
+        android:layout_marginTop="@dimen/title_bg_margin_top"
+        android:background="@drawable/round_two_sides_top_right"
+        android:paddingLeft="@dimen/title_bg_padding_other"
+        android:paddingTop="@dimen/title_bg_padding_other"
+        android:paddingRight="@dimen/title_bg_padding_right"
+        android:paddingBottom="@dimen/title_bg_padding_other"
 
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_heading_body_size"
+       />
+
+
+
+<RelativeLayout
+    android:layout_marginTop="@dimen/_10sdp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
     <RelativeLayout
+        android:layout_above="@id/btnAddInspection"
+        android:padding="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -47,5 +53,24 @@
 
     </RelativeLayout>
 
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="right"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/btnAddInspection"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_height"
+        android:background="@drawable/ripple_bg_button"
+        android:text="Add Inspection"
+        android:textColor="@color/white" />
+
+
+</RelativeLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

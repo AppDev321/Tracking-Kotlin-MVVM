@@ -11,16 +11,15 @@
 
 
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/all_app_bg"
         android:orientation="vertical">
 
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:background="@color/white" />
+            android:layout_height="@dimen/_200sdp" />
 
         <RelativeLayout
             android:id="@+id/rl_two_login"
@@ -109,7 +108,8 @@
                                 android:layout_height="@dimen/_15sdp"
                                 android:layout_centerVertical="true"
                                 android:layout_marginLeft="17dp"
-                                android:src="@drawable/ic_email" />
+                                android:src="@drawable/ic_email"
+                                app:tint="@color/black" />
 
                         </RelativeLayout>
 
@@ -142,7 +142,8 @@
                                 android:layout_height="@dimen/_15sdp"
                                 android:layout_centerVertical="true"
                                 android:layout_marginLeft="17dp"
-                                android:src="@drawable/ic_pass" />
+                                android:src="@drawable/ic_pass"
+                                app:tint="@color/black" />
 
                         </RelativeLayout>
 

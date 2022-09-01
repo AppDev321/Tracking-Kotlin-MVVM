@@ -13,7 +13,7 @@
 
 
     <RelativeLayout
-        android:background="@color/white"
+        android:background="@color/all_app_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -139,18 +139,19 @@
                         <RelativeLayout
                             android:id="@+id/comment_container"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_50sdp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="left"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:background="@drawable/box_round_corner"
                             android:orientation="horizontal"
-                            android:padding="@dimen/_5sdp"
                             android:visibility="visible">
 
                             <EditText
+                                android:padding="@dimen/_5sdp"
+                                android:minHeight="@dimen/_35sdp"
                                 android:id="@+id/edComment"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
                                 android:gravity="center_vertical"
                                 android:hint="Enter your comments"
@@ -171,31 +172,38 @@
         </ScrollView>
 
         <LinearLayout
-            android:layout_marginBottom="@dimen/_5sdp"
             android:id="@+id/container_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="right"
             android:orientation="horizontal"
             android:padding="@dimen/_5sdp">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnPreviousCehck"
-                android:layout_width="@dimen/btn_width"
-                android:layout_height="@dimen/btn_height"
-                android:layout_marginRight="@dimen/_10sdp"
-                android:background="@drawable/box_round_corner"
-                android:text="Previous"
-                android:textColor="@color/black" />
 
-            <Button
-                android:id="@+id/btnNextCheck"
-                android:layout_width="@dimen/btn_width"
+            <androidx.appcompat.widget.AppCompatButton
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/ripple_bg_button"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/box_round_corner"
+                android:id="@+id/btnPreviousCehck"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:backgroundTint="@color/white"
+                android:text="Previous"
+                android:textColor="@android:color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/ripple_bg_button"
+                android:layout_height="@dimen/btn_height"
+                android:id="@+id/btnNextCheck"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:text="Next"
-                android:textColor="@color/white" />
+                android:textColor="@android:color/white" />
+
         </LinearLayout>
     </RelativeLayout>
 

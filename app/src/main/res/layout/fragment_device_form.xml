@@ -9,8 +9,6 @@
             type="com.example.afjtracking.model.requests.DeviceDetail" />
 
 
-
-
     </data>
 
 
@@ -18,140 +16,150 @@
         android:id="@+id/container_inspection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/all_app_bg"
         android:orientation="vertical"
         android:visibility="visible">
 
         <TextView
             android:id="@+id/txt_inpseciton_count"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+
             android:text="Device Information"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_heading_body_size"
-            android:textStyle="bold" />
+         />
 
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/_5sdp">
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:weightSum="2">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Device ID:"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_body_normal_size" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@={deviceInfo.deviceID}"
-                    android:textSize="@dimen/text_body_normal_size" />
-            </LinearLayout>
-
-
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/_10sdp"
+            app:cardElevation="@dimen/card_elevation"
+            app:cardCornerRadius="@dimen/card_round_radio">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:weightSum="2">
+                android:orientation="vertical"
+                android:padding="@dimen/_5sdp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Brand:"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_body_normal_size" />
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@={deviceInfo.brand}"
-                    android:textSize="@dimen/text_body_normal_size" />
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Device ID:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_body_normal_size" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@={deviceInfo.deviceID}"
+                        android:textSize="@dimen/text_body_normal_size" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Brand:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_body_normal_size" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@={deviceInfo.brand}"
+                        android:textSize="@dimen/text_body_normal_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Model:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_body_normal_size" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@={deviceInfo.model}"
+                        android:textSize="@dimen/text_body_normal_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Android Version:"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_body_normal_size" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@={deviceInfo.androidVersion}"
+                        android:textSize="@dimen/text_body_normal_size" />
+                </LinearLayout>
+
+
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:weightSum="2">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Model:"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_body_normal_size" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@={deviceInfo.model}"
-                    android:textSize="@dimen/text_body_normal_size" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_8sdp"
-                android:layout_marginRight="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:weightSum="2">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Android Version:"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/text_body_normal_size" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@={deviceInfo.androidVersion}"
-                    android:textSize="@dimen/text_body_normal_size" />
-            </LinearLayout>
-
-
-
-
-
-
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
 
     </LinearLayout>

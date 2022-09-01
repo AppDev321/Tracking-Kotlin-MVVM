@@ -134,11 +134,7 @@ class TrackingFragment : Fragment() {
     private fun onSetViews() {
 
 
-        binding.btnShowMap.setOnClickListener()
-        {
 
-            Navigation.findNavController(it).navigate(R.id.mapsFragment)
-        }
 
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.

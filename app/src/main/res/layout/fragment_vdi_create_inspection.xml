@@ -2,25 +2,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/all_app_bg">
 
     <RelativeLayout
         android:id="@+id/layout_create_inspection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+
         android:visibility="gone">
 
 
         <TextView
             android:id="@+id/txtInspectionTitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/_10sdp"
             android:text=""
-            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_heading_body_size"
-            android:textStyle="bold" />
+             />
 
 
         <ScrollView
@@ -46,6 +52,7 @@
                 <LinearLayout
                     android:id="@+id/layout_vdi_form"
                     android:layout_width="match_parent"
+
                     android:layout_height="match_parent"
                     android:orientation="vertical"></LinearLayout>
 
@@ -61,20 +68,22 @@
                     android:padding="@dimen/_5sdp">
 
                     <androidx.appcompat.widget.AppCompatButton
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:layout_height="@dimen/btn_height"
                         android:id="@+id/btnPreviousCehck"
                         android:layout_width="@dimen/btn_width"
-                        android:layout_height="@dimen/btn_height"
                         android:layout_marginRight="@dimen/_10sdp"
                         android:background="@drawable/box_round_corner"
                         android:text="Previous"
                         android:textColor="@color/black"
                         android:visibility="invisible" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:background="@drawable/ripple_bg_button"
+                        android:layout_height="@dimen/btn_height"
                         android:id="@+id/btnSubmit"
                         android:layout_width="@dimen/btn_width"
-                        android:layout_height="@dimen/btn_height"
-                        android:background="@drawable/box_round_corner"
                         android:text="Submit"
                         android:textColor="@color/white" />
                 </LinearLayout>

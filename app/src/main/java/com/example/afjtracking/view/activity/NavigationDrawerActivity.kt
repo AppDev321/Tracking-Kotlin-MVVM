@@ -15,6 +15,8 @@ import com.example.afjtracking.model.responses.User
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 
@@ -35,6 +37,9 @@ class NavigationDrawerActivity : BaseActivity() {
 
 
         drawerLayout = binding.drawerLayout
+
+
+
         val navView: NavigationView = binding.navView
 
 

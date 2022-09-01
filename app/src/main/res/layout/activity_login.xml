@@ -15,7 +15,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/all_app_bg"
         android:isScrollContainer="true">
 
         <LinearLayout
@@ -23,13 +23,14 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/_10sdp"
             android:orientation="vertical"
+
             tools:context=".View.MainActivity">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
-                android:backgroundTint="@color/colorPrimary"
-                android:background="@drawable/blue_bg">
+                android:background="@drawable/blue_bg"
+                android:backgroundTint="@color/colorPrimary">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -58,46 +59,63 @@
                 </LinearLayout>
             </FrameLayout>
 
-
-            <RelativeLayout
-                android:layout_width="@dimen/_200sdp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+            <androidx.cardview.widget.CardView
                 android:layout_marginTop="@dimen/_36sdp"
-                android:background="@drawable/blue_border_rounded_cornwe">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_round_corner"
+                android:layout_marginLeft="@dimen/_30sdp"
+                android:layout_marginRight="@dimen/_30sdp"
 
+                android:layout_gravity="center_horizontal">
 
-                <EditText
-                    android:id="@+id/txtEmailAddress"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/img_email"
-                    android:background="@android:color/transparent"
-                    android:ems="10"
-                    android:hint="E-Mail Address"
-                    android:inputType="textEmailAddress"
-                    android:padding="17dp"
 
-                    android:text="@={LoginViewModel.EmailAddress}"
-                    android:textCursorDrawable="@drawable/cursor_color"
-                    android:textSize="@dimen/text_body_normal_size" />
+                 >
 
-                <ImageView
-                    android:id="@+id/img_email"
-                    android:layout_width="@dimen/_15sdp"
-                    android:layout_height="@dimen/_15sdp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="17dp"
-                    android:src="@drawable/ic_email" />
 
-            </RelativeLayout>
+                    <EditText
+                        android:id="@+id/txtEmailAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/img_email"
+                        android:background="@android:color/transparent"
+                        android:ems="10"
+                        android:hint="E-Mail Address"
+                        android:inputType="textEmailAddress"
+                        android:padding="17dp"
 
+                        android:text="@={LoginViewModel.EmailAddress}"
+                        android:textCursorDrawable="@drawable/cursor_color"
+                        android:textSize="@dimen/text_body_normal_size" />
+
+                    <ImageView
+                        android:id="@+id/img_email"
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="17dp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/black" />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/_30sdp"
+                android:layout_marginRight="@dimen/_30sdp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_round_corner"
+                android:layout_gravity="center_horizontal">
             <RelativeLayout
-                android:layout_width="@dimen/_200sdp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@drawable/blue_border_rounded_cornwe">
+               >
 
 
                 <EditText
@@ -121,17 +139,26 @@
                     android:layout_height="@dimen/_15sdp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="17dp"
-                    android:src="@drawable/ic_pass" />
+                    android:src="@drawable/ic_pass"
+                    app:tint="@color/black" />
 
             </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
-            <RelativeLayout
+
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="@dimen/_12sdp"
                 android:layout_width="@dimen/_200sdp"
                 android:layout_height="wrap_content"
+                app:cardCornerRadius="5dp"
+                app:cardElevation="5dp"
+                android:visibility="gone"
+                android:layout_gravity="center_horizontal">
+            <RelativeLayout
+             android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@drawable/blue_border_rounded_cornwe"
-                android:visibility="gone">
+                    >
 
 
                 <EditText
@@ -159,11 +186,37 @@
                     android:src="@drawable/logo" />
 
             </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+
 
 
             <androidx.appcompat.widget.AppCompatButton
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/blue_border_rounded_cornwe"
+                android:backgroundTint="@color/white"
+                android:gravity="center"
+                android:onClick="@{(v) -> LoginViewModel.getDeviceDetailDialog(v)}"
+                android:padding="14dp"
+                android:text="Device Info"
+
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/text_body_normal_size" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+
                 android:id="@+id/btnLogin"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/_30sdp"
+                android:layout_marginRight="@dimen/_30sdp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="32dp"
@@ -178,22 +231,6 @@
                 android:textSize="@dimen/text_body_normal_size" />
 
 
-
-            <androidx.appcompat.widget.AppCompatButton
-
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="32dp"
-                android:background="@drawable/blue_border_rounded_cornwe"
-                android:gravity="center"
-                android:onClick="@{(v) -> LoginViewModel.getDeviceDetailDialog(v)}"
-                android:padding="14dp"
-                android:text="Device Info"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/text_body_normal_size" />
 
 
 

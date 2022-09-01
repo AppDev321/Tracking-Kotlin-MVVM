@@ -7,11 +7,7 @@
         <variable
             name="inspectionModel"
             type="com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel" />
-
-
-
-
-    </data>
+ </data>
 
 
     <LinearLayout
@@ -19,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/all_app_bg"
         android:visibility="visible">
 
         <TextView

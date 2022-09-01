@@ -16,7 +16,7 @@
 
 
         <RelativeLayout
-            android:background="@color/white"
+            android:background="@color/all_app_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -107,6 +107,7 @@
                                 android:textSize="@dimen/text_body_normal_size" />-->
 
                                 <CheckBox
+                                    android:buttonTint="@color/colorPrimary"
                                     android:id="@+id/checkbox"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -122,6 +123,7 @@
                                     android:orientation="vertical">
 
                                     <CheckBox
+                                        android:buttonTint="@color/colorPrimary"
                                         android:id="@+id/issueCheck"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
@@ -148,13 +150,9 @@
                                             android:textStyle="bold" />
 
                                         <RelativeLayout
-
-
                                             android:layout_width="match_parent"
                                             android:layout_height="@dimen/_30sdp"
-                                            android:layout_marginRight="@dimen/_20sdp"
                                             android:background="@drawable/box_round_corner">
-
                                             <EditText
                                                 android:id="@+id/edWorn"
                                                 android:layout_width="match_parent"
@@ -187,24 +185,30 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="@dimen/_8sdp"
-                android:gravity="right"
+                android:gravity="center"
                 android:orientation="horizontal"
+                android:weightSum="2"
                 android:padding="@dimen/_5sdp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnPreviousCehck"
-                    android:layout_width="@dimen/btn_width"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:background="@drawable/ripple_bg_button"
                     android:layout_height="@dimen/btn_height"
+                    android:id="@+id/btnPreviousCehck"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_marginRight="@dimen/_10sdp"
-                    android:background="@drawable/box_round_corner"
+                    android:backgroundTint="@color/white"
                     android:text="Previous"
                     android:textColor="@android:color/black" />
 
-                <Button
-                    android:id="@+id/btnNextCheck"
-                    android:layout_width="@dimen/btn_width"
+                <androidx.appcompat.widget.AppCompatButton
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:background="@drawable/ripple_bg_button"
                     android:layout_height="@dimen/btn_height"
-                    android:background="@drawable/box_round_corner"
+                    android:id="@+id/btnNextCheck"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:text="Next"
                     android:textColor="@android:color/white" />
             </LinearLayout>

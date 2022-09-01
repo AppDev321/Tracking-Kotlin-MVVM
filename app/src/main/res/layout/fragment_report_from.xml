@@ -2,34 +2,38 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/all_app_bg">
 
     <RelativeLayout
         android:id="@+id/layout_create_inspection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+
         android:visibility="gone">
 
 
         <TextView
             android:id="@+id/txtInspectionTitle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_10sdp"
-            android:text=""
-            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_heading_body_size"
-            android:textStyle="bold" />
+       />
 
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
             android:layout_below="@+id/txtInspectionTitle"
             android:orientation="vertical"
-            android:padding="@dimen/_5sdp">
+            android:padding="@dimen/_5sdp"
+            android:scrollbars="none">
 
             <LinearLayout
 
@@ -38,12 +42,11 @@
                 android:orientation="vertical">
 
 
-
                 <LinearLayout
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:id="@+id/layout_vdi_form"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:orientation="vertical"></LinearLayout>
 
                 <LinearLayout
@@ -60,16 +63,19 @@
                         android:layout_width="@dimen/btn_width"
                         android:layout_height="@dimen/btn_height"
                         android:layout_marginRight="@dimen/_10sdp"
-                        android:background="@drawable/box_round_corner"
+                        android:background="@drawable/ripple_bg_button"
+                        android:backgroundTint="@color/white"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
                         android:text="Cancel"
                         android:textColor="@color/black"
                         android:visibility="visible" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSubmit"
                         android:layout_width="@dimen/btn_width"
                         android:layout_height="@dimen/btn_height"
-                        android:background="@drawable/box_round_corner"
+                        android:background="@drawable/ripple_bg_button"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
                         android:text="Submit"
                         android:textColor="@color/white" />
                 </LinearLayout>
@@ -77,19 +83,17 @@
         </ScrollView>
 
 
-
-
     </RelativeLayout>
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/txtErrorMsg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="Stat"
         android:padding="@dimen/_10sdp"
-        android:textSize="@dimen/text_body_normal_size" />
+        android:text="Stat"
+        android:textSize="@dimen/text_body_normal_size"
+        android:visibility="gone" />
 
 </RelativeLayout>
 

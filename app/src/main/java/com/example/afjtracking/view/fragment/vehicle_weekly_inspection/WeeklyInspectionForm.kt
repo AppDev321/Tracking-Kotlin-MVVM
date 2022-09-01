@@ -1,6 +1,8 @@
 package com.example.afjtracking.view.fragment.vehicle_weekly_inspection
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.core.widget.CompoundButtonCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -86,13 +89,14 @@ class WeeklyInspectionForm : Fragment() {
         {
                 if(it != null) {
                     binding.inspectionModel = weeklyInspectionViewModel
+
                     try {
                         createViews(it)
                     } catch (e: Exception) {
                         mBaseActivity.writeExceptionLogs(e.toString())
                     }
 
-                    weeklyInspectionViewModel._weeklyInspectionCheck.value = null
+                   // weeklyInspectionViewModel._weeklyInspectionCheck.value = null
                 }
 
         }
@@ -269,6 +273,13 @@ class WeeklyInspectionForm : Fragment() {
             )
             newRadioButton.text = text.value
             newRadioButton.tag = text.id
+
+
+            if (Build.VERSION.SDK_INT < 21) {
+                CompoundButtonCompat.setButtonTintList(newRadioButton, ColorStateList.valueOf(R.color.colorPrimary));//Use android.support.v4.widget.CompoundButtonCompat when necessary else
+            } else {
+                newRadioButton.setButtonTintList(ColorStateList.valueOf(R.color.colorPrimary));//setButtonTintList is accessible directly on API>19
+            }
 
             rg.addView(newRadioButton)
 

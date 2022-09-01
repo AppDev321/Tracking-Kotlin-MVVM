@@ -4,7 +4,9 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -13,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -525,6 +528,12 @@ class ReportFormFragment : Fragment() {
                     val checkBox = CheckBox(mBaseActivity)
                     checkBox.text = data.title
                     checkBox.isChecked = false
+                        if (Build.VERSION.SDK_INT < 21) {
+                            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(R.color.colorPrimary));//Use android.support.v4.widget.CompoundButtonCompat when necessary else
+                        } else {
+                            checkBox.setButtonTintList(ColorStateList.valueOf(R.color.colorPrimary));//setButtonTintList is accessible directly on API>19
+                        }
+
                     arrayChecks.add(data.fieldName.toString())
                     checkBox.setOnCheckedChangeListener(object :
                         CompoundButton.OnCheckedChangeListener {

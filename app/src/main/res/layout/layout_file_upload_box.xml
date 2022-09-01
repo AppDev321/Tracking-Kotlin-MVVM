@@ -2,8 +2,8 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="wrap_content"
+    android:background="@color/all_app_bg"
     android:orientation="vertical">
 
     <LinearLayout
@@ -13,12 +13,12 @@
 
 
         <androidx.cardview.widget.CardView
-app:cardBackgroundColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-
-            app:cardCornerRadius="5dp">
+            android:elevation="@dimen/card_elevation"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/card_round_radio">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -162,14 +162,17 @@ app:cardBackgroundColor="@color/white"
 
         </LinearLayout>
 
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnDone"
             android:layout_width="@dimen/btn_width"
             android:layout_height="@dimen/btn_height"
             android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginTop="30dp"
+            android:layout_marginRight="@dimen/_20sdp"
             android:layout_marginBottom="30dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:text="Done"
             android:textColor="@color/white" />
 
