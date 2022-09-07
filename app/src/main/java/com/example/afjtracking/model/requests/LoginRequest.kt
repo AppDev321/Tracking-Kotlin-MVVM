@@ -5,16 +5,16 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class LoginRequest(
-    @field:Expose @field:SerializedName("email") var strEmailAddress: String,
-    @field:Expose @field:SerializedName("password") var strPassword: String,
-    @field:Expose @field:SerializedName("registration_number") var vrnNumber: String,
+    @field:Expose @field:SerializedName("email") var strEmailAddress: String?=null,
+    @field:Expose @field:SerializedName("password") var strPassword: String?=null,
+    @field:Expose @field:SerializedName("registration_number") var vrnNumber: String?=null,
     @field:Expose @field:SerializedName("device_detail") var deviceDetail:DeviceDetail?= DeviceDetail()
 ) {
 
     val isEmailValid: Boolean
         get() = Patterns.EMAIL_ADDRESS.matcher(strEmailAddress).matches()
     val isPasswordLengthGreaterThan5: Boolean
-        get() = strPassword.length > 3
+        get() = strPassword!!.length > 3
 }
 
 

@@ -21,10 +21,10 @@ import java.util.*
 class LoginActivity : BaseActivity() {
     lateinit   var loginViewModel: LoginViewModel;
     lateinit var binding: ActivityLoginBinding
-   val  READ_PHONE_STATE = 210
+     val  READ_PHONE_STATE = 210
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermissionState()
+        //checkPermissionState()
         val token = AFJUtils.getUserToken(this@LoginActivity)
         if (! token!!.isEmpty()) {
             finish()
@@ -38,16 +38,16 @@ class LoginActivity : BaseActivity() {
 
         loginViewModel.user.observe(this) { loginUser ->
             if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).strEmailAddress)) {
-                binding.txtEmailAddress.error = "Enter an E-Mail Address"
+                binding.txtEmailAddress.error = resources.getString(R.string.email_not_empty)
                 binding.txtEmailAddress.requestFocus()
             } else if (!loginUser!!.isEmailValid) {
-                binding.txtEmailAddress.error = "Enter a Valid E-mail Address"
+                binding.txtEmailAddress.error =resources.getString(R.string.email_not_valid)
                 binding.txtEmailAddress.requestFocus()
             } else if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).strPassword)) {
-                binding.txtPassword.error = "Enter a Password"
+                binding.txtPassword.error = resources.getString(R.string.password_not_empty)
                 binding.txtPassword.requestFocus()
             } else if (!loginUser.isPasswordLengthGreaterThan5) {
-                binding.txtPassword.error = "Enter at least 6 Digit password"
+                binding.txtPassword.error =resources.getString(R.string.enter_valid_password)
                 binding.txtPassword.requestFocus()
             } else {
                 AFJUtils.setUserToken(this@LoginActivity, "")
@@ -70,6 +70,7 @@ class LoginActivity : BaseActivity() {
             }
         }
     }
+/*
 
 fun checkPermissionState()
 {
@@ -117,4 +118,5 @@ fun checkPermissionState()
             }
         }
     }
+*/
 }

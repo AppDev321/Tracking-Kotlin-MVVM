@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="authmodel"
+            type="com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <RelativeLayout
+            android:id="@+id/container_qr_scan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <include
+                android:id="@+id/layout_scan"
+                layout="@layout/fragment_attandence_scan" />
+        </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/container_login_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/all_app_bg"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/rl_two_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_80sdp">
+
+            <TextView
+                android:id="@+id/tv_one_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please Login"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_one_login"
+                android:text="Form Authentication"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/cv_one_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_minus40sdp"
+            android:orientation="vertical">
+
+
+            <androidx.cardview.widget.CardView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_180sdp"
+                android:layout_marginRight="@dimen/_20sdp"
+                android:elevation="5dp"
+                app:cardBackgroundColor="#fcfcfc"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="5dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_36sdp"
+                        android:background="@drawable/blue_border_rounded_cornwe">
+
+
+                        <EditText
+                            android:id="@+id/txtEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/img_email"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="E-Mail Address"
+                            android:inputType="textEmailAddress"
+                            android:padding="17dp"
+
+                            android:text="@={authmodel.EmailAddress}"
+                            android:textCursorDrawable="@drawable/cursor_color"
+                            android:textSize="@dimen/text_body_normal_size" />
+
+                        <ImageView
+                            android:id="@+id/img_email"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="17dp"
+                            android:src="@drawable/ic_email"
+                            app:tint="@color/black" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="@dimen/_200sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:background="@drawable/blue_border_rounded_cornwe">
+
+
+                        <EditText
+                            android:id="@+id/txtPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/img_pass"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:hint="Password"
+                            android:inputType="textPassword"
+                            android:padding="17dp"
+                            android:text="@={authmodel.Password}"
+                            android:textCursorDrawable="@drawable/cursor_color"
+                            android:textSize="@dimen/text_body_normal_size" />
+
+
+                        <ImageView
+                            android:id="@+id/img_pass"
+                            android:layout_width="@dimen/_15sdp"
+                            android:layout_height="@dimen/_15sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="17dp"
+                            android:src="@drawable/ic_pass"
+                            app:tint="@color/black" />
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </RelativeLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_below="@id/cv_one_login"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_minus35sdp"
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="15dp"
+            android:id="@+id/loginBtn"
+            android:onClick="@{(v) -> authmodel.onClick(v)}"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_body_normal_size" />
+
+    </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

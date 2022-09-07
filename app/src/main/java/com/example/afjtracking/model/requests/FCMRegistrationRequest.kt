@@ -6,6 +6,6 @@ data class FCMRegistrationRequest
     (
     @SerializedName("device_type") var deviceId: String? = "android",
     @SerializedName("fcm_token") var fcmToken: String? = null,
-    @SerializedName("device_id") var vehicleDeviceId: String?=null
-
+    @SerializedName("device_id") var vehicleDeviceId: String?=null,
+    @SerializedName("type") var qrType: String? = "ATTENDANCE" //TRACKING_APP_LOGIN
 )

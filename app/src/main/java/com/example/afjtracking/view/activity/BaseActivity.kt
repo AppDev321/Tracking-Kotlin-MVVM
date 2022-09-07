@@ -12,6 +12,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.UploadUtil
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -19,12 +20,11 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-    AFJUtils.setPeriodicWorkRequest(this)
+         AFJUtils.setPeriodicWorkRequest(this)
 
     }
 
-/*
-    private fun UploadUtil.trs(){
+/*    private fun UploadUtil.trs(){
         this.handler
     }
 
@@ -33,8 +33,7 @@ open class BaseActivity : AppCompatActivity() {
         onPre()
         withContext(Dispatchers.IO){
             background() }.let(onPost)
-    }
-*/
+    }*/
 
 
     lateinit var progressDialog: ProgressDialog;

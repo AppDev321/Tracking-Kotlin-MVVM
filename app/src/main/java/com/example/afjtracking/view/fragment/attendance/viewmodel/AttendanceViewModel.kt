@@ -3,6 +3,7 @@ package com.example.afjtracking.view.fragment.fuel.viewmodel
 
 import android.content.Context
 import android.graphics.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,10 +27,8 @@ class AttendanceViewModel : ViewModel() {
     private val _dialogShow = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _dialogShow
 
-     var _attendanceResponse = MutableLiveData<AttendanceReponse>()
+    var _attendanceResponse = MutableLiveData<AttendanceReponse>()
     var attendanceReponse: LiveData<AttendanceReponse> = _attendanceResponse
-
-
 
 
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -56,26 +55,28 @@ class AttendanceViewModel : ViewModel() {
     }
 
 
-
-    fun getAttendanceData(context: Context?) {
+    fun getQRCode(context: Context?, qrType: String = "ATTENDANCE") {
         var request = FCMRegistrationRequest()
-        request.vehicleDeviceId= AFJUtils.getDeviceDetail().deviceID
+        request.vehicleDeviceId = AFJUtils.getDeviceDetail().deviceID
+        request.qrType = qrType
         getInstance(context)
         _dialogShow.postValue(true)
-        apiInterface!!.getAttendanceQRCode(request)
-       .enqueue(object : Callback<LocationResponse?> {
-           override fun onResponse(
-                call: Call<LocationResponse?>,
+        apiInterface!!.getQRCode(request)
+            .enqueue(object : Callback<LocationResponse?> {
+                override fun onResponse(
+                    call: Call<LocationResponse?>,
                     response: Response<LocationResponse?>
                 ) {
                     _dialogShow.postValue(false)
                     if (response.body() != null) {
                         if (response.body()!!.code == 200) {
 
-                            val res = AttendanceReponse(response.body()!!.data!!.attendanceCode!!,
-                                response.body()!!.data!!.expireCodeSecond!!)
+                            val res = AttendanceReponse(
+                                response.body()!!.data!!.attendanceCode!!,
+                                response.body()!!.data!!.expireCodeSecond!!
+                            )
 
-                                 _attendanceResponse.postValue(res)
+                            _attendanceResponse.postValue(res)
 
                         } else {
 
@@ -96,9 +97,7 @@ class AttendanceViewModel : ViewModel() {
 
                 override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
                     val exception = t.toString()
-                     mErrorsMsg!!.postValue(exception)
-
-
+                    mErrorsMsg!!.postValue(exception)
 
 
                 }
@@ -107,27 +106,49 @@ class AttendanceViewModel : ViewModel() {
     }
 
 
-    fun getQrCodeBitmap(text: String,context: Context): Bitmap {
-        val size = 512 //pixels
-        val qrCodeContent = text
-        val hints = hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 }
-        // Make the QR code buffer border narrower
-        val bits = QRCodeWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, size, size)
 
-       var qrBitmap= Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
-            for (x in 0 until size) {
-                for (y in 0 until size) {
-                    it.setPixel(x, y, if (bits[x, y]) Color.BLACK else Color.WHITE)
+
+    fun getQrCodeBitmap(text: String, context: AppCompatActivity, callback: QRImageCallback?) {
+
+        context.runOnUiThread{
+                try {
+
+
+                    val size = 512 //pixels
+                    val qrCodeContent = text
+                    val hints =
+                        hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 }
+                    // Make the QR code buffer border narrower
+                    val bits =
+                        QRCodeWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, size, size)
+
+                    var qrBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
+                        for (x in 0 until size) {
+                            for (y in 0 until size) {
+                                it.setPixel(
+                                    x,
+                                    y,
+                                    if (bits[x, y]) context.resources.getColor(R.color.colorPrimary) else context.resources.getColor(
+                                        R.color.all_app_bg
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
+                    //  myLogo= getResizedBitmap(myLogo,80)
+                    //  return mergeBitmaps(qrBitmap, myLogo)
+
+
+                    callback?.onRendered(qrBitmap)
+
+                } catch (e: Exception) {
+                    callback?.onError(e)
                 }
+
             }
-        }
-      //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
-      //  myLogo= getResizedBitmap(myLogo,80)
-      //  return mergeBitmaps(qrBitmap, myLogo)
-        return qrBitmap
+
     }
-
-
 
 
     fun mergeBitmaps(qrCode: Bitmap, myLogo: Bitmap): Bitmap {
@@ -160,4 +181,9 @@ class AttendanceViewModel : ViewModel() {
 
 }
 
-data class AttendanceReponse(val qrCode:String ,val timeOut:Int)
+data class AttendanceReponse(val qrCode: String, val timeOut: Int)
+interface QRImageCallback {
+    fun onRendered(bitmap: Bitmap)
+
+    fun onError(e: Exception)
+}

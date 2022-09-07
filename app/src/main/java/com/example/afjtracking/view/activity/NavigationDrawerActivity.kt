@@ -67,7 +67,6 @@ class NavigationDrawerActivity : BaseActivity() {
                 R.id.nav_weekly_inspection,
                 R.id.nav_attendance_form,
                 R.id.nav_fuel_form,
-
                 R.id.nav_report_form,
                 R.id.nav_device_info
             ), drawerLayout

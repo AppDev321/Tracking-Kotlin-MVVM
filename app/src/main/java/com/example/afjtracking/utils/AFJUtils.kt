@@ -18,19 +18,14 @@ package com.example.afjtracking.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.Context.WINDOW_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Point
 import android.location.Location
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Display
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.*
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AnimRes
@@ -43,11 +38,9 @@ import com.example.afjtracking.service.worker.LocationWorker
 import com.example.afjtracking.service.worker.UploadWorker
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.gson.GsonBuilder
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
 import java.io.File
 import java.text.DateFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -349,6 +342,87 @@ object AFJUtils {
         }
     }
 
+
+
+    fun dateComparison(date: String,withTime :Boolean): Boolean {
+        try {
+            val inputDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
+            if (withTime) {
+                // val requiredSdf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+                val compareDateTime = sourceSdf.parse(uTCToLocal(inputDateFormat,inputDateFormat,date))
+                val currentDateTime = sourceSdf.parse(sourceSdf.format(Date()))
+
+                AFJUtils.writeLogs("comaper=${uTCToLocal(inputDateFormat,inputDateFormat,date)}   current=${sourceSdf.format(Date())}")
+
+                when {
+
+                    currentDateTime.before(compareDateTime) -> {
+                        AFJUtils.writeLogs("curent date is less then expire")
+                        return true
+                    }
+                    currentDateTime.after(compareDateTime) -> {
+                        AFJUtils.writeLogs("curent date is greater then expire")
+                        return false
+                    }
+
+                    currentDateTime.after(compareDateTime) -> {
+                        AFJUtils.writeLogs("curent date is equals to expire")
+                        return false
+                    }
+                }
+
+
+            } else {
+                val requiredSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                requiredSdf.format(sourceSdf.parse(date))
+            }
+
+        }
+        catch (e:Exception){
+            AFJUtils.writeLogs("Date Parsing issuee .....")
+
+        }
+
+       return false
+    }
+
+    fun localToUTC(dateFormat: String?, datesToConvert: String?): String? {
+        var dateToReturn = datesToConvert
+        val sdf = SimpleDateFormat(dateFormat)
+        sdf.timeZone = TimeZone.getDefault()
+        var gmt: Date? = null
+        val sdfOutPutToSend = SimpleDateFormat(dateFormat)
+        sdfOutPutToSend.timeZone = TimeZone.getTimeZone("UTC")
+        try {
+            gmt = sdf.parse(datesToConvert)
+            dateToReturn = sdfOutPutToSend.format(gmt)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return dateToReturn
+    }
+
+
+    fun uTCToLocal(
+        dateFormatInPut: String?,
+        dateFomratOutPut: String?,
+        datesToConvert: String?
+    ): String? {
+        var dateToReturn = datesToConvert
+        val sdf = SimpleDateFormat(dateFormatInPut)
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        var gmt: Date? = null
+        val sdfOutPutToSend = SimpleDateFormat(dateFomratOutPut)
+        sdfOutPutToSend.timeZone = TimeZone.getDefault()
+        try {
+            gmt = sdf.parse(datesToConvert)
+            dateToReturn = sdfOutPutToSend.format(gmt)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return dateToReturn
+    }
     fun getCurrentDateTime(): String {
 
         val sdf = SimpleDateFormat("dd-M-yyyy hh:mm:ss")

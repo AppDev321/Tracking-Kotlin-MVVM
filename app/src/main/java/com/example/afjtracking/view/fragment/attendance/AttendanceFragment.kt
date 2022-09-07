@@ -1,6 +1,7 @@
 package com.example.afjtracking.view.fragment.attendance
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -13,10 +14,7 @@ import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
-import java.lang.Exception
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
 
 
 class AttendanceFragment : Fragment() {
@@ -28,8 +26,8 @@ class AttendanceFragment : Fragment() {
     private val attendanceVM get() = _attendanceVM!!
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
-    var timer:CountDownTimer? = null
-        override fun onAttach(context: Context) {
+    var timer: CountDownTimer? = null
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
     }
@@ -46,7 +44,7 @@ class AttendanceFragment : Fragment() {
         val root: View = binding.root
 
 
-        attendanceVM.getAttendanceData(mBaseActivity)
+        attendanceVM.getQRCode(mBaseActivity)
         attendanceVM.showDialog.observe(viewLifecycleOwner) {
             mBaseActivity.showProgressDialog(it)
         }
@@ -60,52 +58,69 @@ class AttendanceFragment : Fragment() {
             }
         })
 
-        binding.txtTimeExpire.setText("Please wait QR Code is generating")
+        binding.txtTimeExpire.text = "Please wait QR Code is generating"
 
 
-      try {
-          attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
-              if (it != null) {
-                  binding.idIVQrcode.setImageBitmap(attendanceVM.getQrCodeBitmap(it.qrCode,mBaseActivity))
+        try {
+            attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
+                if (it != null) {
 
-                  attendanceVM._attendanceResponse.value=null
-                  timer = object: CountDownTimer(1000 * it.timeOut.toLong(), 1000) {
-                      override fun onTick(millisUntilFinished: Long) {
-                          binding.txtTimeExpire.text = "Your QR Code will refresh in ${millisUntilFinished/1000} seconds"
-                      }
+                    attendanceVM.getQrCodeBitmap(
+                        it.qrCode,
+                        mBaseActivity,
+                        object : QRImageCallback {
+                            override fun onRendered(bitmap: Bitmap) {
 
-                      override fun onFinish() {
-                          attendanceVM.getAttendanceData(mBaseActivity)
-                          timer = null
-                      }
-                  }
-                  if(timer != null)
-                      timer?.start()
+                                mBaseActivity.runOnUiThread {
+                                    binding.idIVQrcode.setImageBitmap(bitmap)
+                                    timer =
+                                        object : CountDownTimer(1000 * it.timeOut.toLong(), 1000) {
+                                            override fun onTick(millisUntilFinished: Long) {
+                                                binding.txtTimeExpire.text =
+                                                    "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
+                                            }
 
-              }
+                                            override fun onFinish() {
+                                                attendanceVM.getQRCode(mBaseActivity)
+                                                timer = null
+                                            }
+                                        }
 
-          })
-      }
-      catch (e:Exception)
-      {
-          AFJUtils.writeLogs(e.toString())
-      }
+                                    if (timer != null)
+                                        timer?.start()
+                                }
+                            }
+
+
+                            override fun onError(e: Exception) {
+                                AFJUtils.writeLogs("There is some exception in rendering QR code")
+                            }
+
+                        })
 
 
 
+
+
+                    attendanceVM._attendanceResponse.value = null
+
+                }
+
+            })
+        } catch (e: Exception) {
+            AFJUtils.writeLogs(e.toString())
+        }
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        if(timer != null)
-        {
+        if (timer != null) {
             timer!!.cancel()
 
         }
     }
-
 
 
 }

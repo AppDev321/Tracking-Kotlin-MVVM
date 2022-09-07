@@ -30,4 +30,9 @@
         <item name="android:textSize">12dp</item>
     </style>
 
+
+    <style name="styleName" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+
 </resources>

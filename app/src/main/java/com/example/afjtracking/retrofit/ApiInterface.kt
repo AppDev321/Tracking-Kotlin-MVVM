@@ -13,6 +13,12 @@ interface ApiInterface {
     @POST("vehicle-login")
     fun getLoginUser(@Body body: LoginRequest?): Call<LoginResponse?>
 
+    @POST("vehicles/fetch-vehicle-data")
+    fun getVehicleData(@Body body: LoginRequest?): Call<LoginResponse?>
+
+
+
+
     @POST("update-location")
     fun updateLocation(@Body body: LocationApiRequest?): Call<LocationResponse?>
 
@@ -67,8 +73,8 @@ interface ApiInterface {
     @POST("update-fcm-token")
     fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest):Call<LocationResponse?>
 
-    @POST("attendance/get-qr-code")
-    fun getAttendanceQRCode(@Body body: FCMRegistrationRequest): Call<LocationResponse?>
+    @POST("get-qr-code")
+    fun getQRCode(@Body body: FCMRegistrationRequest): Call<LocationResponse?>
 
 
 }

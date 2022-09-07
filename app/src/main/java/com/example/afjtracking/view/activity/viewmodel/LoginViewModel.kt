@@ -68,7 +68,13 @@ class LoginViewModel : ViewModel() {
             return userMutableLiveData!!
         }
 
+fun onRetryClick(view:View)
+{
+    var deviceData = AFJUtils.getDeviceDetail()
+    val loginUser = LoginRequest(deviceDetail= deviceData)
 
+    userMutableLiveData!!.postValue(loginUser)
+}
 
     fun getDeviceDetailDialog(view: View)
     {
@@ -100,36 +106,22 @@ class LoginViewModel : ViewModel() {
     fun onClick(view: View?) {
 
         var deviceData = AFJUtils.getDeviceDetail()
-
-
-
-
-
-        val loginUser = LoginRequest(
-            EmailAddress.value.toString(),
-            Password.value.toString(),
-            vrnNumber.value.toString() ,
-            deviceData
-        )
-
-
-
-
+        val loginUser = LoginRequest(deviceDetail= deviceData)
 
         userMutableLiveData!!.postValue(loginUser)
     }
 
     fun loginApiRequest(request: LoginRequest?, context: Context?) {
         getInstance(context)
-        apiInterface!!.getLoginUser(request).enqueue(object : Callback<LoginResponse?> {
+        apiInterface!!.getVehicleData(request).enqueue(object : Callback<LoginResponse?> {
                 override fun onResponse(
                     call: Call<LoginResponse?>,
                     response: Response<LoginResponse?>
                 ) {
                     if (response.body() != null) {
                         if (response.body()!!.code == 200) {
-                            mUserToken!!.postValue(response.body()!!.data!!.token!!)
-
+                           // mUserToken!!.postValue(response.body()!!.data!!.token!!)
+                            mUserToken!!.postValue("0")
                             //Save vehicle object
                             AFJUtils.saveObjectPref(
                                 context!!,

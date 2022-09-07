@@ -29,10 +29,15 @@ import com.example.afjtracking.model.responses.Vehicle
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
 import com.example.afjtracking.view.fragment.fuel.viewmodel.FuelViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class FuelFormFragment : Fragment() {
@@ -54,7 +59,7 @@ class FuelFormFragment : Fragment() {
     var odoReadingError = ""
     lateinit var txtErrorMsg: TextView
 
-     var vehicle:Vehicle = Vehicle()
+    var vehicle: Vehicle = Vehicle()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -62,36 +67,53 @@ class FuelFormFragment : Fragment() {
     }
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
+
 
         fuelViewModel = ViewModelProvider(this).get(FuelViewModel::class.java)
         _binding = FragmentFuelFromBinding.inflate(inflater, container, false)
 
+
         val root: View = binding.root
         txtErrorMsg = binding.txtErrorMsg
 
+        var authView = CustomAuthenticationView(requireContext())
+        binding.root.addView(authView)
 
-        fuelViewModel.showDialog.observe(mBaseActivity) {
+        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            override fun onAuthCompletionListener(boolean: Boolean) {
+                if (boolean) {
+                    binding.root.removeAllViews()
+                    binding.root.addView(binding.layoutCreateInspection)
+                    binding.root.addView(binding.txtErrorMsg)
+                    fuelViewModel.getFuelFormRequest(mBaseActivity)
+                } else {
+                    binding.root.removeAllViews()
+                    binding.root.addView(authView)
+                }
+            }
+        })
+
+
+
+
+        fuelViewModel.showDialog.observe(viewLifecycleOwner) {
             mBaseActivity.showProgressDialog(it)
         }
 
 
-        fuelViewModel.getFuelFormRequest(mBaseActivity)
+
 
 
         fuelViewModel.getFuelForm.observe(viewLifecycleOwner) {
             if (it != null) {
-
                 try {
-
-                showInspectionCreationForm(it)
-
+                    showInspectionCreationForm(it)
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())
                 }
@@ -106,11 +128,10 @@ class FuelFormFragment : Fragment() {
             }
         }
 
-        // Add observer for score
+
         fuelViewModel.errorsMsg.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 mBaseActivity.toast(it, false)
-                mBaseActivity.showProgressDialog(false)
                 binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
                 binding.layoutCreateInspection.visibility = View.GONE
@@ -118,11 +139,10 @@ class FuelFormFragment : Fragment() {
             }
         })
 
-        fuelViewModel.apiUploadStatus.observe(viewLifecycleOwner,{
-            if(it)
-            {
+        fuelViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
+            if (it) {
                 mBaseActivity.onBackPressed()
-                mBaseActivity.showSnackMessage("Request saved",  requireView()
+                mBaseActivity.showSnackMessage("Request saved", requireView()
                 )
             }
         })
@@ -141,9 +161,9 @@ class FuelFormFragment : Fragment() {
 
         binding.txtInspectionTitle.text = "Fuel Form"
 
-        val odoReading =  vehicle.odometerReading
-        lastOdoReading =   if(odoReading!!.isEmpty()) 0 else odoReading.toInt()
-        odoReadingError= "Cannot less than previous reading $lastOdoReading"
+        val odoReading = vehicle.odometerReading
+        lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
+        odoReadingError = "Cannot less than previous reading $lastOdoReading"
 
         for (i in fuelList!!.indices) {
             val formData = fuelList[i]
@@ -154,26 +174,26 @@ class FuelFormFragment : Fragment() {
             }
         }
 
-       /* //Create Form data
-        if (imageForm.size > 0) {
-            val layoutManager = GridLayoutManager(mBaseActivity, 3)
-            binding.recImageContainer.layoutManager = layoutManager
-            val imageFormAdapter =
-                ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
-            imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
+        /* //Create Form data
+         if (imageForm.size > 0) {
+             val layoutManager = GridLayoutManager(mBaseActivity, 3)
+             binding.recImageContainer.layoutManager = layoutManager
+             val imageFormAdapter =
+                 ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
+             imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
+                 override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
 
-                    val index = formIndex[positon]
-                    imageForm[positon] = uploadForm
-                    storedData[index].formData = uploadForm
-                }
-            })
-            binding.recImageContainer.adapter = imageFormAdapter
-        }*/
+                     val index = formIndex[positon]
+                     imageForm[positon] = uploadForm
+                     storedData[index].formData = uploadForm
+                 }
+             })
+             binding.recImageContainer.adapter = imageFormAdapter
+         }*/
 
-binding.btnPreviousCehck.setOnClickListener{
-    mBaseActivity.onBackPressed()
-}
+        binding.btnPreviousCehck.setOnClickListener {
+            mBaseActivity.onBackPressed()
+        }
         binding.btnSubmit.setOnClickListener {
 
             var isAllImageUploaded = true
@@ -196,7 +216,7 @@ binding.btnPreviousCehck.setOnClickListener{
             }
 
 
-            if (isAllImageUploaded  && isOdoMeterErrorFound == false) {
+            if (isAllImageUploaded && isOdoMeterErrorFound == false) {
                 var isAllRequired = true
                 for (i in storedData.indices) {
                     fuelList[i].value = storedData[i].formData!!.value
@@ -217,16 +237,13 @@ binding.btnPreviousCehck.setOnClickListener{
                 if (isAllRequired) {
 
                     val request = SaveFormRequest()
-                    request.fuelForm=fuelList
-                   fuelViewModel.saveFuelForm(request,mBaseActivity)
-
+                    request.fuelForm = fuelList
+                    fuelViewModel.saveFuelForm(request, mBaseActivity)
 
 
                 }
-            }
-            else
-            {
-                mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
+            } else {
+                mBaseActivity.showSnackMessage(odoReadingError, binding.root)
             }
         }
 
@@ -243,7 +260,7 @@ binding.btnPreviousCehck.setOnClickListener{
     fun createViewChecks(uiType: String, formData: FuelForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
         when (uiType) {
-            "TEXT" -> {
+            resources.getString(R.string.ui_type_text)    -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
@@ -270,20 +287,20 @@ binding.btnPreviousCehck.setOnClickListener{
 
                 dataStore.editText!!.setOnFocusChangeListener(object : View.OnFocusChangeListener {
                     override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                        if(!hasFocus)
-                        {
-                            val s =  dataStore.formData!!.value
+                        if (!hasFocus) {
+                            val s = dataStore.formData!!.value
                             if (formData.title!!.lowercase().contains("odometer")) {
                                 if (!s.toString().isEmpty()) {
                                     val reading = Integer.parseInt(s.toString())
                                     if (reading < lastOdoReading) {
-                                        mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-                                        dataStore.editText!!.error=  odoReadingError
-                                        isOdoMeterErrorFound  = true
-                                    }
-                                    else
-                                    {
-                                        isOdoMeterErrorFound  = false
+                                        mBaseActivity.showSnackMessage(
+                                            odoReadingError,
+                                            binding.root
+                                        )
+                                        dataStore.editText!!.error = odoReadingError
+                                        isOdoMeterErrorFound = true
+                                    } else {
+                                        isOdoMeterErrorFound = false
                                         dataStore.editText!!.setError(null)
                                         lastOdoReading = dataStore.formData!!.value!!.toInt()
                                     }
@@ -298,11 +315,13 @@ binding.btnPreviousCehck.setOnClickListener{
                     override fun afterTextChanged(s: Editable) {
                         dataStore.formData!!.value = s.toString()
                     }
+
                     override fun beforeTextChanged(
                         s: CharSequence, start: Int,
                         count: Int, after: Int
                     ) {
                     }
+
                     override fun onTextChanged(
                         s: CharSequence, start: Int,
                         before: Int, count: Int
@@ -315,7 +334,7 @@ binding.btnPreviousCehck.setOnClickListener{
                 containerChecks.addView(view)
 
             }
-            "FILE" -> {
+            resources.getString(R.string.ui_type_file)    -> {
                 // "FILE" -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -365,7 +384,7 @@ binding.btnPreviousCehck.setOnClickListener{
                 containerChecks.addView(view)
 
             }
-            "IMAGE" -> {
+            resources.getString(R.string.ui_type_image)    -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -461,7 +480,6 @@ binding.btnPreviousCehck.setOnClickListener{
 
 
 }
-
 
 data class StoreFuelFormData(
     val editText: EditText? = null,

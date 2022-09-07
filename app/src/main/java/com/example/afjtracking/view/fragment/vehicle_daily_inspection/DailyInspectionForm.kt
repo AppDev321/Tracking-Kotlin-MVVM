@@ -265,7 +265,7 @@ class DailyInspectionForm : Fragment() {
     fun createViewChecks(uiType: String, formData: InspectionForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
         when (uiType) {
-            "TEXT" -> {
+           resources.getString(R.string.ui_type_text)  -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
@@ -360,7 +360,7 @@ class DailyInspectionForm : Fragment() {
                 containerChecks.addView(view)
 
             }
-            "FILE" -> {
+            resources.getString(R.string.ui_type_file)   -> {
                 // "FILE" -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -410,7 +410,7 @@ class DailyInspectionForm : Fragment() {
                 containerChecks.addView(view)
 
             }
-            "IMAGE" -> {
+            resources.getString(R.string.ui_type_image)     -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -499,10 +499,7 @@ class DailyInspectionForm : Fragment() {
 
     }
 
-    private fun getPhotoFile(fileName: String): File {
-        val directoryStorage = mBaseActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(fileName, ".jpg", directoryStorage)
-    }
+
 
 
 }

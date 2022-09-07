@@ -82,7 +82,7 @@
         android:id="@+id/nav_fuel_login_form"
         android:name="com.example.afjtracking.view.fragment.fuel.FuelAuthFragment"
         android:label="@string/menu_fuel_fill"
-        tools:layout="@layout/fragment_fuel_login" />
+        tools:layout="@layout/fragment_auth" />
 
     <fragment
         android:id="@+id/nav_fuel_form"

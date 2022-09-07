@@ -71,11 +71,6 @@ class LocationUpdatesService : Service() {
     override fun onCreate() {
 
         PACKAGE_NAME = this.packageName
-
-
-
-
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -103,7 +98,7 @@ class LocationUpdatesService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.i(TAG, "Service started")
+
         val startedFromNotification = intent.getBooleanExtra(
             EXTRA_STARTED_FROM_NOTIFICATION,
             false
@@ -123,7 +118,7 @@ class LocationUpdatesService : Service() {
 
     override fun onBind(intent: Intent): IBinder? {
 
-        Log.i(TAG, "in onBind()")
+
         stopForeground(true)
         mChangingConfiguration = false
         return mBinder
@@ -131,17 +126,16 @@ class LocationUpdatesService : Service() {
 
     override fun onRebind(intent: Intent) {
 
-        Log.i(TAG, "in onRebind()")
+
         stopForeground(true)
         mChangingConfiguration = false
         super.onRebind(intent)
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        Log.i(TAG, "Last client unbound from service")
+
 
         if (!mChangingConfiguration && requestingLocationUpdates(this)) {
-            Log.i(TAG, "Starting foreground service")
             /*
             // TODO(developer). If targeting O, use the following code.
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
@@ -175,14 +169,14 @@ class LocationUpdatesService : Service() {
     }
 
     fun removeLocationUpdates() {
-        Log.i(TAG, "Removing location updates")
+
         try {
             mFusedLocationClient!!.removeLocationUpdates(mLocationCallback)
             setRequestingLocationUpdates(this, false)
             stopSelf()
         } catch (unlikely: SecurityException) {
             setRequestingLocationUpdates(this, true)
-            Log.e(TAG, "Lost location permission. Could not remove updates. $unlikely")
+
         }
     }
 
@@ -212,7 +206,7 @@ class LocationUpdatesService : Service() {
                 .setContentTitle(getLocationTitle(this))
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.afj_logo)
                 .setTicker(text)
                 .setSilent(true)
                 .setWhen(System.currentTimeMillis())
@@ -246,14 +240,10 @@ class LocationUpdatesService : Service() {
 
         mLocation = location
         UPDATE_INTERVAL_IN_MILLISECONDS = Constants.LOCATION_SERVICE_IN_SECONDS
-        AFJUtils.writeLogs("time value= $UPDATE_INTERVAL_IN_MILLISECONDS")
-
-        // Notify anyone listening for broadcasts about the new location.
+       // AFJUtils.writeLogs("time value= $UPDATE_INTERVAL_IN_MILLISECONDS")
         val intent = Intent(ACTION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, location)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-
-
         if (serviceIsRunningInForeground(this)) {
             mNotificationManager!!.notify(NOTIFICATION_ID, notification)
        }
