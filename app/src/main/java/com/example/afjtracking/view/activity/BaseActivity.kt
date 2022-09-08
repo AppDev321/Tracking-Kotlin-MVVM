@@ -11,9 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
+import com.example.afjtracking.R
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.UploadUtil
 import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 
 open class BaseActivity : AppCompatActivity() {
@@ -36,7 +38,7 @@ open class BaseActivity : AppCompatActivity() {
     }*/
 
 
-    lateinit var progressDialog: ProgressDialog;
+    lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,13 +53,7 @@ open class BaseActivity : AppCompatActivity() {
 
             }
         })
-        lifecycleScope.async(onPre = {
-
-        }, background = {
-
-        }, onPost = {
-
-        })*/
+       */
         progressDialog = ProgressDialog(this@BaseActivity)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setMessage("Please Wait....")
@@ -86,13 +82,15 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun toast(msg: String,showToast: Boolean = true) {
-        if (msg.toLowerCase().contains("unauthenticated")) {
+        if (msg.lowercase(Locale.getDefault()).contains(resources.getString(R.string.unauthenticated))) {
             AFJUtils.setUserToken(this@BaseActivity, "")
             finish()
             startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
         } else {
-           if(showToast)
-            Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
+           if(showToast) {
+               Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
+
+           }
         }
     }
 

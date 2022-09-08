@@ -10,11 +10,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
 import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class AttendanceFragment : Fragment() {
@@ -58,48 +63,38 @@ class AttendanceFragment : Fragment() {
             }
         })
 
-        binding.txtTimeExpire.text = "Please wait QR Code is generating"
-
 
         try {
             attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
+
+                val response  = it
                 if (it != null) {
 
-                    attendanceVM.getQrCodeBitmap(
-                        it.qrCode,
-                        mBaseActivity,
-                        object : QRImageCallback {
-                            override fun onRendered(bitmap: Bitmap) {
-
-                                mBaseActivity.runOnUiThread {
-                                    binding.idIVQrcode.setImageBitmap(bitmap)
-                                    timer =
-                                        object : CountDownTimer(1000 * it.timeOut.toLong(), 1000) {
-                                            override fun onTick(millisUntilFinished: Long) {
-                                                binding.txtTimeExpire.text =
-                                                    "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
-                                            }
-
-                                            override fun onFinish() {
-                                                attendanceVM.getQRCode(mBaseActivity)
-                                                timer = null
-                                            }
-                                        }
-
-                                    if (timer != null)
-                                        timer?.start()
-                                }
+                    lifecycleScope.async(onPre = {
+                        binding.txtTimeExpire.text = "Please wait QR Code is generating"
+                        binding.idIVQrcode.setImageBitmap(null)
+                    }, background = {
+                        attendanceVM.getQrCodeBitmap(
+                            it.qrCode,
+                            mBaseActivity,
+                            )
+                    }, onPost = {
+                        if(it != null)
+                        binding.idIVQrcode.setImageBitmap(it)
+                        timer =   object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                binding.txtTimeExpire.text =
+                                    "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
                             }
-
-
-                            override fun onError(e: Exception) {
-                                AFJUtils.writeLogs("There is some exception in rendering QR code")
+                            override fun onFinish() {
+                                attendanceVM.getQRCode(mBaseActivity)
+                                timer = null
                             }
+                        }
 
-                        })
-
-
-
+                        if (timer != null)
+                            timer?.start()
+                    })
 
 
                     attendanceVM._attendanceResponse.value = null
@@ -122,5 +117,11 @@ class AttendanceFragment : Fragment() {
         }
     }
 
+    private fun <R> CoroutineScope.async(onPre:() -> Unit, background: () -> R, onPost: (R) -> Unit) = launch(
+        Dispatchers.Main) {
+        onPre()
+        withContext(Dispatchers.IO){
+            background() }.let(onPost)
+    }
 
 }

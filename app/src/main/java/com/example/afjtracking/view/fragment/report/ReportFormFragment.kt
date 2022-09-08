@@ -33,6 +33,7 @@ import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.CustomDropDownAdapter
 import com.example.afjtracking.view.adapter.FileFormAdapter
 import com.example.afjtracking.view.adapter.ImageFormAdapter
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.fuel.viewmodel.ReportViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.sql.Time
@@ -97,8 +98,29 @@ class ReportFormFragment : Fragment() {
             mBaseActivity.showProgressDialog(it)
         }
 
+        binding.baseLayout.visibility = View.GONE
+        val authView = CustomAuthenticationView(requireContext())
+        binding.root.addView(authView)
+        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            override fun onAuthCompletionListener(boolean: Boolean) {
+                if (_binding == null)
+                    return
+                if (boolean) {
+                    binding.root.removeAllViews()
+                    binding.root.addView(binding.baseLayout)
+                    binding.baseLayout.visibility = View.VISIBLE
+                    reportViewModel.getReportFormRequest(mBaseActivity)
+                } else {
+                    binding.root.removeAllViews()
+                    binding.root.addView(authView)
+                }
+            }
+        })
 
-        reportViewModel.getReportFormRequest(mBaseActivity)
+
+
+
+
 
 
         reportViewModel.getReportData.observe(viewLifecycleOwner)
@@ -161,7 +183,7 @@ class ReportFormFragment : Fragment() {
 
     fun showReportFormField(formList: List<InspectionForm>) {
 
-        binding.layoutCreateInspection.visibility = View.VISIBLE
+        binding.baseLayout.visibility = View.VISIBLE
         binding.txtErrorMsg.visibility = View.GONE
 
         binding.txtInspectionTitle.text = "Report Form"
@@ -170,7 +192,7 @@ class ReportFormFragment : Fragment() {
         lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
         odoReadingError = "Cannot less than previous reading $lastOdoReading"
 
-        for (i in formList!!.indices) {
+        for (i in formList.indices) {
             val formData = formList[i]
          try {
                 createViewChecks(formData.type!!.uppercase(), formData, i)
@@ -276,23 +298,20 @@ class ReportFormFragment : Fragment() {
                 val dataStore = StoreReportFormData(inputText, formData)
 
 
-                dataStore.editText!!.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
                     override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                        if(!hasFocus)
-                        {
+                        if(!hasFocus) {
                             val s =  dataStore.formData!!.value
                             if (formData.title!!.lowercase().contains("odometer")) {
                                 if (!s.toString().isEmpty()) {
                                     val reading = Integer.parseInt(s.toString())
                                     if (reading < lastOdoReading) {
                                         mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-                                        dataStore.editText!!.error=  odoReadingError
+                                        dataStore.editText.error=  odoReadingError
                                         isOdoMeterErrorFound  = true
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         isOdoMeterErrorFound  = false
-                                        dataStore.editText!!.setError(null)
+                                        dataStore.editText.error = null
                                         lastOdoReading = dataStore.formData!!.value!!.toInt()
                                     }
                                 }
@@ -300,9 +319,9 @@ class ReportFormFragment : Fragment() {
                         }
                     }
 
-                })
+                }
 
-                dataStore.editText!!.addTextChangedListener(object : TextWatcher {
+                dataStore.editText.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable) {
                         dataStore.formData!!.value = s.toString()
                     }
@@ -339,16 +358,16 @@ class ReportFormFragment : Fragment() {
 
                 val dataStore = StoreReportFormData(inputText, formData)
 
-                dataStore.editText!!.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
                     override fun onFocusChange(v: View?, hasFocus: Boolean) {
                         if(!hasFocus) {
                             val s = dataStore.formData!!.value
                         }
                     }
 
-                })
+                }
 
-                dataStore.editText!!.addTextChangedListener(object : TextWatcher {
+                dataStore.editText.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable) {
                         dataStore.formData!!.value = s.toString()
                     }
@@ -378,7 +397,7 @@ class ReportFormFragment : Fragment() {
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 textTitleLable.setTextColor(Color.BLACK)
                 val spinnerView = view.findViewById<Spinner>(R.id.spOption)
-                spinnerView.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+                spinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                         //AFJUtils.writeLogs(formData.options[p2].fieldName.toString())
                         for (i in storedData.indices) {
@@ -391,9 +410,9 @@ class ReportFormFragment : Fragment() {
 
                     override fun onNothingSelected(p0: AdapterView<*>?) {
                     }
-                })
+                }
                 val adapter = CustomDropDownAdapter(mBaseActivity, formData.options)
-                spinnerView.setAdapter(adapter)
+                spinnerView.adapter = adapter
                 containerChecks.addView(view)
 
 
@@ -436,8 +455,8 @@ class ReportFormFragment : Fragment() {
                 textTitleLable.setOnClickListener {
                     if (uploadPhotoCount < imageUploadLimit) {
                         imageForm.add(InspectionForm(fieldName = "image"))
-                        imageFormAdapter.notifyItemInserted(imageForm.size);
-                        recImageContainer.smoothScrollToPosition(imageForm.size);
+                        imageFormAdapter.notifyItemInserted(imageForm.size)
+                        recImageContainer.smoothScrollToPosition(imageForm.size)
                         uploadPhotoCount++
                     } else {
                         textTitleLable.visibility = View.GONE
@@ -491,8 +510,8 @@ class ReportFormFragment : Fragment() {
                 textTitleLable.setOnClickListener {
                     if (uploadFileCount < uploadFileLimit) {
                         fileForm.add(InspectionForm(fieldName = "file", title = "File"))
-                        fileFormAdapter.notifyItemInserted(fileForm.size);
-                        recImageContainer.smoothScrollToPosition(fileForm.size);
+                        fileFormAdapter.notifyItemInserted(fileForm.size)
+                        recImageContainer.smoothScrollToPosition(fileForm.size)
                         uploadFileCount++
                     } else {
                         textTitleLable.visibility = View.GONE
@@ -529,9 +548,9 @@ class ReportFormFragment : Fragment() {
                     checkBox.text = data.title
                     checkBox.isChecked = false
                         if (Build.VERSION.SDK_INT < 21) {
-                            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(R.color.colorPrimary));//Use android.support.v4.widget.CompoundButtonCompat when necessary else
+                            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(R.color.colorPrimary))//Use android.support.v4.widget.CompoundButtonCompat when necessary else
                         } else {
-                            checkBox.setButtonTintList(ColorStateList.valueOf(R.color.colorPrimary));//setButtonTintList is accessible directly on API>19
+                            checkBox.buttonTintList = ColorStateList.valueOf(R.color.colorPrimary)//setButtonTintList is accessible directly on API>19
                         }
 
                     arrayChecks.add(data.fieldName.toString())
@@ -597,8 +616,8 @@ class ReportFormFragment : Fragment() {
 
                 lateinit var datePicker: DatePicker
                 lateinit var calendar: Calendar
-                calendar = Calendar.getInstance();
-                year = calendar.get(Calendar.YEAR);
+                calendar = Calendar.getInstance()
+                year = calendar.get(Calendar.YEAR)
 
                 month = calendar.get(Calendar.MONTH)
                 day = calendar.get(Calendar.DAY_OF_MONTH)

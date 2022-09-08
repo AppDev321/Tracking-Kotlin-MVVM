@@ -56,8 +56,8 @@ class WeeklyInspectionList : Fragment() {
             AFJUtils.KEY_VEHICLE_DETAIL,
             VehicleDetail::class.java
         )
-        val body = WeeklyVehicleInspectionRequest(vehicleDetail.id.toString())
-        weeklyInspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity, body)
+        val body = WeeklyVehicleInspectionRequest(vehicleDetail.id.toString(), deviceDetail = AFJUtils.getDeviceDetail())
+        weeklyInspectionViewModel.getWeeklyVehicleInspectionCheckList(mBaseActivity, body)
 
 
         weeklyInspectionViewModel.vehicleData.observe(viewLifecycleOwner) {

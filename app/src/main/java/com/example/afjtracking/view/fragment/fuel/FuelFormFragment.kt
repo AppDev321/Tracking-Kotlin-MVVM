@@ -34,10 +34,6 @@ import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
 import com.example.afjtracking.view.fragment.fuel.viewmodel.FuelViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class FuelFormFragment : Fragment() {
@@ -82,20 +78,24 @@ class FuelFormFragment : Fragment() {
         val root: View = binding.root
         txtErrorMsg = binding.txtErrorMsg
 
-        var authView = CustomAuthenticationView(requireContext())
+        val authView = CustomAuthenticationView(requireContext())
         binding.root.addView(authView)
 
         authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
             override fun onAuthCompletionListener(boolean: Boolean) {
+                if (_binding == null)
+                    return
                 if (boolean) {
+
                     binding.root.removeAllViews()
-                    binding.root.addView(binding.layoutCreateInspection)
+                    binding.root.addView(binding.baseLayout)
                     binding.root.addView(binding.txtErrorMsg)
                     fuelViewModel.getFuelFormRequest(mBaseActivity)
                 } else {
                     binding.root.removeAllViews()
                     binding.root.addView(authView)
                 }
+
             }
         })
 
@@ -134,7 +134,7 @@ class FuelFormFragment : Fragment() {
                 mBaseActivity.toast(it, false)
                 binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
-                binding.layoutCreateInspection.visibility = View.GONE
+                binding.baseLayout.visibility = View.GONE
                 fuelViewModel.errorsMsg.value = null
             }
         })
@@ -142,7 +142,8 @@ class FuelFormFragment : Fragment() {
         fuelViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
             if (it) {
                 mBaseActivity.onBackPressed()
-                mBaseActivity.showSnackMessage("Request saved", requireView()
+                mBaseActivity.showSnackMessage(
+                    "Request saved", requireView()
                 )
             }
         })
@@ -156,7 +157,7 @@ class FuelFormFragment : Fragment() {
 
     fun showInspectionCreationForm(fuelList: List<FuelForm>) {
 
-        binding.layoutCreateInspection.visibility = View.VISIBLE
+        binding.baseLayout.visibility = View.VISIBLE
         binding.txtErrorMsg.visibility = View.GONE
 
         binding.txtInspectionTitle.text = "Fuel Form"
@@ -165,7 +166,7 @@ class FuelFormFragment : Fragment() {
         lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
         odoReadingError = "Cannot less than previous reading $lastOdoReading"
 
-        for (i in fuelList!!.indices) {
+        for (i in fuelList.indices) {
             val formData = fuelList[i]
             try {
                 createViewChecks(formData.type!!.uppercase(), formData, i)
@@ -251,6 +252,7 @@ class FuelFormFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.root.removeAllViews()
         _binding = null
 
 
@@ -260,7 +262,7 @@ class FuelFormFragment : Fragment() {
     fun createViewChecks(uiType: String, formData: FuelForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
         when (uiType) {
-            resources.getString(R.string.ui_type_text)    -> {
+            resources.getString(R.string.ui_type_text) -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
@@ -285,7 +287,7 @@ class FuelFormFragment : Fragment() {
                 val dataStore = StoreFuelFormData(inputText, formData)
 
 
-                dataStore.editText!!.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
                     override fun onFocusChange(v: View?, hasFocus: Boolean) {
                         if (!hasFocus) {
                             val s = dataStore.formData!!.value
@@ -297,11 +299,11 @@ class FuelFormFragment : Fragment() {
                                             odoReadingError,
                                             binding.root
                                         )
-                                        dataStore.editText!!.error = odoReadingError
+                                        dataStore.editText.error = odoReadingError
                                         isOdoMeterErrorFound = true
                                     } else {
                                         isOdoMeterErrorFound = false
-                                        dataStore.editText!!.setError(null)
+                                        dataStore.editText.error = null
                                         lastOdoReading = dataStore.formData!!.value!!.toInt()
                                     }
                                 }
@@ -309,9 +311,9 @@ class FuelFormFragment : Fragment() {
                         }
                     }
 
-                })
+                }
 
-                dataStore.editText!!.addTextChangedListener(object : TextWatcher {
+                dataStore.editText.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable) {
                         dataStore.formData!!.value = s.toString()
                     }
@@ -334,7 +336,7 @@ class FuelFormFragment : Fragment() {
                 containerChecks.addView(view)
 
             }
-            resources.getString(R.string.ui_type_file)    -> {
+            resources.getString(R.string.ui_type_file) -> {
                 // "FILE" -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -384,7 +386,7 @@ class FuelFormFragment : Fragment() {
                 containerChecks.addView(view)
 
             }
-            resources.getString(R.string.ui_type_image)    -> {
+            resources.getString(R.string.ui_type_image) -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)

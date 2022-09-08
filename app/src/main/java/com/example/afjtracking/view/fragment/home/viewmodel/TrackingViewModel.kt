@@ -10,6 +10,7 @@ import com.example.afjtracking.model.requests.LocationApiRequest
 import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.room.model.TableLocation
 import com.example.afjtracking.room.repository.LocationTableRepo
 import com.example.afjtracking.utils.AFJUtils
@@ -32,11 +33,11 @@ class TrackingViewModel : ViewModel() {
             if (_locaitonRequest == null) {
                 _locaitonRequest = MutableLiveData()
             }
-            return _locaitonRequest!!
+            return _locaitonRequest
         }
 
 
-     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
+    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
 
     val errorsMsg: MutableLiveData<String>
         get() {
@@ -61,44 +62,41 @@ class TrackingViewModel : ViewModel() {
     }
 
 
-
     fun postLocationData(request: LocationApiRequest?, context: Context?) {
         getInstance(context)
 
         apiInterface!!.updateLocation(request)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun onSuccess(
+
                     response: Response<LocationResponse?>
                 ) {
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            Log.e("Location API", response.body()!!.data!!.message.toString())
+                    super.onSuccess(response)
+                    AFJUtils.writeLogs("Location API =${ response.body()!!.data!!.message.toString()}")
+                    getLocationRequest.postValue(request)
 
-                            getLocationRequest.postValue(request)
+                }
 
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
                     }
+                    mErrorsMsg!!.postValue(errors)
                 }
 
-                override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                    val exception = t.toString()
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
 
                     if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
                         var locationTable = TableLocation(
-                            apiName =  Constants.LOCATION_API,
-                            apiPostData =  AFJUtils.convertObjectToJson(request!!),
+                            apiName = Constants.LOCATION_API,
+                            apiPostData = AFJUtils.convertObjectToJson(request!!),
                             apiPostResponse = "",
                             apiError = "",
                             apiRetryCount = 0,
@@ -116,7 +114,6 @@ class TrackingViewModel : ViewModel() {
                         mErrorsMsg!!.postValue(exception)
 
                     }
-
                 }
             })
 
@@ -130,37 +127,34 @@ class TrackingViewModel : ViewModel() {
         getInstance(context)
 
         apiInterface!!.sendFCMTokenToServer(request)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun onSuccess(
                     response: Response<LocationResponse?>
                 ) {
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            AFJUtils.writeLogs("***** FCM Token Added to Server ***")
-                        }
-                        else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+                    super.onSuccess(response)
+                   AFJUtils.writeLogs("***** FCM Token Added to Server ***")
+
+                }
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
                     }
+                    mErrorsMsg!!.postValue(errors)
                 }
 
-                override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                    val exception = t.toString()
-                 mErrorsMsg!!.postValue(exception)
-
-
-
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
+                    mErrorsMsg!!.postValue(exception)
                 }
+
+
+
             })
 
     }

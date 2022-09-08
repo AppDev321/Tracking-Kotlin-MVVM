@@ -55,6 +55,7 @@
     <string name="ui_type_text">TEXT</string>
     <string name="ui_type_file">FILE</string>
     <string name="ui_type_image">IMAGE</string>
+    <string name="unauthenticated">unauthenticated</string>
 
 
 </resources>

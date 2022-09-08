@@ -15,6 +15,7 @@ import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
 import java.util.*
 
@@ -45,17 +46,36 @@ class WeeklyInspectionCreateForm : Fragment() {
         val root: View = binding.root
         root.hideKeyboard()
 
+        binding.baseLayout.visibility = View.GONE
+        val authView = CustomAuthenticationView(requireContext())
+        binding.mainLayout.addView(authView)
+        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            override fun onAuthCompletionListener(boolean: Boolean) {
+                if (_binding == null)
+                    return
+                if (boolean) {
+                    binding.mainLayout.removeAllViews()
+                    binding.mainLayout.addView(binding.baseLayout)
+                    binding.baseLayout.visibility = View.VISIBLE
+                } else {
+                    binding.mainLayout.removeAllViews()
+                    binding.mainLayout.addView(authView)
+                }
+            }
+        })
+
+
 
         binding.btnCancel.setOnClickListener {
             mBaseActivity.onBackPressed()
         }
 
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
+        calendar = Calendar.getInstance()
+        year = calendar.get(Calendar.YEAR)
 
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
-        showDate(year, month + 1, day);
+        month = calendar.get(Calendar.MONTH)
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+        showDate(year, month + 1, day)
 
         binding.btnDatePicker.setOnClickListener {
 
@@ -114,9 +134,7 @@ class WeeklyInspectionCreateForm : Fragment() {
         }
 
     private fun showDate(year: Int, month: Int, day: Int) {
-        binding.txtDate.setText(
-            StringBuilder().append(year).append("-")
-                .append(month).append("-").append(day)
-        )
+        binding.txtDate.text = StringBuilder().append(year).append("-")
+            .append(month).append("-").append(day)
     }
 }

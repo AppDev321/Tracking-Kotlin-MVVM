@@ -13,7 +13,7 @@ interface ApiInterface {
     @POST("vehicle-login")
     fun getLoginUser(@Body body: LoginRequest?): Call<LoginResponse?>
 
-    @POST("vehicles/fetch-vehicle-data")
+   @POST("vehicles/fetch-vehicle-data")
     fun getVehicleData(@Body body: LoginRequest?): Call<LoginResponse?>
 
 

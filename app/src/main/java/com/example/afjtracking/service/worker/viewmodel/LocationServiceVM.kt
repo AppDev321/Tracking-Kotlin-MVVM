@@ -9,6 +9,7 @@ import com.example.afjtracking.model.requests.LocationApiRequest
 import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.room.model.TableLocation
 import com.example.afjtracking.room.repository.LocationTableRepo
 import com.example.afjtracking.utils.AFJUtils
@@ -18,7 +19,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 
 class LocationServiceVM : ViewModel() {
@@ -85,33 +85,35 @@ class LocationServiceVM : ViewModel() {
 
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
-                val requestBody = AFJUtils.convertStringToObject(apiRequest.apiPostData,LocationApiRequest::class.java)
+                val requestBody = AFJUtils.convertStringToObject(
+                    apiRequest.apiPostData,
+                    LocationApiRequest::class.java
+                )
 
                 apiInterface!!.updateLocation(requestBody)
-                    .enqueue(object : Callback<LocationResponse?> {
-                        override fun onResponse(
-                            call: Call<LocationResponse?>,
+                    .enqueue(object : SuccessCallback<LocationResponse?>() {
+                        override fun onSuccess(
+
                             response: Response<LocationResponse?>
                         ) {
-                            if (response.body() != null) {
-                                if (response.body()!!.code == 200) {
-                                    apiRequestStatus.postValue(true)
-                                } else {
-                                    var errors = ""
-                                    for (i in response.body()!!.errors!!.indices) {
-                                        errors = "$errors${response.body()!!.errors!![i].message}"
-                                    }
-                                    mErrorsMsg!!.postValue(errors)
-                                }
-                            } else {
-                                mErrorsMsg!!.postValue(response.raw().message)
+                            super.onSuccess(response)
+                            apiRequestStatus.postValue(true)
+                        }
+
+                        override fun onFailure(response: Response<LocationResponse?>) {
+                            super.onFailure(response)
+                            var errors = ""
+                            for (i in response.body()!!.errors!!.indices) {
+                                errors = "$errors${response.body()!!.errors!![i].message}"
                             }
+                            mErrorsMsg!!.postValue(errors)
                         }
 
-                        override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                            mErrorsMsg!!.postValue(t.toString())
-
+                        override fun onAPIError(error: String) {
+                            super.onAPIError(error)
+                            mErrorsMsg!!.postValue(error)
                         }
+
                     })
 
             }
@@ -119,57 +121,52 @@ class LocationServiceVM : ViewModel() {
 
     }
 
- fun uploadErrorData(context: Context, locationTable: TableLocation ) {
+    fun uploadErrorData(context: Context, locationTable: TableLocation) {
 
-            getInstance(context)
-            val body = ErrorRequest(
-                deviceId = Constants.DEVICE_ID,
-                endpoint = locationTable.apiName,
-                error =    locationTable.apiError,
-                retries =  locationTable.apiRetryCount.toString()
+        getInstance(context)
+        val body = ErrorRequest(
+            deviceId = Constants.DEVICE_ID,
+            endpoint = locationTable.apiName,
+            error = locationTable.apiError,
+            retries = locationTable.apiRetryCount.toString()
 
-            )
-            apiInterface!!.postErrorData(body).enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
-                    response: Response<LocationResponse?>
-                ) {
-                    locationTable.apiResponseTime = AFJUtils.getCurrentDateTime()
+        )
+        apiInterface!!.postErrorData(body).enqueue(object : SuccessCallback<LocationResponse?>() {
+            override fun onResponse(
+                call: Call<LocationResponse?>,
+                response: Response<LocationResponse?>
+            ) {
+                locationTable.apiResponseTime = AFJUtils.getCurrentDateTime()
+                AFJUtils.writeLogs("********* Error Upload Data Completed *********")
+                locationTable.apiStatus = 0
+                locationTable.errorPosted = "1"
+                updateApiDataValue(context, locationTable)
+                AFJUtils.writeLogs("********* Backup Api Request Completed *********")
 
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            AFJUtils.writeLogs("********* Error Upload Data Completed *********")
+            }
 
-                            locationTable.apiStatus = 0
-                            locationTable.errorPosted = "1"
-
-                            updateApiDataValue(context, locationTable)
-
-                            AFJUtils.writeLogs("********* Backup Api Request Completed *********")
-
-
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+            override fun onFailure(response: Response<LocationResponse?>) {
+                super.onFailure(response)
+                var errors = ""
+                for (i in response.body()!!.errors!!.indices) {
+                    errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            AFJUtils.writeLogs("********* Error Upload Data Api=$errors *********")
-                        }
-                    } else {
-                        AFJUtils.writeLogs("********* Error Upload Data Api=${response.raw().message} *********")
-                    }
                 }
+                AFJUtils.writeLogs("********* Error Upload Data Api=$errors *********")
+            }
 
-                override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                    AFJUtils.writeLogs("********* Error Upload Data Api=${t.toString()} *********")
-                }
-            })
+            override fun onAPIError(error: String) {
+                super.onAPIError(error)
+                AFJUtils.writeLogs("********* Error Upload Data Api=${error} *********")
+            }
 
-        }
+
+        })
 
     }
+
+}
 
 

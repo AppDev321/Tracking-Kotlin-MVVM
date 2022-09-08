@@ -13,13 +13,13 @@ import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.model.responses.Vehicle
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
-import retrofit2.Call
-import retrofit2.Callback
+import com.example.afjtracking.retrofit.SuccessCallback
 import retrofit2.Response
 
 class FuelViewModel : ViewModel() {
     @JvmField
     var EmailAddress = MutableLiveData<String>()
+
     @JvmField
     var Password = MutableLiveData<String>()
 
@@ -30,7 +30,6 @@ class FuelViewModel : ViewModel() {
 
     val _vehicle = MutableLiveData<Vehicle>()
     val getVehicle: LiveData<Vehicle> = _vehicle
-
 
 
     private val _dialogShow = MutableLiveData<Boolean>()
@@ -77,7 +76,7 @@ class FuelViewModel : ViewModel() {
     fun onClick(view: View?) {
         val loginUser = LoginRequest(
             EmailAddress.value.toString(),
-            Password.value.toString(),""
+            Password.value.toString(), ""
         )
 
         userMutableLiveData!!.postValue(loginUser)
@@ -87,43 +86,42 @@ class FuelViewModel : ViewModel() {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.getFuelForm()
-            .enqueue(object : Callback<GetFuelFormResponse?> {
-                override fun onResponse(
-                    call: Call<GetFuelFormResponse?>,
-                    response: Response<GetFuelFormResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            _vehicle.postValue(response.body()!!.data!!.vehicle!!)
-                            _fuelForm.postValue(response.body()!!.data!!.fuelForm)
+            .enqueue(object : SuccessCallback<GetFuelFormResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
 
-
-                        } else {
-
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                override fun onFailure(response: Response<GetFuelFormResponse?>) {
+                    super.onFailure(response)
+                    _dataUploaded.postValue(false)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        _dataUploaded.postValue(false)
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
                     }
+                    mErrorsMsg!!.postValue(errors)
                 }
 
-                override fun onFailure(call: Call<GetFuelFormResponse?>, t: Throwable) {
-                    val exception = t.toString()
-                     mErrorsMsg!!.postValue(exception)
+                override fun onSuccess(
+
+                    response: Response<GetFuelFormResponse?>
+                ) {
+                    _vehicle.postValue(response.body()!!.data!!.vehicle!!)
+                    _fuelForm.postValue(response.body()!!.data!!.fuelForm)
+                }
+
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
+                    mErrorsMsg!!.postValue(exception)
 
                     _dataUploaded.postValue(false)
-
-
                 }
+
+
             })
 
     }
@@ -132,48 +130,42 @@ class FuelViewModel : ViewModel() {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.saveFuelForm(form)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+
+                override fun onSuccess(
                     response: Response<LocationResponse?>
                 ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            _dataUploaded.postValue(true)
+                    _dataUploaded.postValue(true)
+                }
 
-
-                        } else {
-                            _dataUploaded.postValue(false)
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    _dataUploaded.postValue(false)
+                    var errors = ""
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        _dataUploaded.postValue(false)
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
                     }
+                    mErrorsMsg!!.postValue(errors)
                 }
 
-                override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                    val exception = t.toString()
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
                     _dataUploaded.postValue(false)
                     mErrorsMsg!!.postValue(exception)
                     _dialogShow.postValue(false)
-
-
                 }
+
             })
 
     }
-
-
-
 
 
 }

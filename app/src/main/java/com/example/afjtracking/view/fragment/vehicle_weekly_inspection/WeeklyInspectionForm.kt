@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.widget.CompoundButtonCompat
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.example.afjtracking.model.responses.WeeklyInspectionCheckData
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
 
@@ -57,8 +59,7 @@ class WeeklyInspectionForm : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        weeklyInspectionViewModel =
-            ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
+        weeklyInspectionViewModel =  ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
 
         _binding = FragmentWeeklyInspectionFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -69,7 +70,31 @@ class WeeklyInspectionForm : Fragment() {
 
         val body = SingleInspectionRequest("$inspectionId")
 
-        weeklyInspectionViewModel.getWeeklyInspectionCheckRequest(mBaseActivity, body)
+        binding.baseLayout.visibility = View.GONE
+
+
+        val authView = CustomAuthenticationView(requireContext())
+        binding.mainLayout.addView(authView)
+        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            override fun onAuthCompletionListener(boolean: Boolean) {
+                if (_binding == null)
+                    return
+                if (boolean) {
+                    binding.mainLayout.removeAllViews()
+                    binding.mainLayout.addView(binding.baseLayout)
+                    binding.baseLayout.visibility = View.VISIBLE
+                    weeklyInspectionViewModel.getWeeklyInspectionCheckRequest(mBaseActivity, body)
+                } else {
+                    binding.mainLayout.removeAllViews()
+                    binding.mainLayout.addView(authView)
+                }
+            }
+        })
+
+
+
+
+
 
 
         weeklyInspectionViewModel.showDialog.observe(viewLifecycleOwner) {
@@ -119,6 +144,7 @@ class WeeklyInspectionForm : Fragment() {
 
 
     fun createViews(data: WeeklyInspectionCheckData) {
+
         binding.progressHorizontal.max = data.totalCount!!
         totalCountChecks = data.totalCount!!
         listChecks = data.checks
@@ -276,9 +302,9 @@ class WeeklyInspectionForm : Fragment() {
 
 
             if (Build.VERSION.SDK_INT < 21) {
-                CompoundButtonCompat.setButtonTintList(newRadioButton, ColorStateList.valueOf(R.color.colorPrimary));//Use android.support.v4.widget.CompoundButtonCompat when necessary else
+                CompoundButtonCompat.setButtonTintList(newRadioButton, ColorStateList.valueOf(R.color.colorPrimary))//Use android.support.v4.widget.CompoundButtonCompat when necessary else
             } else {
-                newRadioButton.setButtonTintList(ColorStateList.valueOf(R.color.colorPrimary));//setButtonTintList is accessible directly on API>19
+                newRadioButton.buttonTintList = ColorStateList.valueOf(R.color.colorPrimary)//setButtonTintList is accessible directly on API>19
             }
 
             rg.addView(newRadioButton)

@@ -380,7 +380,7 @@ object AFJUtils {
 
         }
         catch (e:Exception){
-            AFJUtils.writeLogs("Date Parsing issuee .....")
+                writeLogs("Date Parsing issuee .....")
 
         }
 
@@ -464,21 +464,21 @@ object AFJUtils {
         deviceData.model = Build.MODEL
         deviceData.androidVersion = Build.VERSION.RELEASE
         deviceData.deviceID = Constants.DEVICE_ID
-/*deviceData.macBluetooth = android.provider.Settings.Secure.getString( view!!.context.contentResolver, "bluetooth_address")
-        val telephonyManager = view!!.context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        deviceData.imeiSim = if (Build.VERSION.SDK_INT >= 26) {
+        /*deviceData.macBluetooth = android.provider.Settings.Secure.getString( view!!.context.contentResolver, "bluetooth_address")
+                val telephonyManager = view!!.context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                deviceData.imeiSim = if (Build.VERSION.SDK_INT >= 26) {
 
-               try{
-                   telephonyManager.imei
-               }catch (e :Exception)
-               {
-                   deviceData.deviceID
-               }
+                       try{
+                           telephonyManager.imei
+                       }catch (e :Exception)
+                       {
+                           deviceData.deviceID
+                       }
 
-            } else {
-                telephonyManager.deviceId
-            }
-*/
+                    } else {
+                        telephonyManager.deviceId
+                    }
+        */
 
 
         return deviceData

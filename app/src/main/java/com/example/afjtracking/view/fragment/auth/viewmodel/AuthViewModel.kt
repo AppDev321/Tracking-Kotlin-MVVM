@@ -22,16 +22,13 @@ import java.util.*
 class AuthViewModel : ViewModel() {
     @JvmField
     var EmailAddress = MutableLiveData<String>()
+
     @JvmField
     var Password = MutableLiveData<String>()
 
 
-
-
-
     private val _dialogShow = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _dialogShow
-
 
 
     private var userMutableLiveData: MutableLiveData<LoginRequest>? = null
@@ -67,55 +64,9 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun onClick(view: View?) {
-        val loginUser = LoginRequest(
-            EmailAddress.value.toString(),
-            Password.value.toString(),""
-        )
-
-        userMutableLiveData!!.postValue(loginUser)
-    }
-
-    fun getFuelFormRequest(context: Context?) {
-        getInstance(context)
-        _dialogShow.postValue(true)
-        apiInterface!!.getFuelForm()
-            .enqueue(object : Callback<GetFuelFormResponse?> {
-                override fun onResponse(
-                    call: Call<GetFuelFormResponse?>,
-                    response: Response<GetFuelFormResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-
-
-                        } else {
-
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-                                
-                                """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                         mErrorsMsg!!.postValue(response.errorBody().toString())
-                    }
-                }
-
-                override fun onFailure(call: Call<GetFuelFormResponse?>, t: Throwable) {
-                    val exception = t.toString()
-                     mErrorsMsg!!.postValue(exception)
-
-                }
-            })
-
-    }
-
-
+   fun onLoginAuthClick(view:View)
+    {}
 }
+
 
 data class QRFireDatabase(val deviceId:String?="", val status:Boolean?=false, val expiresAt: String?="", val data:Data?=Data() )

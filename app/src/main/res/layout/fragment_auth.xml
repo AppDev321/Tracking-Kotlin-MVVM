@@ -178,7 +178,7 @@
             android:backgroundTint="@color/colorPrimary"
             android:elevation="15dp"
             android:id="@+id/loginBtn"
-            android:onClick="@{(v) -> authmodel.onClick(v)}"
+            android:onClick="@{(v) -> authmodel.onLoginAuthClick(v)}"
             android:text="Login"
             android:textColor="@color/white"
             android:textSize="@dimen/text_body_normal_size" />

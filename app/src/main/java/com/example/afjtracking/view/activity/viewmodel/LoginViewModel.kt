@@ -9,10 +9,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.afjtracking.databinding.FragmentDeviceFormBinding
 import com.example.afjtracking.model.requests.LoginRequest
+import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.model.responses.LoginResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceReponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -113,48 +116,40 @@ fun onRetryClick(view:View)
 
     fun loginApiRequest(request: LoginRequest?, context: Context?) {
         getInstance(context)
-        apiInterface!!.getVehicleData(request).enqueue(object : Callback<LoginResponse?> {
-                override fun onResponse(
-                    call: Call<LoginResponse?>,
+        apiInterface!!.getVehicleData(request).enqueue(object : SuccessCallback<LoginResponse?>() {
+                override fun onSuccess(
                     response: Response<LoginResponse?>
                 ) {
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                           // mUserToken!!.postValue(response.body()!!.data!!.token!!)
-                            mUserToken!!.postValue("0")
-                            //Save vehicle object
-                            AFJUtils.saveObjectPref(
-                                context!!,
-                                AFJUtils.KEY_VEHICLE_DETAIL,
-                                response.body()!!.data!!.vehicle
-                            )
+                    super.onSuccess(response)
+                    // mUserToken!!.postValue(response.body()!!.data!!.token!!)
+                    mUserToken!!.postValue("0")
+                    //Save vehicle object
+                    AFJUtils.saveObjectPref(
+                        context!!,
+                        AFJUtils.KEY_VEHICLE_DETAIL,
+                        response.body()!!.data!!.vehicle
+                    )
+                    //Save User object
+                    AFJUtils.saveObjectPref(
+                        context,
+                        AFJUtils.KEY_USER_DETAIL,
+                        response.body()!!.data!!.user
+                    )
 
-
-                            //Save User object
-                            AFJUtils.saveObjectPref(
-                                context!!,
-                                AFJUtils.KEY_USER_DETAIL,
-                                response.body()!!.data!!.user
-                            )
-
-
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-                                
-                                """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-                    }
                 }
+                override fun onFailure(response: Response<LoginResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
 
-                override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
-                    mErrorsMsg!!.postValue(t.toString())
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
+                override fun onAPIError(error: String) {
+                    mErrorsMsg!!.postValue(error)
                 }
             })
     }

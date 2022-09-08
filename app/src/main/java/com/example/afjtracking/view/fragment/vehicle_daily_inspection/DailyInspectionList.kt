@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentWeeklyInspectionListBinding
 import com.example.afjtracking.model.responses.Inspections
+import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.DailyInspectionAdapter
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
 
 class DailyInspectionList : Fragment() {
@@ -35,19 +37,22 @@ class DailyInspectionList : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val dailyInspectionViewModel = ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
+        val dailyInspectionViewModel =
+            ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
 
         _binding = FragmentWeeklyInspectionListBinding.inflate(inflater, container, false)
         val root: View = binding.root
         binding.btnAddInspection.visibility = View.GONE
-
+        binding.baseLayout.visibility = View.VISIBLE
         root.hideKeyboard()
+        dailyInspectionViewModel.getDailyInspectionList(mBaseActivity)
+
 
         dailyInspectionViewModel.showDialog.observe(viewLifecycleOwner) {
             mBaseActivity.showProgressDialog(it)
         }
 
-        dailyInspectionViewModel.getDailyInspectionList(mBaseActivity)
+
 
         dailyInspectionViewModel.getInspectionList.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -57,7 +62,8 @@ class DailyInspectionList : Fragment() {
                         adapter.setListnerClick(object :
                             DailyInspectionAdapter.ClickWeeklyInspectionListner {
                             override fun handleContinueButtonClick(data: Inspections) {
-                                val bundle = bundleOf(InspectionReviewFragment.argumentParams to data.id)
+                                val bundle =
+                                    bundleOf(InspectionReviewFragment.argumentParams to data.id)
 
                                 mBaseActivity.moveFragmentToNextFragment(
                                     binding.root,
@@ -73,9 +79,7 @@ class DailyInspectionList : Fragment() {
                         binding.txtNoData.visibility = View.GONE
                         binding.recWeeklyInspectionList.visibility = View.VISIBLE
 
-                    }
-                    else
-                    {
+                    } else {
                         binding.txtNoData.visibility = View.VISIBLE
                         binding.recWeeklyInspectionList.visibility = View.GONE
                     }
@@ -101,11 +105,10 @@ class DailyInspectionList : Fragment() {
         }
 
         dailyInspectionViewModel.errorsMsg.observe(mBaseActivity) {
-            if(it != null) {
+            if (it != null) {
                 mBaseActivity.toast(it)
                 dailyInspectionViewModel.errorsMsg.value = null
             }
-
         }
 
         binding.btnAddInspection.setOnClickListener {

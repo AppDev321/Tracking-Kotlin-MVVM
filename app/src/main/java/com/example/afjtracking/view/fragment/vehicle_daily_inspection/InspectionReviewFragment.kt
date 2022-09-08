@@ -18,7 +18,10 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.utils.InputFilterMinMax
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
+
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
+import kotlinx.android.synthetic.main.fragment_daily_inpsection_form.view.*
 
 
 class InspectionReviewFragment : Fragment() {
@@ -30,7 +33,7 @@ class InspectionReviewFragment : Fragment() {
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
     var checkIndex: Int = 0
-    var inpsectionTypeIndex = 0;
+    var inpsectionTypeIndex = 0
     var previousCounter = 0
     var isPreviousClicked= false
 
@@ -56,17 +59,30 @@ class InspectionReviewFragment : Fragment() {
     ): View {
 
         dailyInspectionViewModel=  ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
-
         _binding = FragmentDailyInpsectionFormBinding.inflate(inflater, container, false)
-
-
         val root: View = binding.root
         root.hideKeyboard()
         try {
-
             val inspectionID= arguments?.getInt(argumentParams)!!
 
-            dailyInspectionViewModel.getDailyInspectionReview(mBaseActivity,inspectionID)
+            binding.baseLayout.visibility = View.GONE
+            val authView = CustomAuthenticationView(requireContext())
+            binding.mainLayout.addView(authView)
+            authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+                override fun onAuthCompletionListener(boolean: Boolean) {
+                    if (_binding == null)
+                        return
+                    if (boolean) {
+                        binding.mainLayout.removeAllViews()
+                        binding.mainLayout.addView(binding.baseLayout)
+                        binding.baseLayout.visibility = View.VISIBLE
+                        dailyInspectionViewModel.getDailyInspectionReview(mBaseActivity,inspectionID)
+                    } else {
+                        binding.mainLayout.removeAllViews()
+                        binding.mainLayout.addView(authView)
+                    }
+                }
+            })
 
 
 
@@ -76,7 +92,6 @@ class InspectionReviewFragment : Fragment() {
 
 
 
-            root.hideKeyboard()
             dailyInspectionViewModel.showDialog.observe(mBaseActivity) {
                 mBaseActivity.showProgressDialog(it)
             }
@@ -203,22 +218,22 @@ class InspectionReviewFragment : Fragment() {
             val solvedInspection = view.checkList!!.savedInspection
 
             solvedInspection!!.checked  =  view.checkbox.isChecked
-            solvedInspection!!.issueCheck = view.issueCheck.isChecked
+            solvedInspection.issueCheck = view.issueCheck.isChecked
 
             //***** Saved Inspection Data*******
-            solvedInspection!!.wornRefit = view.edWorn.text.toString()
+            solvedInspection.wornRefit = view.edWorn.text.toString()
 
-            if(solvedInspection!!.issueCheck == true && solvedInspection!!.wornRefit!!.isEmpty())
+            if(solvedInspection.issueCheck == true && solvedInspection.wornRefit!!.isEmpty())
             {
                  mBaseActivity.showSnackMessage("Please enter details of issue",binding.root)
             }
             else {
 
-                solvedInspection!!.fleetNo = view.edFleetId.text.toString()
-                solvedInspection!!.quantity = view.edQuantity.text.toString()
-                solvedInspection!!.quantityOnVehicle = view.edQuantityVehicle.text.toString()
+                solvedInspection.fleetNo = view.edFleetId.text.toString()
+                solvedInspection.quantity = view.edQuantity.text.toString()
+                solvedInspection.quantityOnVehicle = view.edQuantityVehicle.text.toString()
                 if (check.type!!.contains("quantity")) {
-                    solvedInspection!!.quantityRequired = check.data
+                    solvedInspection.quantityRequired = check.data
                 }
 
                 check.savedInspection = solvedInspection

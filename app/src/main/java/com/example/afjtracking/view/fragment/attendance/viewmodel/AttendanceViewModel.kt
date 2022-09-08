@@ -12,10 +12,15 @@ import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.utils.AFJUtils
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,43 +67,32 @@ class AttendanceViewModel : ViewModel() {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.getQRCode(request)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
-                    response: Response<LocationResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-
-                            val res = AttendanceReponse(
-                                response.body()!!.data!!.attendanceCode!!,
-                                response.body()!!.data!!.expireCodeSecond!!
-                            )
-
-                            _attendanceResponse.postValue(res)
-
-                        } else {
-
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-                                
-                                """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-                    }
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
                 }
+                override fun onSuccess(response: Response<LocationResponse?>) {
+                    super.onSuccess(response)
+                    val res = AttendanceReponse(
+                        response.body()!!.data!!.attendanceCode!!,
+                        response.body()!!.data!!.expireCodeSecond!!
+                    )
+                    _attendanceResponse.postValue(res)
+                }
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors!![i].message}
 
-                override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                    val exception = t.toString()
-                    mErrorsMsg!!.postValue(exception)
-
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
+                override fun onAPIError(error: String) {
+                    mErrorsMsg!!.postValue(error)
 
                 }
             })
@@ -106,14 +100,10 @@ class AttendanceViewModel : ViewModel() {
     }
 
 
-
-
     fun getQrCodeBitmap(text: String, context: AppCompatActivity, callback: QRImageCallback?) {
 
         context.runOnUiThread{
                 try {
-
-
                     val size = 512 //pixels
                     val qrCodeContent = text
                     val hints =
@@ -142,11 +132,50 @@ class AttendanceViewModel : ViewModel() {
 
                     callback?.onRendered(qrBitmap)
 
+
                 } catch (e: Exception) {
                     callback?.onError(e)
                 }
 
             }
+
+    }
+    fun getQrCodeBitmap(text: String, context: AppCompatActivity):Bitmap? {
+            try {
+                val size = 512 //pixels
+                val qrCodeContent = text
+                val hints =
+                    hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 }
+                // Make the QR code buffer border narrower
+                val bits =
+                    QRCodeWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, size, size)
+
+                var qrBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
+                    for (x in 0 until size) {
+                        for (y in 0 until size) {
+                            it.setPixel(
+                                x,
+                                y,
+                                if (bits[x, y]) context.resources.getColor(R.color.colorPrimary) else context.resources.getColor(
+                                    R.color.all_app_bg
+                                )
+                            )
+                        }
+                    }
+                }
+                //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
+                //  myLogo= getResizedBitmap(myLogo,80)
+                //  return mergeBitmaps(qrBitmap, myLogo)
+
+
+           return  qrBitmap
+
+
+            } catch (e: Exception) {
+                return  null
+            }
+
+
 
     }
 
@@ -178,6 +207,7 @@ class AttendanceViewModel : ViewModel() {
         }
         return Bitmap.createScaledBitmap(image, width, height, true)
     }
+
 
 }
 

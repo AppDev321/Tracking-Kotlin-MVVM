@@ -31,6 +31,7 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.ImageFormAdapter
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
@@ -101,15 +102,29 @@ class DailyInspectionForm : Fragment() {
 
         val root: View = binding.root
         txtErrorMsg = binding.txtErrorMsg
+        binding.baseLayout.visibility = View.GONE
 
+         val authView = CustomAuthenticationView(requireContext())
+        binding.root.addView(authView)
+        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            override fun onAuthCompletionListener(boolean: Boolean) {
+                if (_binding == null)
+                    return
+                if (boolean) {
+                    binding.root.removeAllViews()
+                     binding.root.addView(binding.baseLayout)
+                    binding.baseLayout.visibility = View.VISIBLE
+                    inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
+                } else {
+                    binding.root.removeAllViews()
+                    binding.root.addView(authView)
+                }
+            }
+        })
 
         inspectionViewModel.showDialog.observe(mBaseActivity) {
             mBaseActivity.showProgressDialog(it)
         }
-
-
-        inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
-
 
         inspectionViewModel.inspectionChecksData.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -139,7 +154,7 @@ class DailyInspectionForm : Fragment() {
                 mBaseActivity.showProgressDialog(false)
                 binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
-                binding.layoutCreateInspection.visibility = View.GONE
+                binding.baseLayout.visibility = View.GONE
                 inspectionViewModel.errorsMsg.value = null
             }
         })
@@ -158,7 +173,7 @@ class DailyInspectionForm : Fragment() {
         ) inpsecitonData.psvForm else inpsecitonData.ptsForm
 
 
-        binding.layoutCreateInspection.visibility = View.VISIBLE
+        binding.baseLayout.visibility = View.VISIBLE
         binding.txtErrorMsg.visibility = View.GONE
 
         binding.txtInspectionTitle.text =
@@ -168,7 +183,7 @@ class DailyInspectionForm : Fragment() {
         lastOdoReading =   if(odoReading!!.isEmpty()) 0 else odoReading.toInt()
         odoReadingError= "Cannot less than previous reading $lastOdoReading"
 
-        for (i in data!!.indices) {
+        for (i in data.indices) {
             val formData = data[i]
             try {
                 createViewChecks(formData.type!!.uppercase(), formData, i)
@@ -290,34 +305,31 @@ class DailyInspectionForm : Fragment() {
                 val dataStore = StoreFormData(inputText, formData)
 
 
-                dataStore.editText!!.setOnFocusChangeListener(object : View.OnFocusChangeListener {
-                    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                        if(!hasFocus)
-                        {
-                            val s =  dataStore.formData!!.value
-                            if (formData.title!!.lowercase().contains("odometer")) {
-                                if (!s.toString().isEmpty()) {
-                                    val reading = Integer.parseInt(s.toString())
-                                    if (reading < lastOdoReading) {
-                                        mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-                                        dataStore.editText!!.error=  odoReadingError
-                                        isOdoMeterErrorFound  = true
-                                    }
-                                    else
-                                    {
-                                        isOdoMeterErrorFound  = false
-                                        dataStore.editText!!.setError(null)
-                                        lastOdoReading = dataStore.formData!!.value!!.toInt()
-                                    }
-                                }
-                            }
-                        }
-                    }
+               dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
+                   override fun onFocusChange(v: View?, hasFocus: Boolean) {
+                       if(!hasFocus) {
+                           val s =  dataStore.formData!!.value
+                           if (formData.title!!.lowercase().contains("odometer")) {
+                               if (!s.toString().isEmpty()) {
+                                   val reading = Integer.parseInt(s.toString())
+                                   if (reading < lastOdoReading) {
+                                       mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
+                                       dataStore.editText.error=  odoReadingError
+                                       isOdoMeterErrorFound  = true
+                                   } else {
+                                       isOdoMeterErrorFound  = false
+                                       dataStore.editText.error = null
+                                       lastOdoReading = dataStore.formData!!.value!!.toInt()
+                                   }
+                               }
+                           }
+                       }
+                   }
 
-                })
+               }
 
 
-                dataStore.editText!!.addTextChangedListener(object : TextWatcher {
+                dataStore.editText.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable) {
                             dataStore.formData!!.value = s.toString()
                     }
@@ -331,19 +343,19 @@ class DailyInspectionForm : Fragment() {
                         before: Int, count: Int
                     ) {
 
-                        val enterDetail = dataStore.editText!!.text.toString()
+                        val enterDetail = dataStore.editText.text.toString()
                         if (formData.title!!.lowercase().contains("odometer")) {
                             if (!enterDetail.isEmpty()) {
                                 val reading = Integer.parseInt(   enterDetail)
                                 if (reading < lastOdoReading) {
                                     mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-                                    dataStore.editText!!.error=  odoReadingError
+                                    dataStore.editText.error=  odoReadingError
                                     isOdoMeterErrorFound  = true
                                 }
                                 else
                                 {
                                     isOdoMeterErrorFound  = false
-                                    dataStore.editText!!.setError(null)
+                                    dataStore.editText.error = null
                                     dataStore.formData!!.value = enterDetail
                                 }
                             }

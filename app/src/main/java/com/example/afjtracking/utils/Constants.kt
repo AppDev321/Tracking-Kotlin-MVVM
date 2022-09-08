@@ -3,11 +3,11 @@ package com.example.afjtracking.utils
 import java.util.concurrent.TimeUnit
 
 object Constants {
-    const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
-  const val FAILED_API_TAG = "vmi808920.contaboserver.net"
+  //  const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
+  //const val FAILED_API_TAG = "vmi808920.contaboserver.net"
 
-   // const val BASE_URL ="http://192.168.1.21:8000/api/"
-  // const val FAILED_API_TAG = "192.168.1.21:8000"
+    const val BASE_URL ="http://192.168.1.6/api/"
+   const val FAILED_API_TAG = "192.168.1.6"
 
     const val WORKER_SERVICE_TIME: Long = 15
     val TIME_WORKER_SERVICE_UNIT = TimeUnit.MINUTES
@@ -29,6 +29,7 @@ object Constants {
 
     const val dateFormat = "yyyy-MM-dd"
     const val dateTimeFromat = "$dateFormat hh:mm"
+    const val dateTimeSecFromat = "$dateFormat hh:mm:ss"
     const val dateTime12HourFromat = "$dateFormat hh:mm aa"
     const val dateTimeSec12HourFromat = "$dateFormat hh:mm:ss aa"
 

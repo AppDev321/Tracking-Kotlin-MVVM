@@ -81,12 +81,6 @@ class TrackingFragment : Fragment() {
         mBaseActivity = context as NavigationDrawerActivity
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -325,11 +319,6 @@ class TrackingFragment : Fragment() {
         )
     }
 
-    override fun onPause() {
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver);
-        super.onPause()
-    }
-
     override fun onStop() {
         if (mBound) {
 
@@ -435,11 +424,12 @@ class TrackingFragment : Fragment() {
                 else {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     if (trackingViewModel != null) {
-
+                        AFJUtils.writeLogs("Location API: null ni hon")
                         trackingViewModel.postLocationData(request, context)
                     } else {
                         _trackingViewModel =
                             ViewModelProvider(context as ViewModelStoreOwner).get(TrackingViewModel::class.java)
+                        AFJUtils.writeLogs("Location API: null hon ma")
                         trackingViewModel.postLocationData(request, context)
                     }
                }

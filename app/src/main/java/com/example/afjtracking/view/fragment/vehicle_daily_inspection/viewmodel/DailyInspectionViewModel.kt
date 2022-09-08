@@ -10,12 +10,12 @@ import com.example.afjtracking.model.requests.SingleInspectionRequest
 import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.room.model.TableAPIData
 import com.example.afjtracking.room.repository.ApiDataRepo
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 
 
@@ -41,15 +41,14 @@ class DailyInspectionViewModel : ViewModel() {
     val apiUploadStatus: LiveData<Boolean> = _dataUploaded
 
 
-
     val _inspections = MutableLiveData<List<Inspections>>()
-    val getInspectionList: LiveData<List<Inspections> > = _inspections
+    val getInspectionList: LiveData<List<Inspections>> = _inspections
 
-    val _inspectionReviewData  = MutableLiveData<InspectionReviewData>()
-    val getInspectionReviewData : LiveData<InspectionReviewData> = _inspectionReviewData
+    val _inspectionReviewData = MutableLiveData<InspectionReviewData>()
+    val getInspectionReviewData: LiveData<InspectionReviewData> = _inspectionReviewData
 
-    private var startPage= 0
-    private var limit =10
+    private var startPage = 0
+    private var limit = 10
 
 
     var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -76,193 +75,179 @@ class DailyInspectionViewModel : ViewModel() {
     }
 
 
-    fun getDailyInspectionList(context: Context){
-       var body = DailyInspectionListRequest(startPage,limit)
-                getInstance(context)
-                _dialogShow.postValue(true)
-                apiInterface!!.getDailyInspectionList(body)
-                    .enqueue(object : Callback<GetDailyInspectionList?> {
-                        override fun onResponse(
-                            call: Call<GetDailyInspectionList?>,
-                            response: Response<GetDailyInspectionList?>
-                        ) {
-                            _dialogShow.postValue(false)
-                            if (response.body() != null) {
-                                var apiTableAPIData = TableAPIData(
-                                    apiName = Constants.DAILY_INSPECTION_LIST,
-                                    apiPostData = "",
-                                    apiPostResponse = "",
-                                    apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
-                                    apiError = "",
-                                    apiRequest = AFJUtils.getCurrentDateTime(),
-                                    apiRetryCount = 0,
-                                    lastTimeApiError = "",
-                                    apiRequestTime = "",
-                                    apiResponseTime = "",
-                                    errorPosted = "0"
+    fun getDailyInspectionList(context: Context) {
+        var body = DailyInspectionListRequest(startPage, limit, deviceDetail = AFJUtils.getDeviceDetail())
+        getInstance(context)
+        _dialogShow.postValue(true)
+        apiInterface!!.getDailyInspectionList(body)
+            .enqueue(object : SuccessCallback<GetDailyInspectionList?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
 
-                                )
-                                ApiDataRepo.insertData(context, apiTableAPIData)
+                override fun onSuccess(
+                    response: Response<GetDailyInspectionList?>
+                ) {
+                    super.onSuccess(response)
+                    var apiTableAPIData = TableAPIData(
+                        apiName = Constants.DAILY_INSPECTION_LIST,
+                        apiPostData = "",
+                        apiPostResponse = "",
+                        apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
+                        apiError = "",
+                        apiRequest = AFJUtils.getCurrentDateTime(),
+                        apiRetryCount = 0,
+                        lastTimeApiError = "",
+                        apiRequestTime = "",
+                        apiResponseTime = "",
+                        errorPosted = "0"
+                    )
+                    ApiDataRepo.insertData(context, apiTableAPIData)
+                    val res = response.body()!!.data!!
 
-                                if (response.body()!!.code == 200) {
-                                    val res = response.body()!!.data!!
+                    _inspections.postValue(res.inspections)
+                    _vehicleInfo.postValue(res.vehicle!!)
+                }
 
-                                    _inspections.postValue(res.inspections!!)
-                                    _vehicleInfo.postValue(res.vehicle!!)
-
-                                } else {
-                                    var errors = ""
-                                    for (i in response.body()!!.errors.indices) {
-                                        errors = """
+                override fun onFailure(response: Response<GetDailyInspectionList?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
                                         $errors${response.body()!!.errors[i].message}
                                         
                                         """.trimIndent()
-                                    }
-                                    mErrorsMsg!!.postValue(errors)
-                                }
-                            } else {
-                                mErrorsMsg!!.postValue(response.errorBody().toString())
-                            }
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
 
-                        }
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
 
-                        override fun onFailure(
-                            call: Call<GetDailyInspectionList?>,
-                            t: Throwable
-                        ) {
-                            val exception = t.toString()
-                            _dialogShow.postValue(false)
 
-                            if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
-                                fetchDataFromDBDailyInspection(context!!)
-                            } else {
-                                mErrorsMsg!!.postValue(exception)
-                            }
-                        }
-                    })
+                    val exception = error
+                    _dialogShow.postValue(false)
+
+                    if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
+                        fetchDataFromDBDailyInspection(context)
+                    } else {
+                        mErrorsMsg!!.postValue(exception)
+                    }
+
+                }
+
+
+            })
     }
 
 
-    fun getDailyInspectionReview(context: Context,id :Int){
+    fun getDailyInspectionReview(context: Context, id: Int) {
         var body = SingleInspectionRequest(dailyInspectionId = id.toString())
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.getDailyInspectionReview(body)
-            .enqueue(object : Callback<GetDailyInspectionReview?> {
-                override fun onResponse(
-                    call: Call<GetDailyInspectionReview?>,
+            .enqueue(object : SuccessCallback<GetDailyInspectionReview?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+
+                override fun onSuccess(
+
                     response: Response<GetDailyInspectionReview?>
                 ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
+                    super.onSuccess(response)
+                    val res = response.body()!!.data!!
+                    _inspectionReviewData.postValue(res)
+                }
 
-                        if (response.body()!!.code == 200) {
-                            val res = response.body()!!.data!!
-                            _inspectionReviewData.postValue(res)
-
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors.indices) {
-                                errors = """
+                override fun onFailure(response: Response<GetDailyInspectionReview?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
                                         $errors${response.body()!!.errors[i].message}
                                         
                                         """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
                     }
-
+                    mErrorsMsg!!.postValue(errors)
                 }
 
-                override fun onFailure(
-                    call: Call<GetDailyInspectionReview?>,
-                    t: Throwable
-                ) {
-                    val exception = t.toString()
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
                     _dialogShow.postValue(false)
                     mErrorsMsg!!.postValue(exception)
-
                 }
+
             })
     }
 
-    fun getDailyVehicleInspectionCheckList(context: Context?){
+    fun getDailyVehicleInspectionCheckList(context: Context?) {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.getVehicleDailyInspectionCheckList()
-            .enqueue(object : Callback<GetDailInspectionCheckListResponse?> {
-                override fun onResponse(
-                    call: Call<GetDailInspectionCheckListResponse?>,
-                    response: Response<GetDailInspectionCheckListResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-
-
-                        if (response.body()!!.code == 200) {
-
-
-                            var apiTableAPIData = TableAPIData(
-                                apiName = Constants.DAILY_INSPECTION_CHECKS,
-                                apiPostData = "",
-                                apiPostResponse = "",
-                                apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
-                                apiError = "",
-                                apiRequest = AFJUtils.getCurrentDateTime(),
-                                apiRetryCount = 0,
-                                lastTimeApiError = "",
-                                apiRequestTime = "",
-                                apiResponseTime = "",
-                                errorPosted = "0"
-
-                            )
-                            ApiDataRepo.insertData(context!!, apiTableAPIData)
-
-
-
-
-                            val resp = response.body()!!.data!!
-                            _vehicleInfo.postValue(resp.vehicle!!)
-                            _inspectionData.postValue(resp)
-
-                            if (resp.ptsChecks.size > 0) {
-
-                                _vehicleClassChecks.postValue(resp.ptsChecks)
-                            } else if (resp.psvChecks.size > 0) {
-                                _checkedClass.postValue(resp.psvChecks)
-
-                            }
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-                                
-                                """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-                    }
-
+            .enqueue(object : SuccessCallback<GetDailInspectionCheckListResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
                 }
 
-                override fun onFailure(
-                    call: Call<GetDailInspectionCheckListResponse?>,
-                    t: Throwable
+                override fun onSuccess(
+
+                    response: Response<GetDailInspectionCheckListResponse?>
                 ) {
-                    val exception = t.toString()
-                    _dialogShow.postValue(false)
-                   // mErrorsMsg!!.postValue(exception)
+
+
+                    var apiTableAPIData = TableAPIData(
+                        apiName = Constants.DAILY_INSPECTION_CHECKS,
+                        apiPostData = "",
+                        apiPostResponse = "",
+                        apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
+                        apiError = "",
+                        apiRequest = AFJUtils.getCurrentDateTime(),
+                        apiRetryCount = 0,
+                        lastTimeApiError = "",
+                        apiRequestTime = "",
+                        apiResponseTime = "",
+                        errorPosted = "0"
+
+                    )
+                    ApiDataRepo.insertData(context!!, apiTableAPIData)
+                    val resp = response.body()!!.data!!
+                    _vehicleInfo.postValue(resp.vehicle!!)
+                    _inspectionData.postValue(resp)
+                    if (resp.ptsChecks.size > 0) {
+                        _vehicleClassChecks.postValue(resp.ptsChecks)
+                    } else if (resp.psvChecks.size > 0) {
+                        _checkedClass.postValue(resp.psvChecks)
+                    }
+                }
+
+                override fun onFailure(response: Response<GetDailInspectionCheckListResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
+                                
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
+
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
                     if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
                         fetchDataFromDBLastStore(context!!)
                     } else {
                         mErrorsMsg!!.postValue(exception)
                     }
                 }
+
+
             })
 
     }
@@ -271,11 +256,13 @@ class DailyInspectionViewModel : ViewModel() {
 
         ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_CHECKS).observeForever {
             if (it != null) {
-                val response = AFJUtils.convertStringToObject(it.apiGetResponse,GetDailInspectionCheckListResponse::class.java)
-
-                if (response!!.code == 200) {
-                    val resp = response!!.data!!
-                        _inspectionData.postValue(resp)
+                val response = AFJUtils.convertStringToObject(
+                    it.apiGetResponse,
+                    GetDailInspectionCheckListResponse::class.java
+                )
+                if (response.code == 200) {
+                    val resp = response.data!!
+                    _inspectionData.postValue(resp)
                     _vehicleInfo.postValue(resp.vehicle!!)
                     if (resp.ptsChecks.size > 0) {
                         _vehicleClassChecks.postValue(resp.ptsChecks)
@@ -285,16 +272,15 @@ class DailyInspectionViewModel : ViewModel() {
                 } else {
                     var errors = ""
 
-                    for (i in response!!.errors!!.indices) {
+                    for (i in response.errors.indices) {
                         errors = """
-                                $errors${response!!.errors!![i].message}
+                                $errors${response.errors[i].message}
                                 
                                 """.trimIndent()
                     }
                     mErrorsMsg!!.postValue(errors)
                 }
-            }
-            else{
+            } else {
                 mErrorsMsg!!.postValue("No data found")
             }
         }
@@ -303,175 +289,166 @@ class DailyInspectionViewModel : ViewModel() {
     fun fetchDataFromDBDailyInspection(context: Context) {
         ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_LIST).observeForever {
             if (it != null) {
-                val response = AFJUtils.convertStringToObject(it.apiGetResponse,GetDailyInspectionList::class.java)
-                if (response!!.code == 200) {
-                    val resp = response!!.data!!
-                    _inspections.postValue(resp.inspections!!)
+                val response = AFJUtils.convertStringToObject(
+                    it.apiGetResponse,
+                    GetDailyInspectionList::class.java
+                )
+                if (response.code == 200) {
+                    val resp = response.data!!
+                    _inspections.postValue(resp.inspections)
                     _vehicleInfo.postValue(resp.vehicle!!)
                 } else {
                     var errors = ""
-                    for (i in response!!.errors!!.indices) {
+                    for (i in response.errors.indices) {
                         errors = """
-                                $errors${response!!.errors!![i].message}
+                                $errors${response.errors[i].message}
                                 
                                 """.trimIndent()
                     }
                     mErrorsMsg!!.postValue(errors)
                 }
-            }
-            else{
+            } else {
                 mErrorsMsg!!.postValue("No data found")
             }
         }
     }
 
     fun postInspectionVDI(context: Context, body: InspectionCheckData) {
-            getInstance(context)
-            _dialogShow.postValue(true)
-            ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_CHECKS)
-                .observeForever {
-                    it.apiPostData = AFJUtils.convertObjectToJson(body)
-                    ApiDataRepo.insertData(context!!, it)
+        getInstance(context)
+        _dialogShow.postValue(true)
+        ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_CHECKS)
+            .observeForever {
+                it.apiPostData = AFJUtils.convertObjectToJson(body)
+                ApiDataRepo.insertData(context, it)
+            }
+        apiInterface!!.postVehicleDailyInspection(body)
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
                 }
-            apiInterface!!.postVehicleDailyInspection(body)
-                .enqueue(object : Callback<LocationResponse?> {
-                    override fun onResponse(
-                        call: Call<LocationResponse?>,
-                        response: Response<LocationResponse?>
-                    ) {
-                        _dialogShow.postValue(false)
-                        if (response.body() != null) {
-                            if (response.body()!!.code == 200) {
-                                _dataUploaded.postValue(true)
-                                val liveData = ApiDataRepo.getApiSingleData(
-                                    context,
-                                    Constants.DAILY_INSPECTION_CHECKS
-                                )
-                                liveData.observe(context as AppCompatActivity) {
-                                    it.apiStatus = 1
-                                    it.apiPostResponse = response.body()!!.data!!.message!!
-                                    ApiDataRepo.updateApiData(context!!, it)
-                                    liveData.removeObservers(context as AppCompatActivity)
-                                }
-                            } else {
-                                _dataUploaded.postValue(false)
-                                var errors = ""
 
-                                for (i in response.body()!!.errors!!.indices) {
-                                    errors = """
+                override fun onSuccess(
+
+                    response: Response<LocationResponse?>
+                ) {
+
+
+                    _dataUploaded.postValue(true)
+                    val liveData = ApiDataRepo.getApiSingleData(
+                        context,
+                        Constants.DAILY_INSPECTION_CHECKS
+                    )
+                    liveData.observe(context as AppCompatActivity) {
+                        it.apiStatus = 1
+                        it.apiPostResponse = response.body()!!.data!!.message!!
+                        ApiDataRepo.updateApiData(context, it)
+                        liveData.removeObservers(context)
+                    }
+
+                }
+
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+
+                    var errors = ""
+
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                                }
-                                mErrorsMsg!!.postValue(errors)
+                    }
+                    mErrorsMsg!!.postValue(errors)
 
 
-                                val liveData = ApiDataRepo.getApiSingleData(
-                                    context,
-                                    Constants.DAILY_INSPECTION_CHECKS
-                                )
-                                liveData.observe(context as AppCompatActivity) {
-                                    it.apiStatus = 0
-                                    it.apiError = errors
-                                    it.apiRetryCount = it.apiRetryCount + 1
-                                    it.lastTimeApiError = AFJUtils.getCurrentDateTime()
-                                    ApiDataRepo.updateApiData(context!!, it)
+                    val liveData = ApiDataRepo.getApiSingleData(
+                        context,
+                        Constants.DAILY_INSPECTION_CHECKS
+                    )
+                    liveData.observe(context as AppCompatActivity) {
+                        it.apiStatus = 0
+                        it.apiError = errors
+                        it.apiRetryCount = it.apiRetryCount + 1
+                        it.lastTimeApiError = AFJUtils.getCurrentDateTime()
+                        ApiDataRepo.updateApiData(context, it)
 
-                                    liveData.removeObservers(context as AppCompatActivity)
-                                }
-
-                            }
-                        } else {
-                            _dataUploaded.postValue(false)
-                            mErrorsMsg!!.postValue(response.raw().message)
-
-                            val liveData = ApiDataRepo.getApiSingleData(
-                                context,
-                                Constants.DAILY_INSPECTION_CHECKS
-                            )
-                            liveData.observe(context as AppCompatActivity) {
-                                it.apiStatus = 0
-                                it.apiError = response.raw().message
-                                it.apiRetryCount = it.apiRetryCount + 1
-                                it.lastTimeApiError = AFJUtils.getCurrentDateTime()
-                                ApiDataRepo.updateApiData(context!!, it)
-                                liveData.removeObservers(context as AppCompatActivity)
-                            }
-                        }
+                        liveData.removeObservers(context)
                     }
 
-                    override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
-                        _dialogShow.postValue(false)
-                        val exception = t.toString()
-                        if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
-                            _dataUploaded.postValue(true)
-                        } else {
-                            mErrorsMsg!!.postValue(exception)
-                        }
-                        val liveData =
-                            ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_CHECKS)
-                        liveData.observe(context as AppCompatActivity) {
-                            it.apiStatus = 0
-                            it.apiRetryCount = it.apiRetryCount + 1
-                            it.apiError = t.toString()
-                            it.lastTimeApiError = AFJUtils.getCurrentDateTime()
-                            ApiDataRepo.updateApiData(context!!, it)
+                }
 
-                            liveData.removeObservers(context as AppCompatActivity)
-                        }
-
-                    }
-                })
-
-        }
-
-
-
-    fun postChecksInspection(context: Context, body: InspectionReviewData) {
-        getInstance(context)
-        _dialogShow.postValue(true)
-        apiInterface!!.postReviewInspectionChecks(body)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
-                    response: Response<LocationResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-                        if (response.body()!!.code == 200) {
-                            _dataUploaded.postValue(true)
-
-                        } else {
-                            _dataUploaded.postValue(false)
-                            var errors = ""
-
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-
-                                """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-
-                        }
+                override fun onAPIError(error: String) {
+                    val exception = error
+                    if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
+                        _dataUploaded.postValue(true)
                     } else {
-                        mErrorsMsg!!.postValue(response.raw().message)
-                        _dataUploaded.postValue(false)
-
+                        mErrorsMsg!!.postValue(exception)
+                    }
+                    val liveData =
+                        ApiDataRepo.getApiSingleData(context, Constants.DAILY_INSPECTION_CHECKS)
+                    liveData.observe(context as AppCompatActivity) {
+                        it.apiStatus = 0
+                        it.apiRetryCount = it.apiRetryCount + 1
+                        it.apiError = error
+                        it.lastTimeApiError = AFJUtils.getCurrentDateTime()
+                        ApiDataRepo.updateApiData(context, it)
+                        liveData.removeObservers(context)
                     }
                 }
 
                 override fun onFailure(call: Call<LocationResponse?>, t: Throwable) {
                     _dialogShow.postValue(false)
-                    val exception = t.toString()
-                    mErrorsMsg!!.postValue(exception)
-                    _dataUploaded.postValue(false)
+
 
                 }
             })
 
     }
 
+
+    fun postChecksInspection(context: Context, body: InspectionReviewData) {
+        getInstance(context)
+        _dialogShow.postValue(true)
+        apiInterface!!.postReviewInspectionChecks(body)
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+
+                override fun onSuccess(
+
+                    response: Response<LocationResponse?>
+                ) {
+                    super.onSuccess(response)
+                    _dataUploaded.postValue(true)
+                }
+
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors!![i].message}
+
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
+
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
+                    mErrorsMsg!!.postValue(exception)
+                    _dataUploaded.postValue(false)
+                }
+
+
+            })
+
+    }
 
 
 }

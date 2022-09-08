@@ -11,6 +11,7 @@ import com.example.afjtracking.model.requests.WeeklyVehicleInspectionRequest
 import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
+import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.room.model.TableAPIData
 import com.example.afjtracking.room.repository.ApiDataRepo
 import com.example.afjtracking.utils.AFJUtils
@@ -35,11 +36,10 @@ class WeeklyInspectionViewModel : ViewModel() {
     val apiHasData: LiveData<Boolean> = _hasData
 
 
-
-     val _weeklyInspectionCheck = MutableLiveData<WeeklyInspectionCheckData>()
+    val _weeklyInspectionCheck = MutableLiveData<WeeklyInspectionCheckData>()
     val weeklyInspectionCheck: LiveData<WeeklyInspectionCheckData> = _weeklyInspectionCheck
 
-     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
+    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
     val errorsMsg: MutableLiveData<String>
         get() {
             if (mErrorsMsg == null) {
@@ -63,75 +63,67 @@ class WeeklyInspectionViewModel : ViewModel() {
     }
 
 
-    fun getDailyVehicleInspectionCheckList(context: Context?,body: WeeklyVehicleInspectionRequest) {
+    fun getWeeklyVehicleInspectionCheckList(
+        context: Context?,
+        body: WeeklyVehicleInspectionRequest
+    ) {
         _dialogShow.postValue(true)
         getInstance(context)
         apiInterface!!.getWeeklyInspectionList(body)
-            .enqueue(object : Callback<WeeklyInspectionListResponse?> {
-                override fun onResponse(
-                    call: Call<WeeklyInspectionListResponse?>,
-                    response: Response<WeeklyInspectionListResponse?>
-                ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
+            .enqueue(object : SuccessCallback<WeeklyInspectionListResponse?>() {
 
-                        var apiTableAPIData = TableAPIData(
-                            apiName =  Constants.WEEKLY_INSPECTION_CHECKS,
-                            apiPostData = "",
-                            apiPostResponse = "",
-                            apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
-                            apiError = "",
-                            apiRequest = AFJUtils.getCurrentDateTime(),
-                            apiRetryCount = 0,
-                            lastTimeApiError = "",
-                            apiRequestTime = "",
-                            apiResponseTime = "",
-                            errorPosted = "0"
-                        )
-
-                        ApiDataRepo.insertData(context!!, apiTableAPIData)
-
-                        if (response.body()!!.code == 200) {
-                            val resp = response.body()!!.data!!
-                            _vehicleData.postValue(resp.vehicle!!)
-                            _hasData.postValue(true)
-
-                        } else {
-                            var errors = ""
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
-                                
-                                """.trimIndent()
-                            }
-                          //  mErrorsMsg!!.postValue(errors)
-                            _hasData.postValue(false)
-                        }
-                    } else {
-                       // mErrorsMsg!!.postValue(response.errorBody().toString())
-                        _hasData.postValue(false)
-                    }
-
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
                 }
 
-                override fun onFailure(
-                    call: Call<WeeklyInspectionListResponse?>,
-                    t: Throwable
+                override fun onSuccess(
+                    response: Response<WeeklyInspectionListResponse?>
                 ) {
+                    super.onSuccess(response)
+                    var apiTableAPIData = TableAPIData(
+                        apiName = Constants.WEEKLY_INSPECTION_CHECKS,
+                        apiPostData = "",
+                        apiPostResponse = "",
+                        apiGetResponse = AFJUtils.convertObjectToJson(response.body()!!),
+                        apiError = "",
+                        apiRequest = AFJUtils.getCurrentDateTime(),
+                        apiRetryCount = 0,
+                        lastTimeApiError = "",
+                        apiRequestTime = "",
+                        apiResponseTime = "",
+                        errorPosted = "0"
+                    )
+                    ApiDataRepo.insertData(context!!, apiTableAPIData)
+                    val resp = response.body()!!.data!!
+                    _vehicleData.postValue(resp.vehicle!!)
+                    _hasData.postValue(true)
+                }
 
-                    _dialogShow.postValue(false)
-
-                    val exception = t.toString()
-
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    _hasData.postValue(false)
+                    val exception = error
                     if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
-
                         fetchDataFromDBLastStore(context!!)
                     } else {
                         mErrorsMsg!!.postValue(exception)
                         _hasData.postValue(false)
                     }
 
+                }
 
+                override fun onFailure(response: Response<WeeklyInspectionListResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
+                                
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                    _hasData.postValue(false)
                 }
             })
 
@@ -140,20 +132,23 @@ class WeeklyInspectionViewModel : ViewModel() {
 
     fun fetchDataFromDBLastStore(context: Context) {
         //Fetch Data from API
-        ApiDataRepo.getApiSingleData(context, Constants.WEEKLY_INSPECTION_CHECKS).observeForever{
+        ApiDataRepo.getApiSingleData(context, Constants.WEEKLY_INSPECTION_CHECKS).observeForever {
 
-            if(it != null) {
-            val response = AFJUtils.convertStringToObject(it.apiGetResponse,WeeklyInspectionListResponse::class.java)
+            if (it != null) {
+                val response = AFJUtils.convertStringToObject(
+                    it.apiGetResponse,
+                    WeeklyInspectionListResponse::class.java
+                )
 
-                if (response!!.code == 200) {
-                    val resp = response!!.data!!
+                if (response.code == 200) {
+                    val resp = response.data!!
                     _vehicleData.postValue(resp.vehicle!!)
                     _hasData.postValue(true)
                 } else {
                     var errors = ""
-                    for (i in response!!.errors!!.indices) {
+                    for (i in response.errors.indices) {
                         errors = """
-                                $errors${response!!.errors!![i].message}
+                                $errors${response.errors[i].message}
                                 
                                 """.trimIndent()
                     }
@@ -161,9 +156,7 @@ class WeeklyInspectionViewModel : ViewModel() {
 
                     _hasData.postValue(false)
                 }
-            }
-            else
-            {
+            } else {
                 mErrorsMsg!!.postValue("No data found")
                 _hasData.postValue(false)
             }
@@ -172,53 +165,42 @@ class WeeklyInspectionViewModel : ViewModel() {
     }
 
 
-
-    fun createWeeklyInspectionRequest(context: Context?,body: InspectionCreateRequest) {
+    fun createWeeklyInspectionRequest(context: Context?, body: InspectionCreateRequest) {
         _dialogShow.postValue(true)
         getInstance(context)
         apiInterface!!.createWeeklyInspection(body)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+
+                override fun onSuccess(
+
                     response: Response<LocationResponse?>
                 ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
+                    val resp = response.body()!!.data!!
+                    _isCompleted.postValue(true)
+                }
 
-                        if (response.body()!!.code == 200) {
-                            val resp = response.body()!!.data!!
-                            _isCompleted.postValue(true)
-
-                        } else {
-                            var errors = ""
-
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                            _isCompleted.postValue(false)
-
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-                        _isCompleted.postValue(false)
-
                     }
-
+                    mErrorsMsg!!.postValue(errors)
+                    _isCompleted.postValue(false)
                 }
 
-                override fun onFailure(
-                    call: Call<LocationResponse?>,
-                    t: Throwable
-                ) {
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
                     _isCompleted.postValue(false)
-                    _dialogShow.postValue(false)
-
-                    val exception = t.toString()
-
+                    val exception = error
                     if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
 
                         fetchDataFromDBLastStore(context!!)
@@ -226,125 +208,103 @@ class WeeklyInspectionViewModel : ViewModel() {
                         mErrorsMsg!!.postValue(exception)
                     }
                 }
+
             })
 
     }
 
 
-    fun saveWeeklyInspectionChecks(context: Context?,body: SavedWeeklyInspection,isOnBackPress: Boolean) {
+    fun saveWeeklyInspectionChecks(
+        context: Context?,
+        body: SavedWeeklyInspection,
+        isOnBackPress: Boolean
+    ) {
         _dialogShow.postValue(true)
         getInstance(context)
         apiInterface!!.saveWeeklyInspectionCheck(body)
-            .enqueue(object : Callback<LocationResponse?> {
-                override fun onResponse(
-                    call: Call<LocationResponse?>,
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+                override fun onSuccess(
+
                     response: Response<LocationResponse?>
                 ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
+                    super.onSuccess(response)
+                     if (!isOnBackPress)
+                       _isCompleted.postValue(response.body()!!.data!!.isCompleted)
+                }
 
-                        if (response.body()!!.code == 200) {
-                            if(!isOnBackPress)
-                            _isCompleted.postValue(response.body()!!.data!!.isCompleted)
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    _isCompleted.postValue(false)
+                    var errors = ""
 
-                        }
-                        else {
-                            _isCompleted.postValue(false)
-                            var errors = ""
-
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
+                    for (i in response.body()!!.errors!!.indices) {
+                        errors = """
                                 $errors${response.body()!!.errors!![i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                            _hasData.postValue(false)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-
-                        _isCompleted.postValue(false)
                     }
-
+                    mErrorsMsg!!.postValue(errors)
+                    _hasData.postValue(false)
                 }
-
-                override fun onFailure(
-                    call: Call<LocationResponse?>,
-                    t: Throwable
-                ) {
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
                     _isCompleted.postValue(false)
                     _dialogShow.postValue(false)
 
-                    val exception = t.toString()
+                    val exception = error
                     mErrorsMsg!!.postValue(exception)
-                    if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
-
-
-                    } else {
-
-                    }
-
-
                 }
+
             })
 
     }
 
-    fun getWeeklyInspectionCheckRequest(context: Context?,body: SingleInspectionRequest) {
+    fun getWeeklyInspectionCheckRequest(context: Context?, body: SingleInspectionRequest) {
         _dialogShow.postValue(true)
         getInstance(context)
         apiInterface!!.getWeeklyInspectionChecks(body)
-            .enqueue(object : Callback<GetWeeklyInspectionChecksListResponse?> {
-                override fun onResponse(
-                    call: Call<GetWeeklyInspectionChecksListResponse?>,
+            .enqueue(object : SuccessCallback<GetWeeklyInspectionChecksListResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+                override fun onSuccess(
+
                     response: Response<GetWeeklyInspectionChecksListResponse?>
                 ) {
-                    _dialogShow.postValue(false)
-                    if (response.body() != null) {
-
-                        if (response.body()!!.code == 200) {
+                    super.onSuccess(response)
                             val resp = response.body()!!.data!!
                             _weeklyInspectionCheck.postValue(resp)
                             _hasData.postValue(true)
-                        }
-                        else {
-                            var errors = ""
+                }
 
-                            for (i in response.body()!!.errors!!.indices) {
-                                errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                override fun onFailure(response: Response<GetWeeklyInspectionChecksListResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
-                            }
-                            mErrorsMsg!!.postValue(errors)
-                            _hasData.postValue(false)
-                        }
-                    } else {
-                        mErrorsMsg!!.postValue(response.errorBody().toString())
-                        _hasData.postValue(false)
                     }
-
+                    mErrorsMsg!!.postValue(errors)
+                    _hasData.postValue(false)
                 }
 
-                override fun onFailure(
-                    call: Call<GetWeeklyInspectionChecksListResponse?>,
-                    t: Throwable
-                ) {
-
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
                     _dialogShow.postValue(false)
                     _hasData.postValue(false)
-                    val exception = t.toString()
+                    val exception = error
                     mErrorsMsg!!.postValue(exception)
-                    if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
-
-
-                    } else {
-
-                    }
-
-
                 }
+
+
             })
 
     }
