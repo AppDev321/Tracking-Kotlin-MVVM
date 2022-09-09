@@ -56,6 +56,8 @@
     <string name="ui_type_file">FILE</string>
     <string name="ui_type_image">IMAGE</string>
     <string name="unauthenticated">unauthenticated</string>
+    <string name="choose_sign_title">Choose an Account</string>
+    <string name="choose_sign_sub_msg">to continue to AFJ sign in</string>
 
 
 </resources>

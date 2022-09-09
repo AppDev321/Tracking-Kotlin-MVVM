@@ -97,6 +97,9 @@ class FuelFormFragment : Fragment() {
                 }
 
             }
+            override fun onAuthForceClose(boolean: Boolean) {
+                mBaseActivity.onBackPressed()
+            }
         })
 
 

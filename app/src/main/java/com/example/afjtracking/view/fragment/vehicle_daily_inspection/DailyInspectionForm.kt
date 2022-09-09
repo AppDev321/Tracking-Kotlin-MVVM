@@ -113,12 +113,16 @@ class DailyInspectionForm : Fragment() {
                 if (boolean) {
                     binding.root.removeAllViews()
                      binding.root.addView(binding.baseLayout)
-                    binding.baseLayout.visibility = View.VISIBLE
+                    binding.root.addView(binding.txtErrorMsg)
+
                     inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
                 } else {
                     binding.root.removeAllViews()
                     binding.root.addView(authView)
                 }
+            }
+            override fun onAuthForceClose(boolean: Boolean) {
+                mBaseActivity.onBackPressed()
             }
         })
 
@@ -138,7 +142,6 @@ class DailyInspectionForm : Fragment() {
                             "Inspection already completed",
                             requireView()
                         )
-
                     }
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())

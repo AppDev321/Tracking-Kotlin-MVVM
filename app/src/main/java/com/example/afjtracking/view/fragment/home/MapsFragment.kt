@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,9 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.afjtracking.R
+import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.LatLngInterpolator
+import com.example.afjtracking.utils.MapUtils
 import com.example.afjtracking.utils.MarkerAnimation
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.google.android.gms.common.ConnectionResult
@@ -26,23 +29,28 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import java.lang.Math.abs
+import java.lang.Math.atan
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private val MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5445
-     var googleMap: GoogleMap?= null
+    var googleMap: GoogleMap? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var currentLocationMarker: Marker? = null
     private var currentLocation: Location? = null
     private var firstTimeFlag = true
+    private var previousLatLng :LatLng?= null
+
+
 
     private val clickListener =
         View.OnClickListener { view ->
-               if (view.id == R.id.currentLocationImageButton
-                   && googleMap != null
-                   && currentLocation != null
-               )
-                   animateCamera(currentLocation!! )
+            if (view.id == R.id.currentLocationImageButton
+                && googleMap != null
+                && currentLocation != null
+            )
+                animateCamera(currentLocation!!)
         }
     private val mLocationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -50,7 +58,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             if (locationResult.lastLocation == null) return
             currentLocation = locationResult.lastLocation
             if (firstTimeFlag && googleMap != null) {
-               animateCamera(currentLocation!!)
+                animateCamera(currentLocation!!)
                 firstTimeFlag = false
             }
             showMarker(currentLocation!!)
@@ -84,13 +92,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     @Override
     override fun onMapReady(googleMap: GoogleMap) {
-        this.googleMap = googleMap;
+        this.googleMap = googleMap
     }
 
     fun startCurrentLocationUpdates() {
-        val locationRequest = LocationRequest . create ()
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(3000);
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 3000
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(
                     mBaseActivity,
@@ -102,10 +110,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             ) {
                 ActivityCompat.requestPermissions(
                     mBaseActivity,
-                    arrayOf( Manifest.permission.ACCESS_FINE_LOCATION ),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-                );
-                return;
+                )
+                return
             }
         }
         fusedLocationProviderClient!!.requestLocationUpdates(
@@ -113,91 +121,109 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             mLocationCallback,
             Looper.myLooper()
         )
+
+
     }
-    fun  isGooglePlayServicesAvailable():Boolean
-    {
-        val googleApiAvailability = GoogleApiAvailability . getInstance ();
-        val status = googleApiAvailability . isGooglePlayServicesAvailable (mBaseActivity);
+
+    fun isGooglePlayServicesAvailable(): Boolean {
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val status = googleApiAvailability.isGooglePlayServicesAvailable(mBaseActivity)
         if (ConnectionResult.SUCCESS == status)
-            return true;
+            return true
         else {
             if (googleApiAvailability.isUserResolvableError(status))
-                Toast.makeText(mBaseActivity, "Install google play services", Toast.LENGTH_LONG).show();
+                Toast.makeText(mBaseActivity, "Install google play services", Toast.LENGTH_LONG)
+                    .show()
         }
-        return false;
+        return false
     }
+
     @Override
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
-    ){
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED)
-                Toast.makeText(mBaseActivity, "Permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mBaseActivity, "Permission denied", Toast.LENGTH_SHORT).show()
             else if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                startCurrentLocationUpdates();
+                startCurrentLocationUpdates()
         }
     }
-   fun animateCamera(  location:Location)
-    {
-        val latLng =  LatLng(location.getLatitude(), location.getLongitude());
+
+    fun animateCamera(location: Location) {
+        val latLng = LatLng(location.latitude, location.longitude)
         googleMap!!.animateCamera(
             CameraUpdateFactory.newCameraPosition(
                 getCameraPositionWithBearing(
                     latLng
                 )
             )
-        );
+        )
     }
 
-    fun  getCameraPositionWithBearing( latLng:LatLng):CameraPosition
-    {
-        return  CameraPosition . Builder ().target(latLng).zoom(17.0F).build();
+    fun getCameraPositionWithBearing(latLng: LatLng): CameraPosition {
+        return CameraPosition.Builder().target(latLng).zoom(17.0F).build()
     }
-  fun showMarker(  currentLocation:Location)
-    {
+
+    fun showMarker(currentLocation: Location) {
+
+        fusedLocationProviderClient!!.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                if(location != null)
+                previousLatLng =  LatLng(location.latitude, location.longitude)
+            }
 
 
-        val latLng =  LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+        val bitmapDescriptor =  BitmapDescriptorFactory.fromBitmap(MapUtils.getCarBitmap(mBaseActivity))
         if (currentLocationMarker == null)
             currentLocationMarker = googleMap!!.addMarker(
-                 MarkerOptions ().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng)
+          //    MarkerOptions ().icon(BitmapDescriptorFactory.defaultMarker()).position(latLng)
+            MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor)
             )
         else
-
 
             MarkerAnimation.animateMarkerToGB(
                 currentLocationMarker!!,
                 latLng,
-                 LatLngInterpolator. Spherical ()
+                LatLngInterpolator.Spherical()
             )
+        if(previousLatLng != null) {
+            val rotation = MapUtils.getRotation(previousLatLng!!, latLng)
+            if (!rotation.isNaN()) {
+                currentLocationMarker?.rotation = rotation
+            }
+        }
+       animateCamera(currentLocation)
     }
 
 
     @Override
-    override fun onResume()
-    {
-        super.onResume();
+    override fun onResume() {
+        super.onResume()
         if (isGooglePlayServicesAvailable()) {
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mBaseActivity);
-            startCurrentLocationUpdates();
+            fusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(mBaseActivity)
+            startCurrentLocationUpdates()
         }
     }
+
     @Override
-    override fun onDestroy()
-    {
-        super.onDestroy();
-        fusedLocationProviderClient = null;
-        googleMap = null;
+    override fun onDestroy() {
+        super.onDestroy()
+        fusedLocationProviderClient = null
+        googleMap = null
     }
 
 
     override fun onStop() {
         super.onStop()
         if (fusedLocationProviderClient != null)
-            fusedLocationProviderClient!!.removeLocationUpdates(mLocationCallback);
+            fusedLocationProviderClient!!.removeLocationUpdates(mLocationCallback)
     }
 
 }

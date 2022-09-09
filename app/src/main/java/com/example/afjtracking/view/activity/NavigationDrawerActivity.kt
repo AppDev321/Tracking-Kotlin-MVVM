@@ -14,6 +14,7 @@ import com.example.afjtracking.databinding.ActivityNavigationBinding
 import com.example.afjtracking.model.responses.User
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.view.fragment.auth.viewmodel.QRFirebaseUser
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -44,13 +45,13 @@ class NavigationDrawerActivity : BaseActivity() {
 
 
         try {
-            val userObject =  AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, User::class.java)
-            if(userObject != null) {
+            val userObject =  AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
+            if(userObject.full_name != null) {
                 navView.getHeaderView(0)
-                    .txt_nav_head_designation.text = userObject.designation ?: Constants.NULL_DEFAULT_VALUE
+                    .txt_nav_head_designation.text = userObject.official_email ?: Constants.NULL_DEFAULT_VALUE
 
                 navView.getHeaderView(0)
-                    .txt_nav_head_name.text = userObject.fullName ?: Constants.NULL_DEFAULT_VALUE
+                    .txt_nav_head_name.text = userObject.full_name
             }
 
         } catch (e: Exception) {
@@ -79,7 +80,7 @@ class NavigationDrawerActivity : BaseActivity() {
         // supportActionBar!!.setDisplayHomeAsUpEnabled(false);
 
 
-        navView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener({ menuItem ->
+        navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener({ menuItem ->
             AFJUtils.setUserToken(this, "")
             finish()
             startActivity(Intent(this, LoginActivity::class.java))
@@ -97,11 +98,28 @@ class NavigationDrawerActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            drawerLayout.closeDrawer(Gravity.LEFT);
+            drawerLayout.closeDrawer(Gravity.LEFT)
         } else {
-            super.onBackPressed();
+            super.onBackPressed()
         }
     }
 
+    fun updateUserNavItem()
+    {
+        AFJUtils.writeLogs("Nav item update")
+        val navView: NavigationView = binding.navView
+        try {
+            val userObject =  AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
+            if(userObject != null) {
+                navView.getHeaderView(0)
+                    .txt_nav_head_designation.text = userObject.official_email ?: Constants.NULL_DEFAULT_VALUE
 
+                navView.getHeaderView(0)
+                    .txt_nav_head_name.text = userObject.full_name ?: Constants.NULL_DEFAULT_VALUE
+            }
+
+        } catch (e: Exception) {
+            writeExceptionLogs("Header Exception:\n${e}")
+        }
+    }
 }

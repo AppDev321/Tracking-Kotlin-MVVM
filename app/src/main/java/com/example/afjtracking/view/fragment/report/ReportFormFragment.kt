@@ -108,12 +108,15 @@ class ReportFormFragment : Fragment() {
                 if (boolean) {
                     binding.root.removeAllViews()
                     binding.root.addView(binding.baseLayout)
-                    binding.baseLayout.visibility = View.VISIBLE
                     reportViewModel.getReportFormRequest(mBaseActivity)
                 } else {
                     binding.root.removeAllViews()
                     binding.root.addView(authView)
                 }
+            }
+
+            override fun onAuthForceClose(boolean: Boolean) {
+                mBaseActivity.onBackPressed()
             }
         })
 

@@ -89,6 +89,9 @@ class WeeklyInspectionForm : Fragment() {
                     binding.mainLayout.addView(authView)
                 }
             }
+            override fun onAuthForceClose(boolean: Boolean) {
+                mBaseActivity.onBackPressed()
+            }
         })
 
 

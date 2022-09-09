@@ -12,14 +12,21 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
 import com.example.afjtracking.R
+import com.example.afjtracking.databinding.DialogChooseSigninBinding
 import com.example.afjtracking.databinding.FragmentAuthBinding
+import com.example.afjtracking.databinding.LayoutFileUploadBoxBinding
+import com.example.afjtracking.model.responses.User
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
 import com.example.afjtracking.view.fragment.auth.viewmodel.QRFireDatabase
+import com.example.afjtracking.view.fragment.auth.viewmodel.QRFirebaseUser
+import com.example.afjtracking.view.fragment.fileupload.viewmodel.FileUploadModel
 import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
 import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +53,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
     interface AuthListeners {
         fun onAuthCompletionListener(boolean: Boolean)
+        fun onAuthForceClose(boolean: Boolean)
 
     }
 
@@ -98,51 +106,58 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.containerQrScan.visibility = View.VISIBLE
 
 
-        // User data change listener
-        dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString())
-            .addValueEventListener(
-                object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val user = dataSnapshot.getValue(QRFireDatabase::class.java)
-                        if (user == null) {
-                            showAuthOptionDialog()
-                            return
+            // User data change listener
+            dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString())
+                .addValueEventListener(
+                    object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val user = dataSnapshot.getValue(QRFireDatabase::class.java)
+                            if (user == null) {
+                                showAuthOptionDialog()
+                                return
+                            }
+                            if (AFJUtils.dateComparison(user.expiresAt.toString(), true)) {
+                                if (user.status == false) {
+                                    if (!isInitView)
+                                        mBaseActivity.toast(
+                                            "You are unable to access this form",
+                                            true
+                                        )
+                                    authListeners.onAuthCompletionListener(false)
+                                    showAuthOptionDialog()
+                                } else {
+                                    //Save User object
+                                    AFJUtils.setUserToken(context, user.data!!.token)
+                                    AFJUtils.saveObjectPref(
+                                        context,
+                                        AFJUtils.KEY_USER_DETAIL,
+                                        user.data.user
+                                    )
+                                    authListeners.onAuthCompletionListener(true)
+                                    context.updateUserNavItem()
 
-                        }
-                        if (AFJUtils.dateComparison(user.expiresAt.toString(), true)) {
-                            if (user.status == false)
-                            {
-                                if(!isInitView)
-                                mBaseActivity.toast("You are unable to access this form", true)
+
+                                }
+                            } else {
+                                if (!isInitView)
+                                    mBaseActivity.toast(
+                                        "QR code is expire please try again!!",
+                                        true
+                                    )
                                 authListeners.onAuthCompletionListener(false)
                                 showAuthOptionDialog()
                             }
-                            else
-                            {
-                                //Save User object
-                                AFJUtils.setUserToken(context,  user.data!!.token)
-                                AFJUtils.saveObjectPref(
-                                    context,
-                                    AFJUtils.KEY_USER_DETAIL,
-                                    user.data.user
-                                )
-                                authListeners.onAuthCompletionListener(true)
-                            }
+                            isInitView = false
                         }
-                        else
-                        {
-                                 if(!isInitView)
-                                mBaseActivity.toast("QR code is expire please try again!!", true)
-                                authListeners.onAuthCompletionListener(false)
-                                showAuthOptionDialog()
-                        }
-                        isInitView = false
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        AFJUtils.writeLogs("FireError:$error")
 
-                    }
-                })
+                        override fun onCancelled(error: DatabaseError) {
+                            AFJUtils.writeLogs("FireError:$error")
+
+                        }
+                    })
+
+
+
 
         addView(binding.root)
     }
@@ -222,7 +237,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                                     "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
                             }
                             override fun onFinish() {
-                                attendanceVM.getQRCode(mBaseActivity)
+                                attendanceVM.getQRCode(mBaseActivity,qrType)
                                 timer = null
                             }
                         }
@@ -245,6 +260,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
 
     }
+
 
     fun showAuthOptionDialog() {
 
@@ -275,10 +291,39 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             }
         })
      //   alert.show()
+        val userObject =  AFJUtils.getObjectPref(context, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
+        if(userObject.full_name != null) {
+            showCredentialSessionDialog(userObject)
+        }
+        else {
+            attendanceViewModel()
+        }
+    }
 
 
+    fun showCredentialSessionDialog(userObject :QRFirebaseUser)
+    {
+        val builder = android.app.AlertDialog.Builder(context)
+        val dialogBinding: DialogChooseSigninBinding = DialogChooseSigninBinding.inflate(  LayoutInflater.from(context), null, false  )
+        val mView: View = dialogBinding.root
+        builder.setCancelable(false)
+        builder.setView(mView)
+        dialogBinding.user = userObject
 
-        attendanceViewModel()
+        val alertDialog = builder.create()
+        alertDialog.show()
+        dialogBinding.btnClose.setOnClickListener{
+            alertDialog.dismiss()
+            authListeners.onAuthForceClose(true)
+        }
+        dialogBinding.containerAlreadySignin.setOnClickListener{
+            alertDialog.dismiss()
+            authListeners.onAuthCompletionListener(true)
+        }
+        dialogBinding.containerAnotherSignin.setOnClickListener{
+            alertDialog.dismiss()
+            attendanceViewModel()
+        }
 
     }
 

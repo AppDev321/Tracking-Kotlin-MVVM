@@ -25,7 +25,7 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         // val token = AFJUtils.getUserToken(this@SplashActivity)
         //if (! token!!.isEmpty()) {
-        val vehicleDetail = AFJUtils.getObjectPref(
+      /*  val vehicleDetail = AFJUtils.getObjectPref(
             this,
             AFJUtils.KEY_VEHICLE_DETAIL,
             VehicleDetail::class.java
@@ -33,11 +33,7 @@ class SplashActivity : BaseActivity() {
         if (vehicleDetail != null) {
             finish()
             startActivity(Intent(this@SplashActivity, NavigationDrawerActivity::class.java))
-        }
-
-
-
-
+        }*/
 
 
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
