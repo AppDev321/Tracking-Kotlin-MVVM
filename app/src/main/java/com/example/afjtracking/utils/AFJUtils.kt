@@ -345,6 +345,8 @@ object AFJUtils {
 
 
     fun dateComparison(date: String,withTime :Boolean): Boolean {
+
+        AFJUtils.writeLogs("date=$date")
         try {
             val inputDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
@@ -353,21 +355,20 @@ object AFJUtils {
                 val compareDateTime = sourceSdf.parse(uTCToLocal(inputDateFormat,inputDateFormat,date))
                 val currentDateTime = sourceSdf.parse(sourceSdf.format(Date()))
 
-                AFJUtils.writeLogs("comaper=${uTCToLocal(inputDateFormat,inputDateFormat,date)}   current=${sourceSdf.format(Date())}")
 
                 when {
 
                     currentDateTime.before(compareDateTime) -> {
-                        AFJUtils.writeLogs("curent date is less then expire")
+
                         return true
                     }
                     currentDateTime.after(compareDateTime) -> {
-                        AFJUtils.writeLogs("curent date is greater then expire")
+
                         return false
                     }
 
                     currentDateTime.after(compareDateTime) -> {
-                        AFJUtils.writeLogs("curent date is equals to expire")
+
                         return false
                     }
                 }

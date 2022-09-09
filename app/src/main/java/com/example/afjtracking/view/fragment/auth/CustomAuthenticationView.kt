@@ -14,19 +14,14 @@ import androidx.lifecycle.*
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.DialogChooseSigninBinding
 import com.example.afjtracking.databinding.FragmentAuthBinding
-import com.example.afjtracking.databinding.LayoutFileUploadBoxBinding
-import com.example.afjtracking.model.responses.User
 import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
 import com.example.afjtracking.view.fragment.auth.viewmodel.QRFireDatabase
 import com.example.afjtracking.view.fragment.auth.viewmodel.QRFirebaseUser
-import com.example.afjtracking.view.fragment.fileupload.viewmodel.FileUploadModel
 import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
 import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +45,14 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         init(context)
     }
 
+
+ /*   fun addFirebaseReferenceAgain()
+    {
+        if(dbReference !=null && reference != null)
+        {
+            dbReference.addValueEventListener(reference)
+        }
+    }*/
 
     interface AuthListeners {
         fun onAuthCompletionListener(boolean: Boolean)
@@ -79,9 +82,9 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     var timer: CountDownTimer? = null
 
     val qrType = "TRACKING_APP_LOGIN"
-    private lateinit var dbReference: DatabaseReference
 
     var isInitView :Boolean = true
+
 
 
     fun addAuthListner(authListeners: AuthListeners) {
@@ -91,9 +94,6 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
     private fun init(context: Context) {
         mBaseActivity = context as NavigationDrawerActivity
-
-        dbReference = FirebaseDatabase.getInstance().getReference("qr_table")
-
 
         _authViewModel = ViewModelProvider(context).get(AuthViewModel::class.java)
         _attendanceVM = ViewModelProvider(context).get(AttendanceViewModel::class.java)
@@ -105,57 +105,68 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.containerLoginView.visibility = View.GONE
         binding.containerQrScan.visibility = View.VISIBLE
 
-
             // User data change listener
-            dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString())
-                .addValueEventListener(
-                    object : ValueEventListener {
-                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                            val user = dataSnapshot.getValue(QRFireDatabase::class.java)
-                            if (user == null) {
-                                showAuthOptionDialog()
-                                return
-                            }
-                            if (AFJUtils.dateComparison(user.expiresAt.toString(), true)) {
-                                if (user.status == false) {
-                                    if (!isInitView)
-                                        mBaseActivity.toast(
-                                            "You are unable to access this form",
-                                            true
-                                        )
-                                    authListeners.onAuthCompletionListener(false)
-                                    showAuthOptionDialog()
-                                } else {
-                                    //Save User object
-                                    AFJUtils.setUserToken(context, user.data!!.token)
-                                    AFJUtils.saveObjectPref(
-                                        context,
-                                        AFJUtils.KEY_USER_DETAIL,
-                                        user.data.user
-                                    )
-                                    authListeners.onAuthCompletionListener(true)
-                                    context.updateUserNavItem()
+     if(mBaseActivity.dbReference == null && mBaseActivity.reference == null) {
 
+         mBaseActivity.dbReference = FirebaseDatabase.getInstance().getReference("qr_table")
+         mBaseActivity.dbReference?.child(AFJUtils.getDeviceDetail().deviceID.toString())?.addValueEventListener(
+             object : ValueEventListener {
+                 override fun onDataChange(dataSnapshot: DataSnapshot) {
+                     AFJUtils.writeLogs("Firebase trigger data here.....")
 
-                                }
-                            } else {
-                                if (!isInitView)
-                                    mBaseActivity.toast(
-                                        "QR code is expire please try again!!",
-                                        true
-                                    )
-                                authListeners.onAuthCompletionListener(false)
-                                showAuthOptionDialog()
-                            }
-                            isInitView = false
-                        }
+                     AFJUtils.writeLogs(AFJUtils.getDeviceDetail().deviceID.toString())
 
-                        override fun onCancelled(error: DatabaseError) {
-                            AFJUtils.writeLogs("FireError:$error")
+                     val user = dataSnapshot.getValue(QRFireDatabase::class.java)
 
-                        }
-                    })
+                     if (user == null) {
+                         showAuthOptionDialog()
+                         return
+                     }
+                     if (AFJUtils.dateComparison(user.expiresAt.toString(), true)) {
+                         if (user.status == false) {
+                             if (!isInitView)
+                                 mBaseActivity.toast(
+                                     "You are unable to access this form",
+                                     true
+                                 )
+                             authListeners.onAuthCompletionListener(false)
+                             showAuthOptionDialog()
+                         } else {
+                             //Save User object
+                             AFJUtils.setUserToken(context, user.data!!.token)
+                             AFJUtils.saveObjectPref(
+                                 context,
+                                 AFJUtils.KEY_USER_DETAIL,
+                                 user.data.user
+                             )
+                             authListeners.onAuthCompletionListener(true)
+                             context.updateUserNavItem()
+                             AFJUtils.writeLogs("firebae=$user")
+                         }
+                     } else {
+                         if (!isInitView) {
+                             mBaseActivity.toast(
+                                 "QR code is expire please try again!!",
+                                 true
+                             )
+                         }
+                         authListeners.onAuthCompletionListener(false)
+                         showAuthOptionDialog()
+                     }
+                     isInitView = false
+                 }
 
+                 override fun onCancelled(error: DatabaseError) {
+                     AFJUtils.writeLogs("FireError:$error")
+
+                 }
+             })
+
+     }
+     else{
+             mBaseActivity.dbReference!!.child(AFJUtils.getDeviceDetail().deviceID.toString())
+            showAuthOptionDialog()
+        }
 
 
 
@@ -189,6 +200,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+
     }
 
     override fun onAttachedToWindow() {
@@ -199,10 +211,17 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
     fun attendanceViewModel() {
 
-        binding.containerLoginView.visibility = View.GONE
-        binding.containerQrScan.visibility = View.VISIBLE
 
-        attendanceVM.getQRCode(mBaseActivity,qrType)
+        if (timer == null) {
+            AFJUtils.writeLogs("it attendanceViewModel")
+            binding.layoutScan.idIVQrcode.setImageBitmap(null)
+            binding.layoutScan.txtTimeExpire.text =""
+            binding.containerLoginView.visibility = View.GONE
+            binding.containerQrScan.visibility = View.VISIBLE
+            attendanceVM.getQRCode(mBaseActivity, qrType)
+        }
+
+
         attendanceVM.showDialog.observe(this) {
             mBaseActivity.showProgressDialog(it)
         }
@@ -218,36 +237,72 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         try {
             attendanceVM.attendanceReponse.observe(this, {
                 if (it != null) {
-
+                    if (timer == null) {
                     val response  = it
+
+                    attendanceVM.getQrCodeBitmap(it.qrCode,mBaseActivity,object :QRImageCallback{
+                        override fun onRendered(bitmap: Bitmap) {
+                            AFJUtils.writeLogs("Qr generating ...")
+
+                            binding.layoutScan.idIVQrcode.setImageBitmap(bitmap)
+                            timer =  object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {
+                                        binding.layoutScan.txtTimeExpire.text =
+                                            "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
+                                    }
+
+                                    override fun onFinish() {
+                                        timer = null
+                                        attendanceVM.getQRCode(mBaseActivity, qrType)
+                                    }
+                                }
+
+                            if (timer != null)
+                                timer?.start()
+                        }
+
+                        override fun onError(e: Exception) {
+
+                        }
+
+                    })
+                    /*
+
                     lifecycleScope.async(onPre = {
                         binding.layoutScan.txtTimeExpire.text = "Please wait QR Code is generating"
                         binding.layoutScan.idIVQrcode.setImageBitmap(null)
                     }, background = {
+                        AFJUtils.writeLogs("QR web preoc")
                         attendanceVM.getQrCodeBitmap(
                             it.qrCode,
                             mBaseActivity,
                         )
                     }, onPost = {
-                        if(it != null)
-                            binding.layoutScan.idIVQrcode.setImageBitmap(it)
-                        timer =   object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
-                            override fun onTick(millisUntilFinished: Long) {
-                                binding.layoutScan.txtTimeExpire.text =
-                                    "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
-                            }
-                            override fun onFinish() {
-                                attendanceVM.getQRCode(mBaseActivity,qrType)
-                                timer = null
-                            }
-                        }
+                        if(it != null) {
+                            AFJUtils.writeLogs("QR generateing image")
 
-                        if (timer != null)
-                            timer?.start()
+
+                            binding.layoutScan.idIVQrcode.setImageBitmap(it)
+                            timer =
+                                object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
+                                    override fun onTick(millisUntilFinished: Long) {
+                                        binding.layoutScan.txtTimeExpire.text =
+                                            "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
+                                    }
+
+                                    override fun onFinish() {
+                                        attendanceVM.getQRCode(mBaseActivity, qrType)
+                                        timer = null
+                                    }
+                                }
+
+                            if (timer != null)
+                                timer?.start()
+                        }
                     })
 
-
-
+*/
+                    }
                     attendanceVM._attendanceResponse.value = null
 
 
@@ -267,8 +322,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
         binding.containerLoginView.visibility = View.GONE
         binding.containerQrScan.visibility = View.VISIBLE
-        binding.layoutScan.idIVQrcode.setImageBitmap(null)
-        binding.layoutScan.txtTimeExpire.text =""
+        /*binding.layoutScan.idIVQrcode.setImageBitmap(null)
+        binding.layoutScan.txtTimeExpire.text =""*/
 
         val choice = arrayOf<CharSequence>("QR Scan", "Password")
         val alert: AlertDialog.Builder = AlertDialog.Builder(mBaseActivity)
@@ -296,6 +351,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             showCredentialSessionDialog(userObject)
         }
         else {
+
             attendanceViewModel()
         }
     }
@@ -333,6 +389,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         withContext(Dispatchers.IO){
             background() }.let(onPost)
     }
+
+
 }
 
 

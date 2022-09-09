@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/lock/baseline_lock_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/person_add_alt_1/baseline_person_add_alt_1_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_lock" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/tracking/logo icon.svg" />
+                            <entry key="outputName" value="ic_baseline_person_add" />
+                            <entry key="sourceFile" value="C:\Users\Ahsan\Downloads\afj tracking app\afj tracking app\svgs\add more.svg" />
                           </map>
                         </option>
                       </PersistentState>

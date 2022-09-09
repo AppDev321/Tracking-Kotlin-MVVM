@@ -106,7 +106,7 @@ class DailyInspectionForm : Fragment() {
 
          val authView = CustomAuthenticationView(requireContext())
         binding.root.addView(authView)
-        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+      authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
             override fun onAuthCompletionListener(boolean: Boolean) {
                 if (_binding == null)
                     return
@@ -114,7 +114,6 @@ class DailyInspectionForm : Fragment() {
                     binding.root.removeAllViews()
                      binding.root.addView(binding.baseLayout)
                     binding.root.addView(binding.txtErrorMsg)
-
                     inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
                 } else {
                     binding.root.removeAllViews()
@@ -165,6 +164,7 @@ class DailyInspectionForm : Fragment() {
 
         return root
     }
+
 
 
     fun showInspectionCreationForm(it: InspectionCheckData) {

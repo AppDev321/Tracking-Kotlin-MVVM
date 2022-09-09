@@ -18,6 +18,8 @@ import com.example.afjtracking.view.fragment.auth.viewmodel.QRFirebaseUser
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 
@@ -26,6 +28,9 @@ class NavigationDrawerActivity : BaseActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityNavigationBinding
     private lateinit var drawerLayout: DrawerLayout
+     var dbReference: DatabaseReference? = null
+     var reference : ValueEventListener?=  null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +111,7 @@ class NavigationDrawerActivity : BaseActivity() {
 
     fun updateUserNavItem()
     {
-        AFJUtils.writeLogs("Nav item update")
+
         val navView: NavigationView = binding.navView
         try {
             val userObject =  AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)

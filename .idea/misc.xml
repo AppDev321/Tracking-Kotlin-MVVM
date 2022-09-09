@@ -15,21 +15,24 @@
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable/ripple_bg_button.xml" value="0.1825" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable/round_two_sides_top_right.xml" value="0.1345" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/font/montserrat.xml" value="0.19444444444444445" />
-        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_login.xml" value="0.176" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_navigation.xml" value="0.1" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_splash.xml" value="0.1488599348534202" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/app_bar_main.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/content_main.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/dialog_choose_signin.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_attandence_scan.xml" value="0.16" />
-        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_daily_inpsection_form.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_auth.xml" value="0.1" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_daily_inpsection_form.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_device_form.xml" value="0.264" />
-        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_fuel_from.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_fuel_from.xml" value="0.14814814814814814" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_fuel_login.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_report_from.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_traking.xml" value="0.264" />
-        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_vdi_create_inspection.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_vdi_create_inspection.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_vehicle_detail.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_weekly_create_inspection.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_weekly_inspection_form.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_weekly_inspection_form.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_weekly_inspection_list.xml" value="0.176" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/item_daily_psv_inspection_check.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/item_daily_pts_inspection_check.xml" value="0.25" />
@@ -47,6 +50,7 @@
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_vehicle_info_text.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_weekly_inspection_check_item.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_weekly_inspection_item.xml" value="0.176" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/nav_header_main.xml" value="0.15032894736842106" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/menu/activity_main_drawer.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/menu/menu_drawer.xml" value="0.25" />
         <entry key="app/src/main/res/drawable-xhdpi/ic_add_report_file.xml" value="0.1665" />
