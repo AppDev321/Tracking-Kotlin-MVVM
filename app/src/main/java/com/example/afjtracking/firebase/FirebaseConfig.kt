@@ -22,7 +22,7 @@ object FirebaseConfig {
             }
             Constants.DEVICE_FCM_TOKEN = task.result
 
-            AFJUtils.writeLogs("${Constants.DEVICE_FCM_TOKEN}");
+            AFJUtils.writeLogs("${Constants.DEVICE_FCM_TOKEN}")
 
         })
     }
@@ -58,6 +58,8 @@ object FirebaseConfig {
                 }
             })
     }
+
+
 
 
 }

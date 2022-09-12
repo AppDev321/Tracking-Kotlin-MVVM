@@ -37,7 +37,7 @@ class DailyInspectionViewModel : ViewModel() {
     val _vehicleInfo = MutableLiveData<Vehicle>()
     val getVehicleInfo: LiveData<Vehicle> = _vehicleInfo
 
-    private val _dataUploaded = MutableLiveData<Boolean>()
+     var _dataUploaded = MutableLiveData<Boolean>()
     val apiUploadStatus: LiveData<Boolean> = _dataUploaded
 
 

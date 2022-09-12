@@ -141,8 +141,9 @@ class InspectionReviewFragment : Fragment() {
                  //   mBaseActivity.closeFragment(this)
                     mBaseActivity.toast("Inspection Completed")
                     mBaseActivity.onBackPressed()
+                    dailyInspectionViewModel._dataUploaded.value =false
                 }
-                AFJUtils.writeLogs("upload=$it")
+
             }
 
         }

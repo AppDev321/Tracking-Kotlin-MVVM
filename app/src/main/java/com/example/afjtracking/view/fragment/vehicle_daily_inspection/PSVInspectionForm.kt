@@ -118,6 +118,7 @@ class PSVInspectionForm : Fragment() {
                     mBaseActivity.toast("Inspection Completed")
                     mBaseActivity.onBackPressed()
                 }
+                inspectionViewModel._dataUploaded.value =false
 
             }
         }
@@ -187,12 +188,12 @@ class PSVInspectionForm : Fragment() {
             //***** Saved Inspection Data*******
             val solvedInspection = view.checkList!!.savedInspection
             solvedInspection!!.checked  =  view.checkbox.isChecked
-            solvedInspection!!.issueCheck = view.issueCheck.isChecked
+            solvedInspection.issueCheck = view.issueCheck.isChecked
 
             //***** Saved Inspection Data*******
-            solvedInspection!!.wornRefit = view.edWorn.text.toString()
+            solvedInspection.wornRefit = view.edWorn.text.toString()
 
-            if(solvedInspection!!.issueCheck == true && solvedInspection!!.wornRefit!!.isEmpty())
+            if(solvedInspection.issueCheck == true && solvedInspection.wornRefit!!.isEmpty())
             {
                 mBaseActivity.showSnackMessage("Please enter details of issue",binding.root)
             }

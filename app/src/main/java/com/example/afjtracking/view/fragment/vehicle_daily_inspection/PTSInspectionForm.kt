@@ -31,7 +31,7 @@ class PTSInspectionForm : Fragment() {
     private var mInspectionTypeList: ArrayList<PTSCheck> = arrayListOf()
     private lateinit var mBaseActivity: NavigationDrawerActivity
     var checkIndex: Int = 0
-    var inpsectionTypeIndex = 0;
+    var inpsectionTypeIndex = 0
     var previousCounter = 0
     var isPreviousClicked= false
 
@@ -123,6 +123,7 @@ class PTSInspectionForm : Fragment() {
                  //   mBaseActivity.closeFragment(this)
                     mBaseActivity.toast("Inspection Completed")
                     mBaseActivity.onBackPressed()
+                    inspectionViewModel._dataUploaded.value = false
                 }
             }
 
@@ -202,22 +203,22 @@ class PTSInspectionForm : Fragment() {
             val solvedInspection = view.checkList!!.savedInspection
 
             solvedInspection!!.checked  =  view.checkbox.isChecked
-            solvedInspection!!.issueCheck = view.issueCheck.isChecked
+            solvedInspection.issueCheck = view.issueCheck.isChecked
 
             //***** Saved Inspection Data*******
-            solvedInspection!!.wornRefit = view.edWorn.text.toString()
+            solvedInspection.wornRefit = view.edWorn.text.toString()
 
-            if(solvedInspection!!.issueCheck == true && solvedInspection!!.wornRefit!!.isEmpty())
+            if(solvedInspection.issueCheck == true && solvedInspection.wornRefit!!.isEmpty())
             {
                  mBaseActivity.showSnackMessage("Please enter details of issue",binding.root)
             }
             else {
 
-                solvedInspection!!.fleetNo = view.edFleetId.text.toString()
-                solvedInspection!!.quantity = view.edQuantity.text.toString()
-                solvedInspection!!.quantityOnVehicle = view.edQuantityVehicle.text.toString()
+                solvedInspection.fleetNo = view.edFleetId.text.toString()
+                solvedInspection.quantity = view.edQuantity.text.toString()
+                solvedInspection.quantityOnVehicle = view.edQuantityVehicle.text.toString()
                 if (check.type!!.contains("quantity")) {
-                    solvedInspection!!.quantityRequired = check.message
+                    solvedInspection.quantityRequired = check.message
                 }
 
 

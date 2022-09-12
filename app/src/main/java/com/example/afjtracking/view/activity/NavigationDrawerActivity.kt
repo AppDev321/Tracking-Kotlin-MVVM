@@ -2,6 +2,7 @@ package com.example.afjtracking.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.Gravity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -29,7 +30,8 @@ class NavigationDrawerActivity : BaseActivity() {
     private lateinit var binding: ActivityNavigationBinding
     private lateinit var drawerLayout: DrawerLayout
      var dbReference: DatabaseReference? = null
-     var reference : ValueEventListener?=  null
+    var timer: CountDownTimer? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -345,8 +345,6 @@ object AFJUtils {
 
 
     fun dateComparison(date: String,withTime :Boolean): Boolean {
-
-        AFJUtils.writeLogs("date=$date")
         try {
             val inputDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
