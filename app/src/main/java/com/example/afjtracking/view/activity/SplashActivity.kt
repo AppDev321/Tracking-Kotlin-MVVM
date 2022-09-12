@@ -52,11 +52,11 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
 
     override fun onUpdateNeeded(updateUrl: String) {
         val dialog: AlertDialog = AlertDialog.Builder(this)
-            .setTitle("New version available")
-            .setMessage("Please, update app to new version to continue using.")
-            .setPositiveButton("Update",
+            .setTitle("New Update Available")
+            .setMessage("There is a newer version of app available please update it now.")
+            .setPositiveButton("Update Now",
                 DialogInterface.OnClickListener { dialog, which -> redirectStore(updateUrl) })
-            .setNegativeButton("No, thanks",
+            .setNegativeButton("Close",
                 DialogInterface.OnClickListener { dialog, which -> finish() }).create()
         dialog.show()
     }
