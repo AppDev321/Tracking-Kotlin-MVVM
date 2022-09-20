@@ -79,7 +79,7 @@ class UploadUtil: CoroutineScope {
                     //Update data in table
                     fileViewModel.updateFileData(context,fileUpload)
 
-                    NotificationUtils.showNotification(context,"AFJ File Uploaded",
+                    NotificationUtils.showTextImageNotification(context,"AFJ File Uploaded",
                         "File uploaded completed","")
 
                     AFJUtils.writeLogs("********* File Upload Completed *********")

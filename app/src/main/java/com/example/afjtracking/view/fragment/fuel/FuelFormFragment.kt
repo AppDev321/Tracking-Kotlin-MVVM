@@ -26,13 +26,13 @@ import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.FuelForm
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.model.responses.Vehicle
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.*
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
 import com.example.afjtracking.view.fragment.fuel.viewmodel.FuelViewModel
+import com.example.afjtracking.view.fragment.fuel.viewmodel.NotificationViewModel
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
 
@@ -144,10 +144,34 @@ class FuelFormFragment : Fragment() {
 
         fuelViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
             if (it) {
-                mBaseActivity.onBackPressed()
-                mBaseActivity.showSnackMessage(
-                    "Request saved", requireView()
+
+             /*
+                   mBaseActivity.onBackPressed()
+                     mBaseActivity.showSnackMessage(
+                            "Request saved", requireView()
+                )*/
+
+
+                CustomDialog().showTaskCompleteDialog(
+                    mBaseActivity,
+                    isShowTitle =  true,
+                    isShowMessage = true,
+                    titleText=getString(R.string.request_submited),
+                    msgText =getString(R.string.request_msg,"Fuel filling"),
+                    lottieFile = R.raw.fuel,
+                    showOKButton = true,
+                    okButttonText = "Close",
+                    listner =object:DialogCustomInterface{
+                        override fun onClick(var1: LottieDialog) {
+                            super.onClick(var1)
+                            var1.dismiss()
+                            mBaseActivity.onBackPressed()
+                        }
+                    }
                 )
+
+
+
             }
         })
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.requests.LocationApiRequest
+import com.example.afjtracking.model.requests.LoginRequest
 import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
@@ -21,10 +22,10 @@ import retrofit2.Response
 
 class TrackingViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+    private val _notificationCount = MutableLiveData<Int>()
+    val notificationCount: LiveData<Int> = _notificationCount
+
+
 
     private var _locaitonRequest = MutableLiveData<LocationApiRequest>()
 
@@ -80,9 +81,9 @@ class TrackingViewModel : ViewModel() {
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)
                     var errors = ""
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }
@@ -138,9 +139,9 @@ class TrackingViewModel : ViewModel() {
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)
                     var errors = ""
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }
@@ -157,6 +158,43 @@ class TrackingViewModel : ViewModel() {
 
             })
 
+    }
+
+
+
+    fun getNotificationCount( context: Context?) {
+        getInstance(context)
+        var request = LoginRequest(deviceID = Constants.DEVICE_ID)
+        apiInterface!!.getNotificationCount(request)
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun onSuccess(
+                    response: Response<LocationResponse?>
+                ) {
+                    super.onSuccess(response)
+                   if( response.body()?.data?.notificationCount!! > 0)
+                   {
+                       _notificationCount .postValue( response.body()?.data?.notificationCount)
+                   }
+
+                }
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
+                                
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+                }
+
+                override fun onAPIError(error: String) {
+                    super.onAPIError(error)
+                    val exception = error
+                    mErrorsMsg!!.postValue(exception)
+                }
+            })
     }
 
 }

@@ -13,6 +13,20 @@
 
 
 
+        <string-array name="color_white_text">
+            <item>#9e00c5</item>
+            <item>#006978</item>
+            <item>#0069c0</item>
+            <item>#087f23</item>
+            <item>#c53d13</item>
+            <item>#34515e</item>
+            <item>#14cba8</item>
+            <item>#707070</item>
+            <item>#01579b</item>
+            <item>#69f0ae</item>
+            <item>#cddc39</item>
+        </string-array>
+
 
 
 </resources>

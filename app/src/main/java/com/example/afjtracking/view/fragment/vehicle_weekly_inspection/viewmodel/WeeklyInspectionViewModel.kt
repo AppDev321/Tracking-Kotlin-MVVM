@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.afjtracking.R
 import com.example.afjtracking.model.requests.InspectionCreateRequest
 import com.example.afjtracking.model.requests.SavedWeeklyInspection
 import com.example.afjtracking.model.requests.SingleInspectionRequest
@@ -157,7 +158,7 @@ class WeeklyInspectionViewModel : ViewModel() {
                     _hasData.postValue(false)
                 }
             } else {
-                mErrorsMsg!!.postValue("No data found")
+                mErrorsMsg!!.postValue(context.resources.getString(R.string.no_data_found))
                 _hasData.postValue(false)
             }
         }
@@ -187,9 +188,9 @@ class WeeklyInspectionViewModel : ViewModel() {
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)
                     var errors = ""
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }
@@ -241,9 +242,9 @@ class WeeklyInspectionViewModel : ViewModel() {
                     _isCompleted.postValue(false)
                     var errors = ""
 
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }

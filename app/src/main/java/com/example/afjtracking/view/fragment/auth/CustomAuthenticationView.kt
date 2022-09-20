@@ -1,33 +1,30 @@
 package com.example.afjtracking.view.fragment.auth
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.CountDownTimer
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.lifecycle.*
-import com.example.afjtracking.R
 import com.example.afjtracking.databinding.DialogChooseSigninBinding
 import com.example.afjtracking.databinding.FragmentAuthBinding
+import com.example.afjtracking.model.responses.QRFireDatabase
+import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.InternetDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
-import com.example.afjtracking.view.fragment.auth.viewmodel.QRFireDatabase
-import com.example.afjtracking.view.fragment.auth.viewmodel.QRFirebaseUser
-import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
-import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
+
+
+import com.example.afjtracking.view.fragment.auth.viewmodel.QRImageCallback
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
+import kotlinx.coroutines.*
 
 class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     constructor(context: Context, attributes: AttributeSet, style: Int) : super(
@@ -45,6 +42,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     constructor(context: Context) : super(context) {
         init(context)
     }
+
+
 
 
     interface AuthListeners {
@@ -65,14 +64,13 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     private var _binding: FragmentAuthBinding? = null
     private val binding get() = _binding!!
 
-    private var _authViewModel: AuthViewModel? = null
-    private val authViewModel get() = _authViewModel!!
+
 
 
     var from: Int = 0
 
-    private var _attendanceVM: AttendanceViewModel? = null
-    private val attendanceVM get() = _attendanceVM!!
+    private var _authViewModel: AuthViewModel? = null
+    private val authViewModel get() = _authViewModel!!
 
 
     val qrType = "TRACKING_APP_LOGIN"
@@ -96,7 +94,6 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
 
         _authViewModel = ViewModelProvider(context).get(AuthViewModel::class.java)
-        _attendanceVM = ViewModelProvider(context).get(AttendanceViewModel::class.java)
 
         _binding =
             FragmentAuthBinding.inflate((context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater))
@@ -107,7 +104,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.containerQrScan.visibility = View.VISIBLE
 
         // User data change listener
-        //if(mBaseActivity.dbReference == null ) {
+
+        InternetDialog(context).internetStatus
 
         mBaseActivity.dbReference = FirebaseDatabase.getInstance().getReference("qr_table")
         mBaseActivity.dbReference?.child(AFJUtils.getDeviceDetail().deviceID.toString())
@@ -155,7 +153,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        AFJUtils.writeLogs("FireError:$error")
+
 
                     }
                 })
@@ -171,29 +169,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         addView(binding.root)
     }
 
-    fun loginEmailPassword() {
-        binding.containerQrScan.visibility = View.GONE
-        binding.containerLoginView.visibility = View.VISIBLE
-        authViewModel.user.observe(this) { loginUser ->
-            if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).strEmailAddress)) {
-                binding.txtEmailAddress.error = resources.getString(R.string.email_not_empty)
-                binding.txtEmailAddress.requestFocus()
-            } else if (!loginUser!!.isEmailValid) {
-                binding.txtEmailAddress.error = resources.getString(R.string.email_not_valid)
-                binding.txtEmailAddress.requestFocus()
-            } else if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).strPassword)) {
-                binding.txtPassword.error = resources.getString(R.string.password_not_empty)
-                binding.txtPassword.requestFocus()
-            } else if (!loginUser.isPasswordLengthGreaterThan5) {
-                binding.txtPassword.error = resources.getString(R.string.enter_valid_password)
-                binding.txtPassword.requestFocus()
-            } else {
-                mBaseActivity.showProgressDialog(true)
-                //    fuelViewModel.loginApiRequest(loginUser, this@LoginActivity)
 
-            }
-        }
-    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -210,68 +186,59 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
     fun attendanceViewModel() {
         if (mBaseActivity.timer == null) {
-            AFJUtils.writeLogs("it attendanceViewModel")
+
             binding.layoutScan.idIVQrcode.setImageBitmap(null)
             binding.layoutScan.txtTimeExpire.text = ""
             binding.containerLoginView.visibility = View.GONE
             binding.containerQrScan.visibility = View.VISIBLE
-            attendanceVM.getQRCode(mBaseActivity, qrType)
+            authViewModel.getQRCode(mBaseActivity, qrType)
         }
 
 
-        attendanceVM.showDialog.observe(this) {
-            mBaseActivity.showProgressDialog(it)
+        authViewModel.showDialog.observe(this) {
+            //mBaseActivity.showProgressDialog(it)
         }
 
-        attendanceVM.errorsMsg.observe(this) {
+        authViewModel.errorsMsg.observe(this, {
             if (it != null) {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
-
-                attendanceVM.errorsMsg.value = null
+                authViewModel.errorsMsg.value = null
             }
-        }
+        })
 
 
         try {
-            attendanceVM.attendanceReponse.observe(this) {
+            authViewModel.attendanceReponse.observe(this) {
                 if (it != null) {
                     if (mBaseActivity.timer == null) {
-
-                        fetchAndGenerateQRCode(it.qrCode,it.timeOut,false)
-
-
+                        fetchAndGenerateQRCode(it.qrCode,it.timeOut,true)
                     }
-                    attendanceVM._attendanceResponse.value = null
-
-
+                    authViewModel._attendanceResponse.value = null
                 }
 
             }
         } catch (e: Exception) {
             AFJUtils.writeLogs(e.toString())
         }
-
-
     }
 
     private fun fetchAndGenerateQRCode(qrCode:String, timeout:Int, runWithCoroutine: Boolean)
     {
         if(runWithCoroutine) {
-            lifecycleScope.async(onPre = {
+      lifecycleScope.async(onPre = {
                 binding.layoutScan.txtTimeExpire.text =
                     "Please wait QR Code is generating"
                 binding.layoutScan.idIVQrcode.setImageBitmap(null)
             }, background = {
                 AFJUtils.writeLogs("Qr fetching ...")
-                attendanceVM.getQrCodeBitmap(
+                authViewModel.getQrCodeBitmap(
                     qrCode,
                     mBaseActivity,
                 )
             }, onPost = {
                 if (it != null) {
                     cancelCountDownTimer()
-
                     AFJUtils.writeLogs("Qr generating ...")
                     binding.layoutScan.idIVQrcode.setImageBitmap(it)
                     mBaseActivity.timer =
@@ -283,7 +250,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                             }
 
                             override fun onFinish() {
-                                attendanceVM.getQRCode(mBaseActivity, qrType)
+                                authViewModel.getQRCode(mBaseActivity, qrType)
 
                             }
                         }
@@ -292,10 +259,11 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                         mBaseActivity.timer?.start()
                 }
             })
+
         }
         else{
 
-            attendanceVM.getQrCodeBitmap(qrCode,mBaseActivity,object : QRImageCallback {
+            authViewModel.getQrCodeBitmap(qrCode,mBaseActivity,object : QRImageCallback {
                 override fun onRendered(bitmap: Bitmap) {
                     AFJUtils.writeLogs("Qr generating ...")
 
@@ -311,7 +279,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                                 "Please wait QR Code is generating"
                             binding.layoutScan.idIVQrcode.setImageBitmap(null)
                             cancelCountDownTimer()
-                            attendanceVM.getQRCode(mBaseActivity, qrType)
+                            authViewModel.getQRCode(mBaseActivity, qrType)
                         }
                     }
 
@@ -393,6 +361,34 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         dialogBinding.containerAnotherSignin.setOnClickListener {
             alertDialog.dismiss()
             attendanceViewModel()
+        }
+
+    }
+
+    fun closeAllPendingOperations(){
+
+    }
+
+    companion object {
+        private var INSTANCE: CustomAuthenticationView? = null
+
+        fun killPrevInstance() {
+            if (INSTANCE != null) {
+                INSTANCE!!.closeAllPendingOperations()
+                INSTANCE = null
+            }
+        }
+
+        fun instance(context: Context,authListeners: AuthListeners): CustomAuthenticationView? {
+            if (INSTANCE != null) {
+                    //                return INSTANCE
+                killPrevInstance()
+            }
+            synchronized(this) {
+                INSTANCE = CustomAuthenticationView(context)
+                INSTANCE!!.addAuthListner(authListeners)
+                return INSTANCE
+            }
         }
 
     }

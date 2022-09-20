@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
-import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceViewModel
-import com.example.afjtracking.view.fragment.fuel.viewmodel.QRImageCallback
+import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class AttendanceFragment : Fragment() {
     private var _binding: FragmentAttandenceScanBinding? = null
     private val binding get() = _binding!!
 
-    private var _attendanceVM: AttendanceViewModel? = null
+    private var _attendanceVM: AuthViewModel? = null
     private val attendanceVM get() = _attendanceVM!!
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
@@ -43,7 +43,7 @@ class AttendanceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _attendanceVM = ViewModelProvider(this).get(AttendanceViewModel::class.java)
+        _attendanceVM = ViewModelProvider(this).get(AuthViewModel::class.java)
 
         _binding = FragmentAttandenceScanBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -51,7 +51,7 @@ class AttendanceFragment : Fragment() {
 
         attendanceVM.getQRCode(mBaseActivity)
         attendanceVM.showDialog.observe(viewLifecycleOwner) {
-            mBaseActivity.showProgressDialog(it)
+         //   mBaseActivity.showProgressDialog(it)
         }
 
         attendanceVM.errorsMsg.observe(viewLifecycleOwner, Observer {

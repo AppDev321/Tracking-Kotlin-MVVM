@@ -4,8 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.os.Environment
+import androidx.annotation.ColorInt
+import androidx.core.graphics.drawable.DrawableCompat
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -17,7 +20,7 @@ object BitmapUtils {
         return try {
             val o = BitmapFactory.Options()
             o.inJustDecodeBounds = true
-            if (getFileExt(file.getName()) == "png" || getFileExt(file.getName()) == "PNG") {
+            if (getFileExt(file.name) == "png" || getFileExt(file.name) == "PNG") {
                 o.inSampleSize = 6
             } else {
                 o.inSampleSize = 6
@@ -40,7 +43,7 @@ object BitmapUtils {
             o2.inSampleSize = scale
             inputStream = FileInputStream(file)
             var selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2)
-            val ei = ExifInterface(file.getAbsolutePath())
+            val ei = ExifInterface(file.absolutePath)
             val orientation: Int = ei.getAttributeInt(
                 ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_UNDEFINED
@@ -72,12 +75,12 @@ object BitmapUtils {
                 success = folder.mkdir()
             }
             if (success) {
-                val newFile = File(File(folder.getAbsolutePath()), file.getName())
+                val newFile = File(File(folder.absolutePath), file.name)
                 if (newFile.exists()) {
                     newFile.delete()
                 }
                 val outputStream = FileOutputStream(newFile)
-                if (getFileExt(file.getName()) == "png" || getFileExt(file.getName()) == "PNG") {
+                if (getFileExt(file.name) == "png" || getFileExt(file.name) == "PNG") {
                     selectedBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 } else {
                     selectedBitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -105,5 +108,11 @@ object BitmapUtils {
             source!!, 0, 0, source.width, source.height,
             matrix, true
         )
+    }
+
+    internal fun Drawable.tint(@ColorInt color: Int): Drawable {
+        val wrapped = DrawableCompat.wrap(this)
+        DrawableCompat.setTint(wrapped, color)
+        return wrapped
     }
 }

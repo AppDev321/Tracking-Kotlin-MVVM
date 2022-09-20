@@ -38,6 +38,7 @@
     <string name="no_data_found">No Record Found</string>
     <string name="menu_tracking">Track Location</string>
     <string name="menu_gallery">Gallery</string>
+    <string name="menu_notification">Notification</string>
     <string name="menu_fuel_fill">Fuel Filling Form</string>
     <string name="menu_report_fill">Report Form</string>
     <string name="menu_attendance">Attendance</string>
@@ -58,6 +59,13 @@
     <string name="unauthenticated">unauthenticated</string>
     <string name="choose_sign_title">Choose an Account</string>
     <string name="choose_sign_sub_msg">to continue to AFJ sign in</string>
+    <string name="navigation">Map Navigation</string>
+    <string name="search">Search</string>
+    <string name="map_key">AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw</string><!--AIzaSyAqTFu0vYEDJw7dj51jCUB6JwXzLolk60s-->
+    <!--AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw-->
+<string name="request_msg">Your %s request has been submitted successfully</string>
+    <string name="request_submited">Request Completed</string>
+    <string name="request_inspection_completed">Inspection Completed</string>
 
 
 </resources>

@@ -13,10 +13,10 @@
 -->
 
 <resources>
-    <color name="colorPrimary">#095BD6</color>
+    <color name="colorPrimary">#2D87E5</color>
     <color name="colorPrimaryDark">@color/colorPrimary</color>
     <color name="colorAccent">@color/colorPrimary</color>
-    <color name="light_blue">#D4E0F3</color>
+    <color name="light_blue">#E4ECF8</color>
 
 
 
@@ -46,5 +46,12 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="all_app_bg">#F6F6F6</color>
+    <color name="menu_bg">#E6E4E4</color>
+
+
+    <color name="df_transparent_black_background">#80000000</color>
+    <color name="whiteCardColor">#fff</color>
+    <color name="whiteTextColor">#fff</color>
+    <color name="blackTextColor">#000</color>
 
 </resources>

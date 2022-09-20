@@ -5,14 +5,16 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">@dimen/_130sdp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="text_heading_body_size">@dimen/_10sdp</dimen>
-    <dimen name="text_body_normal_size">@dimen/_10sdp</dimen>
+    <dimen name="text_heading_body_size">@dimen/_11sdp</dimen>
+    <dimen name="text_body_normal_size">@dimen/_8sdp</dimen>
 
     <dimen name="btn_height">@dimen/_35sdp</dimen>
     <dimen name="btn_width">@dimen/_80sdp</dimen>
     <dimen name ="card_elevation">@dimen/_5sdp</dimen>
     <dimen name ="card_round_radio">@dimen/_2sdp</dimen>
 
+    <dimen name="headerTextSize">22sp</dimen>
+    <dimen name="contentTextSize">16dp</dimen>
 
     <dimen name="title_bg_padding_right">@dimen/_15sdp</dimen>
     <dimen name="title_bg_padding_other">@dimen/_5sdp</dimen>

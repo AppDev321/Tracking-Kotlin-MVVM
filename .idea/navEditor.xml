@@ -8,6 +8,18 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
+                  <entry key="map_nav">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="486" />
+                            <option name="y" value="877" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="mapsFragment">
                     <value>
                       <LayoutPositions>
@@ -20,13 +32,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="nav_attandence_scan">
+                  <entry key="nav_attendance_form">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
+                            <option name="x" value="244" />
+                            <option name="y" value="907" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -61,8 +73,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
+                            <option name="x" value="-41" />
+                            <option name="y" value="-173" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -80,13 +92,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="nav_fuel_login_form">
+                  <entry key="nav_notification">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-3" />
-                            <option name="y" value="244" />
+                            <option name="x" value="-53" />
+                            <option name="y" value="214" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -181,8 +193,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-6" />
-                            <option name="y" value="-117" />
+                            <option name="x" value="-13" />
+                            <option name="y" value="1264" />
                           </Point>
                         </option>
                       </LayoutPositions>

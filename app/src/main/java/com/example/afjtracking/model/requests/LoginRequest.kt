@@ -8,7 +8,9 @@ class LoginRequest(
     @field:Expose @field:SerializedName("email") var strEmailAddress: String?=null,
     @field:Expose @field:SerializedName("password") var strPassword: String?=null,
     @field:Expose @field:SerializedName("registration_number") var vrnNumber: String?=null,
-    @field:Expose @field:SerializedName("device_detail") var deviceDetail:DeviceDetail?= DeviceDetail()
+    @field:Expose @field:SerializedName("device_detail") var deviceDetail:DeviceDetail?= DeviceDetail(),
+    @field:Expose @field:SerializedName("device_id") var deviceID:String?= null,
+    @field:Expose @field:SerializedName("notification_id") var notificatonID:Int?= null
 ) {
 
     val isEmailValid: Boolean

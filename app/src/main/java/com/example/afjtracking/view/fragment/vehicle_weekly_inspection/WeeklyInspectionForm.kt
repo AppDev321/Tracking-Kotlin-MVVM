@@ -27,6 +27,9 @@ import com.example.afjtracking.model.responses.WeeklyInspectionCheck
 import com.example.afjtracking.model.responses.WeeklyInspectionCheckData
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
+import com.example.afjtracking.utils.CustomDialog
+import com.example.afjtracking.utils.DialogCustomInterface
+import com.example.afjtracking.utils.LottieDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
@@ -132,8 +135,25 @@ class WeeklyInspectionForm : Fragment() {
         weeklyInspectionViewModel.apiCompleted.observe(viewLifecycleOwner)
         {
             if (it) {
-                mBaseActivity.toast("Inspection Successfully Completed")
-                mBaseActivity.onBackPressed()
+              //  mBaseActivity.toast("Inspection Successfully Completed")
+              //  mBaseActivity.onBackPressed()
+                CustomDialog().showTaskCompleteDialog(
+                    mBaseActivity,
+                    isShowTitle =  true,
+                    isShowMessage = true,
+                    titleText=getString(R.string.request_submited),
+                    msgText =getString(R.string.request_msg,"inspection form"),
+                    lottieFile = R.raw.inspection_complete,
+                    showOKButton = true,
+                    okButttonText = "Close",
+                    listner =object: DialogCustomInterface {
+                        override fun onClick(var1: LottieDialog) {
+                            super.onClick(var1)
+                            var1.dismiss()
+                            mBaseActivity.onBackPressed()
+                        }
+                    }
+                )
             }
         }
 

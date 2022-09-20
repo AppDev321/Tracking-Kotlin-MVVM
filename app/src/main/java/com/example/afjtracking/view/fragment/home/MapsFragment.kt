@@ -1,13 +1,14 @@
 package com.example.afjtracking.view.fragment.home
 
+
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,14 +24,26 @@ import com.example.afjtracking.utils.MarkerAnimation
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.location.*
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.LocationRequest.create
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import java.lang.Math.abs
-import java.lang.Math.atan
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.RectangularBounds
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
+
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
@@ -42,7 +55,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private var firstTimeFlag = true
     private var previousLatLng :LatLng?= null
 
-
+    var placesClient: PlacesClient? = null
 
     private val clickListener =
         View.OnClickListener { view ->
@@ -88,16 +101,69 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
         val myLoc = view.findViewById(R.id.currentLocationImageButton) as ImageButton
         myLoc.setOnClickListener(clickListener)
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext().applicationContext, resources.getString(R.string.map_key))
+        }
+
+        // Create a new Places client instance.
+
+        // Create a new Places client instance.
+        val placesClient = Places.createClient(requireContext())
+        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+        // and once again when the user makes a selection (for example when calling fetchPlace()).
+        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
+        // and once again when the user makes a selection (for example when calling fetchPlace()).
+        val token = AutocompleteSessionToken.newInstance()
+        // Create a RectangularBounds object.
+        // Create a RectangularBounds object.
+        val bounds = RectangularBounds.newInstance(
+            LatLng(-33.880490, 151.184363),  //dummy lat/lng
+            LatLng(-33.858754, 151.229596)
+        )
+        // Use the builder to create a FindAutocompletePredictionsRequest.
+        // Use the builder to create a FindAutocompletePredictionsRequest.
+        val request =
+            FindAutocompletePredictionsRequest.builder() // Call either setLocationBias() OR setLocationRestriction().
+                .setLocationBias(bounds) //.setLocationRestriction(bounds)
+                .setTypeFilter(TypeFilter.ADDRESS)
+                .setSessionToken(token)
+                .setQuery("Lahore")
+                .build()
+
+
+        placesClient.findAutocompletePredictions(request)
+            .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
+            var    mResult = StringBuilder()
+                for (prediction in response.autocompletePredictions) {
+                    mResult.append(" ").append(
+                        """
+                            ${prediction.getFullText(null)}
+                            
+                            """.trimIndent()
+                    )
+                }
+                AFJUtils.writeLogs(java.lang.String.valueOf(mResult))
+            }.addOnFailureListener { exception: Exception? ->
+            if (exception is ApiException) {
+                val apiException = exception
+                AFJUtils.writeLogs("Places exception:$apiException")
+            }
+        }
+
     }
 
     @Override
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
+
+        val source = LatLng(31.490127, 74.316971) //starting point (LatLng)
+        val destination = LatLng(31.474316, 74.316112) // ending point (LatLng)
+
     }
 
     fun startCurrentLocationUpdates() {
-        val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        val locationRequest = create()
+        locationRequest.priority =PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 3000
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(

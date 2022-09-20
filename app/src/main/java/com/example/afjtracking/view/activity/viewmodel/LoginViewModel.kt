@@ -15,7 +15,7 @@ import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
 import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.view.fragment.fuel.viewmodel.AttendanceReponse
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

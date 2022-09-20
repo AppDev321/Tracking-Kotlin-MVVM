@@ -13,7 +13,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.example.afjtracking.R
 import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.UploadUtil
+import com.example.afjtracking.utils.CustomDialog
+import com.example.afjtracking.utils.InternetDialog
+import com.example.afjtracking.utils.LottieDialog
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
@@ -22,7 +24,7 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-         AFJUtils.setPeriodicWorkRequest(this)
+        AFJUtils.setPeriodicWorkRequest(this)
 
     }
 
@@ -39,21 +41,27 @@ open class BaseActivity : AppCompatActivity() {
 
 
     lateinit var progressDialog: ProgressDialog
+    lateinit var customProgressDialog: LottieDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        customProgressDialog = CustomDialog().initializeProgressDialog(
+            this,
+            lottieFile = R.raw.progress,
 
 
-       /* UploadUtil().withBackgroundExecutionListener(object: BackgroundExecutionListener{
-            override fun onPre() {
+            )
 
-            }
+        /* UploadUtil().withBackgroundExecutionListener(object: BackgroundExecutionListener{
+             override fun onPre() {
 
-            override fun onPost() {
+             }
 
-            }
-        })
-       */
+             override fun onPost() {
+
+             }
+         })
+        */
         progressDialog = ProgressDialog(this@BaseActivity)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setMessage("Please Wait....")
@@ -61,10 +69,9 @@ open class BaseActivity : AppCompatActivity() {
     }
 
 
-    fun showSnackMessage(msg:String ,view: View)
-    {
+    fun showSnackMessage(msg: String, view: View) {
         Snackbar.make(
-         view,
+            view,
             msg,
             Snackbar.LENGTH_SHORT
         ).show()
@@ -73,24 +80,34 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showProgressDialog(isShow: Boolean) {
         if (isShow) {
-            if (!progressDialog.isShowing)
-                progressDialog.show()
+            /* if (!progressDialog.isShowing)
+                 progressDialog.show()*/
+            if (!customProgressDialog.isShowing)
+                customProgressDialog.show()
         } else {
-            if (progressDialog.isShowing)
-                progressDialog.dismiss()
+            /* if (progressDialog.isShowing)
+                 progressDialog.dismiss()*/
+            if (customProgressDialog.isShowing)
+                customProgressDialog.dismiss()
         }
     }
 
-    fun toast(msg: String,showToast: Boolean = true) {
-        if (msg.lowercase(Locale.getDefault()).contains(resources.getString(R.string.unauthenticated))) {
+    fun toast(msg: String, showToast: Boolean = true) {
+        if (msg.lowercase(Locale.getDefault())
+                .contains(resources.getString(R.string.unauthenticated))
+        ) {
             AFJUtils.setUserToken(this@BaseActivity, "")
             finish()
             startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
         } else {
-           if(showToast) {
-               Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
 
-           }
+            if (showToast) {
+                if (msg.lowercase().contains("unable to resolve host")) {
+                    InternetDialog(this).internetStatus
+                } else {
+                    Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -100,18 +117,16 @@ open class BaseActivity : AppCompatActivity() {
         oldFragmentId: Int,
         argument: Bundle? = null
     ) {
-        try{
-        Navigation.findNavController(view)
-            .navigate(
-                newFragmentID,
-                argument, NavOptions.Builder()
-                    .setPopUpTo(oldFragmentId, true)
-                    .build()
-            )
+        try {
+            Navigation.findNavController(view)
+                .navigate(
+                    newFragmentID,
+                    argument, NavOptions.Builder()
+                        .setPopUpTo(oldFragmentId, true)
+                        .build()
+                )
 
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
             writeExceptionLogs(e.toString())
         }
     }
@@ -133,16 +148,14 @@ open class BaseActivity : AppCompatActivity() {
         newFragmentID: Int,
         argument: Bundle? = null
     ) {
-        try{
+        try {
             Navigation.findNavController(view)
                 .navigate(
                     newFragmentID,
                     argument
                 )
 
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
             writeExceptionLogs(e.toString())
         }
     }

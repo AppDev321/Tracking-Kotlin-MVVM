@@ -2,12 +2,13 @@ package com.example.afjtracking
 
 import android.provider.Settings
 import android.support.multidex.MultiDexApplication
+import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.firebase.FirebaseConfig
 import com.example.afjtracking.utils.Constants
 
 
-class AFJApplication : MultiDexApplication() {
 
+class AFJApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
@@ -36,7 +37,6 @@ class AFJApplication : MultiDexApplication() {
 
 
     }
-
 
 
 }

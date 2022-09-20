@@ -61,10 +61,10 @@ class FuelViewModel : ViewModel() {
 
 
     companion object {
-        private var instance: FuelViewModel? = null
+        private var instance: NotificationViewModel? = null
         private var apiInterface: ApiInterface? = null
-        fun getInstance(context: Context?): FuelViewModel? {
-            if (instance == null) instance = FuelViewModel()
+        fun getInstance(context: Context?): NotificationViewModel? {
+            if (instance == null) instance = NotificationViewModel()
             if (apiInterface == null) apiInterface =
                 RetrofitUtil.getRetrofitHeaderInstance(context).create(
                     ApiInterface::class.java
@@ -146,9 +146,9 @@ class FuelViewModel : ViewModel() {
                     super.onFailure(response)
                     _dataUploaded.postValue(false)
                     var errors = ""
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }

@@ -12,13 +12,16 @@ class LocationResponse {
     @Expose
     var message: String? = null
 
+
+
+
     @SerializedName("data")
     @Expose
     var data: Data? = null
 
     @SerializedName("errors")
     @Expose
-    var errors: List<Error>? = null
+    var errors: List<Error> = arrayListOf()
     var exceptionMsg = ""
 
     inner class Error {
@@ -50,6 +53,9 @@ class LocationResponse {
 
         @SerializedName("expires_after" )
         var expireCodeSecond : Int? = null
+
+        @SerializedName("count")
+        var notificationCount :Int?= null
 
         //*********************
     }

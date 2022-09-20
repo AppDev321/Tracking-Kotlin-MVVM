@@ -27,8 +27,7 @@ import com.example.afjtracking.databinding.FragmentReportFromBinding
 import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.InspectionForm
 import com.example.afjtracking.model.responses.Vehicle
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.*
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.CustomDropDownAdapter
 import com.example.afjtracking.view.adapter.FileFormAdapter
@@ -170,10 +169,29 @@ class ReportFormFragment : Fragment() {
 
         reportViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
             if (it) {
-                mBaseActivity.onBackPressed()
+              /*  mBaseActivity.onBackPressed()
                 mBaseActivity.showSnackMessage(
                     "Request saved", requireView()
+                )*/
+                CustomDialog().showTaskCompleteDialog(
+                    mBaseActivity,
+                    isShowTitle =  true,
+                    isShowMessage = true,
+                    titleText=getString(R.string.request_submited),
+                    msgText =getString(R.string.request_msg,"report"),
+                    lottieFile = R.raw.report,
+                    showOKButton = true,
+                    okButttonText = "Close",
+                    listner =object: DialogCustomInterface {
+                        override fun onClick(var1: LottieDialog) {
+                            super.onClick(var1)
+                            var1.dismiss()
+                            mBaseActivity.onBackPressed()
+                        }
+                    }
                 )
+
+
             }
         })
 

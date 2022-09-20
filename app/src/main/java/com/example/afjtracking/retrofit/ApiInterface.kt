@@ -10,14 +10,13 @@ import retrofit2.http.POST
 
 
 interface ApiInterface {
+
+
     @POST("vehicle-login")
     fun getLoginUser(@Body body: LoginRequest?): Call<LoginResponse?>
 
-   @POST("vehicles/fetch-vehicle-data")
+    @POST("vehicles/fetch-vehicle-data")
     fun getVehicleData(@Body body: LoginRequest?): Call<LoginResponse?>
-
-
-
 
     @POST("update-location")
     fun updateLocation(@Body body: LocationApiRequest?): Call<LocationResponse?>
@@ -55,26 +54,38 @@ interface ApiInterface {
     fun getWeeklyInspectionChecks(@Body body: SingleInspectionRequest): Call<GetWeeklyInspectionChecksListResponse?>
 
     @POST("vehicles/inspection/check/save")
-    fun saveWeeklyInspectionCheck(@Body body: SavedWeeklyInspection):Call<LocationResponse?>
+    fun saveWeeklyInspectionCheck(@Body body: SavedWeeklyInspection): Call<LocationResponse?>
 
 
     @GET("vehicles/get-fuel-form")
-    fun getFuelForm():Call<GetFuelFormResponse?>
+    fun getFuelForm(): Call<GetFuelFormResponse?>
 
     @POST("vehicles/save-fuel-form")
-    fun saveFuelForm(@Body body:SaveFormRequest):Call<LocationResponse?>
+    fun saveFuelForm(@Body body: SaveFormRequest): Call<LocationResponse?>
 
     @GET("vehicles/get-reporting-form")
-    fun getReportForm():Call<GetReportFormResponse?>
+    fun getReportForm(): Call<GetReportFormResponse?>
 
     @POST("vehicles/save-reporting-form")
-    fun saveReportForm(@Body body:SaveFormRequest):Call<LocationResponse?>
+    fun saveReportForm(@Body body: SaveFormRequest): Call<LocationResponse?>
 
-    @POST("update-fcm-token")
-    fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest):Call<LocationResponse?>
+    @POST("update-vehicle-fcm-token")
+    fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest): Call<LocationResponse?>
 
     @POST("get-qr-code")
     fun getQRCode(@Body body: FCMRegistrationRequest): Call<LocationResponse?>
+
+
+    @POST("device-notification/get-notification-count")
+    fun getNotificationCount(@Body body: LoginRequest): Call<LocationResponse?>
+
+    @POST("device-notification")
+    fun getNotificationData(@Body body: LoginRequest): Call<NotificationDataResponse?>
+
+    @POST("device-notification/change-read-status")
+    fun updateNotificationStatus(@Body body: LoginRequest): Call<LocationResponse?>
+    @POST("device-notification/delete-notification")
+    fun deleteNotification(@Body body: LoginRequest): Call<LocationResponse?>
 
 
 }

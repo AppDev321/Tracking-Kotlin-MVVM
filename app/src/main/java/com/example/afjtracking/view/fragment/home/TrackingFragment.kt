@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.Navigation
 import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentTrakingBinding
@@ -72,8 +71,6 @@ class TrackingFragment : Fragment() {
     }
 
 
-
-
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
     override fun onAttach(context: Context) {
@@ -90,12 +87,13 @@ class TrackingFragment : Fragment() {
         myReceiver = MyReceiver()
 
 
+
         _trackingViewModel = ViewModelProvider(this).get(TrackingViewModel::class.java)
         _binding = FragmentTrakingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.trackingViewModel = trackingViewModel
-
+        mBaseActivity.toolbarVisibility(false)
 
         // Check that the user hasn't revoked permissions by going to Settings.
         if (AFJUtils.requestingLocationUpdates(activity)) {
@@ -106,14 +104,53 @@ class TrackingFragment : Fragment() {
         onSetViews()
 
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
-        mBaseActivity.addChildFragment(VehicleDetailFragment(), this, R.id.frame_tracking)
-        /*binding.btnInspection.setOnClickListener{
-            mBaseActivity.moveFragmentCloseCurrent(
+        mBaseActivity.addChildFragment(MainMenuFragment(), this, R.id.frame_tracking)
+
+        binding.txtGreeting.text = AFJUtils.getGreetingMessage()
+
+
+        //Save vehicle object
+        val vehicleDetail = AFJUtils.getObjectPref(
+            mBaseActivity,
+            AFJUtils.KEY_VEHICLE_DETAIL,
+            VehicleDetail::class.java
+        )
+        binding.txtVRN.text = vehicleDetail.vrn ?: Constants.NULL_DEFAULT_VALUE
+        binding.txtOdoMeter.text = vehicleDetail.odometerReading ?: Constants.NULL_DEFAULT_VALUE
+        binding.txtType.text = vehicleDetail.type ?: Constants.NULL_DEFAULT_VALUE
+        binding.txtModel.text = vehicleDetail.model ?: Constants.NULL_DEFAULT_VALUE
+        binding.txtTypeVehicle.text =
+            vehicleDetail.detail?.vehicleType ?: Constants.NULL_DEFAULT_VALUE
+
+        //Send token to server
+        trackingViewModel.postFCMTokenToServer(
+            FCMRegistrationRequest(
+                fcmToken = Constants.DEVICE_FCM_TOKEN,
+                vehicle_id = vehicleDetail.id,
+                vehicleDeviceId = Constants.DEVICE_ID
+            ),
+            context
+        )
+
+        binding.txtNotificationCount.visibility = View.GONE
+        trackingViewModel.getNotificationCount(mBaseActivity)
+
+        trackingViewModel.notificationCount.observe(viewLifecycleOwner) {
+            binding.txtNotificationCount.visibility = View.VISIBLE
+            binding.txtNotificationCount.text = it.toString()
+            AFJUtils.writeLogs("observer count")
+        }
+
+        binding.btnNotification.setOnClickListener{
+            mBaseActivity.moveFragmentToNextFragment(
                 binding.root,
-                R.id.nav_vdi_inspection_create,
-                R.id.tracking
+                R.id.nav_notification
             )
-        }*/
+        }
+
+
+
+
 
 
         return root
@@ -126,8 +163,6 @@ class TrackingFragment : Fragment() {
 
 
     private fun onSetViews() {
-
-
 
 
         // Bind to the service. If the service is in foreground mode, this signals to the service
@@ -143,8 +178,6 @@ class TrackingFragment : Fragment() {
             Intent(mBaseActivity, LocationUpdatesService::class.java), mServiceConnection,
             AppCompatActivity.BIND_AUTO_CREATE
         )
-
-
 
 
         //}
@@ -167,8 +200,6 @@ class TrackingFragment : Fragment() {
 
         }
 
-        //Send token to server
-        trackingViewModel.postFCMTokenToServer(FCMRegistrationRequest(fcmToken = Constants.DEVICE_FCM_TOKEN), context)
 
     }
 
@@ -309,7 +340,6 @@ class TrackingFragment : Fragment() {
     }
 
 
-
     override fun onResume() {
         super.onResume()
 
@@ -351,7 +381,7 @@ class TrackingFragment : Fragment() {
                 }
                 .show()
         } else {
-             ActivityCompat.requestPermissions(
+            ActivityCompat.requestPermissions(
                 mBaseActivity,
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -368,14 +398,13 @@ class TrackingFragment : Fragment() {
             binding.btnTracking.text = "Stop Tracking"
             binding.btnTracking.backgroundTintList =
                 AppCompatResources.getColorStateList(mBaseActivity, R.color.black)
-            if(mService != null) {
-                    if (!checkPermission()) {
-                        requestPermissions()
-                    } else {
-                        mService!!.requestLocationUpdates()
-                    }
+            if (mService != null) {
+                if (!checkPermission()) {
+                    requestPermissions()
+                } else {
+                    mService!!.requestLocationUpdates()
+                }
             }
-
 
 
         } else {
@@ -387,7 +416,7 @@ class TrackingFragment : Fragment() {
 
     }
 
-     inner class MyReceiver : BroadcastReceiver() {
+    inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val location =
                 intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
@@ -396,9 +425,10 @@ class TrackingFragment : Fragment() {
                     AFJUtils.getObjectPref(
                         mBaseActivity,
                         AFJUtils.KEY_VEHICLE_DETAIL,
-                        VehicleDetail::class.java )
+                        VehicleDetail::class.java
+                    )
                 val request = LocationApiRequest()
-                request.vehicleID = ""+ vehicleDetail.id
+                request.vehicleID = "" + vehicleDetail.id
                 request.accuracy = "" + location.accuracy
                 request.altitude = "" + location.altitude
                 request.heading = "" + location.bearing
@@ -418,10 +448,9 @@ class TrackingFragment : Fragment() {
                 }
 
 
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
                     return
-                }
-                else {
+                } else {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     if (trackingViewModel != null) {
                         AFJUtils.writeLogs("Location API: null ni hon")
@@ -432,7 +461,7 @@ class TrackingFragment : Fragment() {
                         AFJUtils.writeLogs("Location API: null hon ma")
                         trackingViewModel.postLocationData(request, context)
                     }
-               }
+                }
             }
         }
     }

@@ -8,10 +8,20 @@
     <fragment
         android:id="@+id/tracking"
         android:name="com.example.afjtracking.view.fragment.home.TrackingFragment"
-        android:label="@string/menu_tracking"
+        android:label="Dashboard"
         tools:layout="@layout/fragment_traking" >
 
     </fragment>
+
+
+    <fragment
+        android:id="@+id/map_nav"
+        android:name="com.example.afjtracking.view.fragment.home.MapsFragment"
+        android:label="@string/navigation"
+        tools:layout="@layout/fragment_maps" >
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_pts_inspection_form"
@@ -79,14 +89,14 @@
 
 
     <fragment
-        android:id="@+id/nav_fuel_login_form"
-        android:name="com.example.afjtracking.view.fragment.fuel.FuelAuthFragment"
-        android:label="@string/menu_fuel_fill"
-        tools:layout="@layout/fragment_auth" />
+        android:id="@+id/nav_notification"
+        android:name="com.example.afjtracking.view.fragment.fuel.NotificationFragment"
+        android:label="@string/menu_notification"
+        tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/nav_fuel_form"
-        android:name="com.example.afjtracking.view.fragment.fuel.FuelFormFragment"
+        android:name="com.example.afjtracking.view.fragment.fuel.NotificationFragment"
         android:label="@string/menu_fuel_fill"
         tools:layout="@layout/fragment_fuel_from" />
 

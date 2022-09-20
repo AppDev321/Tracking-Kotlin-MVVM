@@ -1,45 +1,36 @@
 package com.example.afjtracking.view.fragment.auth.viewmodel
 
+
 import android.content.Context
-import android.view.View
+import android.graphics.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.afjtracking.model.requests.LoginRequest
-import com.example.afjtracking.model.requests.SaveFormRequest
-import com.example.afjtracking.model.responses.*
+import androidx.lifecycle.viewModelScope
+import com.example.afjtracking.R
+import com.example.afjtracking.model.requests.FCMRegistrationRequest
+import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
-import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.afjtracking.retrofit.SuccessCallback
+import com.example.afjtracking.utils.AFJUtils
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
+import kotlin.concurrent.thread
+
 
 class AuthViewModel : ViewModel() {
-    @JvmField
-    var EmailAddress = MutableLiveData<String>()
-
-    @JvmField
-    var Password = MutableLiveData<String>()
 
 
     private val _dialogShow = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _dialogShow
 
-
-    private var userMutableLiveData: MutableLiveData<LoginRequest>? = null
-    val user: MutableLiveData<LoginRequest>
-        get() {
-            if (userMutableLiveData == null) {
-                userMutableLiveData = MutableLiveData()
-            }
-            return userMutableLiveData!!
-        }
+    var _attendanceResponse = MutableLiveData<AttendanceReponse>()
+    var attendanceReponse: LiveData<AttendanceReponse> = _attendanceResponse
 
 
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -65,52 +56,163 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-   fun onLoginAuthClick(view:View)
-    {}
+
+    fun getQRCode(context: Context?, qrType: String = "ATTENDANCE") {
+        var request = FCMRegistrationRequest()
+        request.vehicleDeviceId = AFJUtils.getDeviceDetail().deviceID
+        request.qrType = qrType
+        getInstance(context)
+        _dialogShow.postValue(true)
+        apiInterface!!.getQRCode(request)
+            .enqueue(object : SuccessCallback<LocationResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+                override fun onSuccess(response: Response<LocationResponse?>) {
+                    super.onSuccess(response)
+                    val res = AttendanceReponse(
+                        response.body()!!.data!!.attendanceCode!!,
+                        response.body()!!.data!!.expireCodeSecond!!
+                    )
+                    _attendanceResponse.postValue(res)
+                }
+                override fun onFailure(response: Response<LocationResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
+
+                                """.trimIndent()
+                    }
+                    mErrorsMsg!!.postValue(errors)
+
+                }
+                override fun onAPIError(error: String) {
+
+                    mErrorsMsg!!.postValue(error)
+
+                }
+            })
+
+    }
+
+
+    fun getQrCodeBitmap(text: String, context: AppCompatActivity, callback: QRImageCallback?) {
+
+        context.runOnUiThread{
+                try {
+                    val size = 512 //pixels
+                    val qrCodeContent = text
+                    val hints =
+                        hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 }
+                    // Make the QR code buffer border narrower
+                    val bits =
+                        QRCodeWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, size, size)
+
+                    var qrBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
+                        for (x in 0 until size) {
+                            for (y in 0 until size) {
+                                it.setPixel(
+                                    x,
+                                    y,
+                                    if (bits[x, y]) context.resources.getColor(R.color.black) else context.resources.getColor(
+                                        R.color.all_app_bg
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
+                    //  myLogo= getResizedBitmap(myLogo,80)
+                    //  return mergeBitmaps(qrBitmap, myLogo)
+
+
+                    callback?.onRendered(qrBitmap)
+
+
+                } catch (e: Exception) {
+                    callback?.onError(e)
+                }
+
+            }
+
+    }
+    fun getQrCodeBitmap(text: String, context: AppCompatActivity):Bitmap? {
+
+            try {
+                val size = 512 //pixels
+                val qrCodeContent = text
+                val hints =
+                    hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 }
+                // Make the QR code buffer border narrower
+                val bits =
+                    QRCodeWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, size, size)
+
+                var qrBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
+                    for (x in 0 until size) {
+                        for (y in 0 until size) {
+                            it.setPixel(
+                                x,
+                                y,
+                                if (bits[x, y]) context.resources.getColor(R.color.black) else context.resources.getColor(
+                                    R.color.all_app_bg
+                                )
+                            )
+                        }
+                    }
+                }
+                //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
+                //  myLogo= getResizedBitmap(myLogo,80)
+                //  return mergeBitmaps(qrBitmap, myLogo)
+
+
+           return  qrBitmap
+
+
+            } catch (e: Exception) {
+               return   null
+            }
+
+
+    }
+
+
+    fun mergeBitmaps(qrCode: Bitmap, myLogo: Bitmap): Bitmap {
+        val bmOverlay = Bitmap.createBitmap(qrCode.width, qrCode.height, qrCode.config)
+        val canvas = Canvas(bmOverlay)
+
+        canvas.drawBitmap(qrCode, Matrix(), null)
+        canvas.drawBitmap(
+            myLogo,
+            ((qrCode.width - myLogo.width) / 2).toFloat(),
+            ((qrCode.height - myLogo.height) / 2).toFloat(),
+            null
+        )
+        return bmOverlay
+    }
+
+    fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap? {
+        var width = image.width
+        var height = image.height
+        val bitmapRatio = width.toFloat() / height.toFloat()
+        if (bitmapRatio > 1) {
+            width = maxSize
+            height = (width / bitmapRatio).toInt()
+        } else {
+            height = maxSize
+            width = (height * bitmapRatio).toInt()
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true)
+    }
+
+
 }
 
+data class AttendanceReponse(val qrCode: String, val timeOut: Int)
+interface QRImageCallback {
+    fun onRendered(bitmap: Bitmap)
 
-data class QRFireDatabase(val deviceId:String?="", val status:Boolean?=false, val expiresAt: String?="", val data:QRFirebaseData?=QRFirebaseData() )
-data class QRFirebaseData(
-    val token   : String?  = null,
-    val user : QRFirebaseUser? = QRFirebaseUser()
-)
-data class QRFirebaseUser(
-
-    val id                             : Int?    = null,
-    val firstname                      : String? = null,
-    val middlename                     : String? = null,
-    val lastname                       : String? = null,
-    val sage_id                        : String? = null,
-    val national_insurance_number      : String? = null,
-    val contact_no                     : String? = null,
-    val official_email                 : String? = null,
-    val personal_email                 : String? = null,
-    val identity_no                    : String? = null,
-    val date_of_birth                   : String? = null,
-    val gender                         : String? = null,
-    val emergency_contact_relationship : String? = null,
-    val emergency_contact              : String? = null,
-    val emergency_contact_address      : String? = null,
-    val current_address                : String? = null,
-    val permanent_address              : String? = null,
-    val city                           : String? = null,
-    val designation                    : String? = null,
-    val type                           : String? = null,
-    val status                         : Int?    = null,
-    val employment_status              : String? = null,
-    val employment_type                : String? = null,
-    val picture                        : String? = null,
-    val joining_date                   : String? = null,
-    val exit_date                      : String? = null,
-    val gross_salary                   : Int?    = null,
-    val bonus                          : Int?    = null,
-    val branch_id                      : Int?    = null,
-    val department_id                  : String? = null,
-    val device_type                    : String? = null,
-    val deleted_at                     : String? = null,
-    val created_at                     : String? = null,
-    val updated_at                     : String? = null,
-    val full_name                      : String? = null
-
-)
+    fun onError(e: Exception)
+}

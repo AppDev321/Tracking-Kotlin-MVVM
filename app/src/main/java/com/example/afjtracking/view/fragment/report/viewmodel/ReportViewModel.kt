@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.afjtracking.R
 import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.retrofit.ApiInterface
@@ -162,7 +163,7 @@ class ReportViewModel : ViewModel() {
                     mErrorsMsg!!.postValue(errors)
                 }
             } else {
-                mErrorsMsg!!.postValue("No data found")
+                mErrorsMsg!!.postValue(context.resources.getString(R.string.no_data_found))
             }
         }
     }
@@ -189,9 +190,9 @@ class ReportViewModel : ViewModel() {
                     super.onFailure(response)
                     _dataUploaded.postValue(false)
                     var errors = ""
-                    for (i in response.body()!!.errors!!.indices) {
+                    for (i in response.body()!!.errors.indices) {
                         errors = """
-                                $errors${response.body()!!.errors!![i].message}
+                                $errors${response.body()!!.errors[i].message}
                                 
                                 """.trimIndent()
                     }

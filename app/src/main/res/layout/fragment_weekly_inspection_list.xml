@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/all_app_bg"
-   >
+    android:background="@color/all_app_bg">
 <androidx.appcompat.widget.LinearLayoutCompat
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,7 +21,6 @@
         android:paddingTop="@dimen/title_bg_padding_other"
         android:paddingRight="@dimen/title_bg_padding_right"
         android:paddingBottom="@dimen/title_bg_padding_other"
-
         android:text=""
         android:textColor="@color/white"
         android:textSize="@dimen/text_heading_body_size"
@@ -32,7 +31,7 @@
     android:layout_height="match_parent"
     >
     <RelativeLayout
-        android:layout_above="@id/btnAddInspection"
+
         android:padding="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -55,21 +54,19 @@
     </RelativeLayout>
 
 
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="right"
-        android:layout_marginLeft="@dimen/_20sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:id="@+id/btnAddInspection"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_height"
-        android:background="@drawable/ripple_bg_button"
-        android:text="Add Inspection"
-        android:textColor="@color/white" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/btnAddInspection"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/_10sdp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:textColor="@color/white"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/add_button"
+            app:lottie_loop="true" />
 
 
 </RelativeLayout>

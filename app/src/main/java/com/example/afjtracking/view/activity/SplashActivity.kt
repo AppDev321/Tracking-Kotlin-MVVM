@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.ActivitySplashBinding
 import com.example.afjtracking.model.requests.LoginRequest
+import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.ota.ForceUpdateChecker
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.viewmodel.LoginViewModel
@@ -25,7 +26,7 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
         super.onCreate(savedInstanceState)
         // val token = AFJUtils.getUserToken(this@SplashActivity)
         //if (! token!!.isEmpty()) {
-      /*  val vehicleDetail = AFJUtils.getObjectPref(
+        /*val vehicleDetail = AFJUtils.getObjectPref(
             this,
             AFJUtils.KEY_VEHICLE_DETAIL,
             VehicleDetail::class.java

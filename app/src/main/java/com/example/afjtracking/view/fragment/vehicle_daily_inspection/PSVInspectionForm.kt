@@ -16,6 +16,9 @@ import com.example.afjtracking.model.responses.InspectionCheckData
 import com.example.afjtracking.model.responses.PSVCheck
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
+import com.example.afjtracking.utils.CustomDialog
+import com.example.afjtracking.utils.DialogCustomInterface
+import com.example.afjtracking.utils.LottieDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
 import kotlinx.android.synthetic.main.fragment_daily_inpsection_form.view.*
@@ -115,8 +118,25 @@ class PSVInspectionForm : Fragment() {
                 if(isAdded) {
                   //  mBaseActivity.closeFragment(this)
 
-                    mBaseActivity.toast("Inspection Completed")
-                    mBaseActivity.onBackPressed()
+                   // mBaseActivity.toast("Inspection Completed")
+                  //  mBaseActivity.onBackPressed()
+                    CustomDialog().showTaskCompleteDialog(
+                        mBaseActivity,
+                        isShowTitle =  true,
+                        isShowMessage = true,
+                        titleText=getString(R.string.request_inspection_completed),
+                        msgText =getString(R.string.request_msg,"inspection form"),
+                        lottieFile = R.raw.inspection_complete,
+                        showOKButton = true,
+                        okButttonText = "Close",
+                        listner =object: DialogCustomInterface {
+                            override fun onClick(var1: LottieDialog) {
+                                super.onClick(var1)
+                                var1.dismiss()
+                                mBaseActivity.onBackPressed()
+                            }
+                        }
+                    )
                 }
                 inspectionViewModel._dataUploaded.value =false
 

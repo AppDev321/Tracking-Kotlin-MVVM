@@ -33,7 +33,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw" />
+            android:value="@string/map_key" />
 
         <activity
             android:name=".view.activity.NavigationDrawerActivity"
@@ -84,15 +84,7 @@ android:screenOrientation="portrait"
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name=".service.AlarmReceiver"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="true">
-        <intent-filter>
-            <action
-                android:name="android.intent.action.BOOT_COMPLETED"/>
-        </intent-filter>
-        </receiver>
+
 
     </application>
 
