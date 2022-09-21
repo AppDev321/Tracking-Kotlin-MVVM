@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.afjtracking.R
 import com.example.afjtracking.model.responses.Notifications
+import com.example.afjtracking.utils.AFJUtils
 
 class NotificationAdapter
     (
@@ -29,9 +30,14 @@ class NotificationAdapter
     }
 
     fun removeAt(position: Int) {
+        AFJUtils.writeLogs("Deleted item ${position}")
         notificationList.removeAt(position)
 
+
+
     }
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val notificationData = notificationList[position].notificationData
         holder.txtTitleNotification.text = notificationData?.title
