@@ -12,11 +12,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.example.afjtracking.R
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.CustomDialog
-import com.example.afjtracking.utils.InternetDialog
-import com.example.afjtracking.utils.LottieDialog
+import com.example.afjtracking.model.responses.QRFireDatabase
+import com.example.afjtracking.model.responses.TrackingSettingFirebase
+import com.example.afjtracking.utils.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.*
 
 
@@ -25,7 +28,6 @@ open class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         AFJUtils.setPeriodicWorkRequest(this)
-
     }
 
 /*    private fun UploadUtil.trs(){
@@ -65,6 +67,7 @@ open class BaseActivity : AppCompatActivity() {
         progressDialog = ProgressDialog(this@BaseActivity)
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setMessage("Please Wait....")
+
 
     }
 

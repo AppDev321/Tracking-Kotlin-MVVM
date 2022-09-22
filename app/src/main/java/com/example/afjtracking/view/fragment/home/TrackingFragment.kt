@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
+import com.example.afjtracking.broadcast.TrackingAppBroadcast
 import com.example.afjtracking.databinding.FragmentTrakingBinding
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.requests.LocationApiRequest
@@ -45,7 +46,7 @@ class TrackingFragment : Fragment() {
     private var _trackingViewModel: TrackingViewModel? = null
     private val trackingViewModel get() = _trackingViewModel!!
 
-    private val TAG = TrackingFragment::class.java.simpleName
+
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
 
@@ -78,6 +79,23 @@ class TrackingFragment : Fragment() {
         mBaseActivity = context as NavigationDrawerActivity
     }
 
+    private val notificationBroadCast = object :TrackingAppBroadcast(){
+        override fun refreshNotificationCount() {
+            super.refreshNotificationCount()
+            if(trackingViewModel != null)
+            {
+                trackingViewModel.getNotificationCount(mBaseActivity)
+            }
+        }
+
+        override fun trackingSetting() {
+            super.trackingSetting()
+            setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
+        }
+    }
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,6 +104,7 @@ class TrackingFragment : Fragment() {
 
         myReceiver = MyReceiver()
 
+        mBaseActivity.registerReceiver(notificationBroadCast,IntentFilter(Constants.NOTIFICATION_BROADCAST))
 
 
         _trackingViewModel = ViewModelProvider(this).get(TrackingViewModel::class.java)
@@ -95,13 +114,16 @@ class TrackingFragment : Fragment() {
         binding.trackingViewModel = trackingViewModel
         mBaseActivity.toolbarVisibility(false)
 
+
         // Check that the user hasn't revoked permissions by going to Settings.
-        if (AFJUtils.requestingLocationUpdates(activity)) {
+       // if (AFJUtils.requestingLocationUpdates(activity)) {
             if (!checkPermission()) {
                 requestPermissions()
             }
-        }
-        onSetViews()
+       // }
+
+
+          onSetViews()
 
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
         mBaseActivity.addChildFragment(MainMenuFragment(), this, R.id.frame_tracking)
@@ -152,13 +174,14 @@ class TrackingFragment : Fragment() {
 
 
 
-
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        mBaseActivity.unregisterReceiver(notificationBroadCast)
     }
 
 
@@ -183,7 +206,7 @@ class TrackingFragment : Fragment() {
         //}
         binding.btnTracking.setOnClickListener {
             var checkTrackingStatus = AFJUtils.requestingLocationUpdates(mBaseActivity)
-            if (checkTrackingStatus == false) {
+            if (checkTrackingStatus == true) {
                 if (!checkPermission()) {
                     requestPermissions()
                 } else {
@@ -347,6 +370,8 @@ class TrackingFragment : Fragment() {
             myReceiver!!,
             IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
         )
+
+
     }
 
     override fun onStop() {
@@ -460,6 +485,16 @@ class TrackingFragment : Fragment() {
                             ViewModelProvider(context as ViewModelStoreOwner).get(TrackingViewModel::class.java)
                         AFJUtils.writeLogs("Location API: null hon ma")
                         trackingViewModel.postLocationData(request, context)
+                    }
+
+                    // **** Checking Service Status of Tracking
+                    if(mService != null) {
+                        val checkTrackingStatus = AFJUtils.requestingLocationUpdates(mBaseActivity)
+                        if (checkTrackingStatus == true) {
+                            mService!!.requestLocationUpdates()
+                        } else {
+                            mService!!.removeLocationUpdates()
+                        }
                     }
                 }
             }

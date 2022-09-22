@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentNotificationBinding
 import com.example.afjtracking.model.responses.Notifications
+import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.utils.SwipeListener
 import com.example.afjtracking.utils.SwipeToDelete
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
@@ -28,7 +30,7 @@ class NotificationFragment : Fragment(), NotificationItemListner {
     lateinit var notificationViewModel: NotificationViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
-
+    var mAdapter: NotificationAdapter? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
@@ -47,7 +49,7 @@ class NotificationFragment : Fragment(), NotificationItemListner {
 
         mBaseActivity.toolbarVisibility(true)
         notificationViewModel.showDialog.observe(viewLifecycleOwner) {
-           mBaseActivity.showProgressDialog(it)
+            mBaseActivity.showProgressDialog(it)
         }
 
         notificationViewModel.getNotifications(mBaseActivity)
@@ -62,51 +64,61 @@ class NotificationFragment : Fragment(), NotificationItemListner {
 
 
         notificationViewModel.getNotifications(mBaseActivity)
-        notificationViewModel.notificationData.observe(viewLifecycleOwner){
+        notificationViewModel.notificationData.observe(viewLifecycleOwner) {
             binding.baseLayout.visibility = View.VISIBLE
 
-            val mAdapter = NotificationAdapter(mBaseActivity, it.toMutableList(),this)
-            binding.recNotification.layoutManager =  LinearLayoutManager(mBaseActivity)
-            binding.recNotification.adapter = mAdapter
-
-
-
+            mAdapter = NotificationAdapter(mBaseActivity, it.toMutableList(), this)
             binding.recNotification.layoutManager = LinearLayoutManager(mBaseActivity)
-
-
-            var itemTouchHelper = ItemTouchHelper(SwipeToDelete(object :SwipeListener{
-
+            binding.recNotification.adapter = mAdapter
+            binding.recNotification.layoutManager = LinearLayoutManager(mBaseActivity)
+            ItemTouchHelper(SwipeToDelete(object : SwipeListener {
                 override fun onSwiped(pos: Int) {
-                   // mAdapter.removeAt(pos)
-                   mAdapter.notifyItemRemoved(pos)
-                    //mAdapter.notifyItemRangeChanged(pos, mAdapter.itemCount);
-                    mAdapter. notifyDataSetChanged()
-
-                    if(mAdapter.itemCount == 0)
-                    {
+                    mAdapter?.removeAt(pos)
+                    mBaseActivity.showSnackMessage("Notification deleted", binding.root)
+                    if (mAdapter?.itemCount == 0) {
                         binding.txtErrorMsg.visibility = View.VISIBLE
                         binding.txtErrorMsg.text = resources.getString(R.string.no_data_found)
                         binding.baseLayout.visibility = View.GONE
                     }
-
                 }
 
-            }))
-            itemTouchHelper.attachToRecyclerView(binding.recNotification)
-
+            })).attachToRecyclerView(binding.recNotification)
         }
 
 
         return root
     }
 
-
-
     override fun onItemClick(item: Notifications) {
-        notificationViewModel.updateNotificationStatus(mBaseActivity,item.id!!)
+        notificationViewModel.updateNotificationStatus(mBaseActivity, item.id!!)
+        when (item.type.toString().uppercase()) {
+            AFJUtils.NOTIFICATION_TYPE.TEXT.name ->
+            {
+                        CustomDialog().showSimpleAlertMsg(
+                            context = mBaseActivity,
+                            title = item.notificationData?.title,
+                            message = item.notificationData?.body,
+                           textPositive = "Close")
+            }
+
+            AFJUtils.NOTIFICATION_TYPE.IMAGE.name ->
+            {
+                CustomDialog().createCustomTextImageDialog(
+                    mBaseActivity,
+                    title = item.notificationData?.title,
+                   // message = item.notificationData?.body,
+                    message = "Bilal will send me url of image in detail",
+                    textNegative = "Close"
+                )
+            }
+
+        }
+
     }
 
-
+    override fun onItemDelete(item: Notifications) {
+        notificationViewModel.deleteNotification(mBaseActivity, item.id!!)
+    }
 
 }
 

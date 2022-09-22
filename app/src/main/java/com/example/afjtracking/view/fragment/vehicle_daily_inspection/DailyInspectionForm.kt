@@ -282,8 +282,8 @@ class DailyInspectionForm : Fragment() {
 
     fun createViewChecks(uiType: String, formData: InspectionForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
-        when (uiType) {
-           resources.getString(R.string.ui_type_text)  -> {
+        when (uiType.uppercase()) {
+            AFJUtils.UI_TYPE.TEXT.name -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
@@ -375,7 +375,7 @@ class DailyInspectionForm : Fragment() {
                 containerChecks.addView(view)
 
             }
-            resources.getString(R.string.ui_type_file)   -> {
+            AFJUtils.UI_TYPE.FILE.name  -> {
                 // "FILE" -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -425,7 +425,7 @@ class DailyInspectionForm : Fragment() {
                 containerChecks.addView(view)
 
             }
-            resources.getString(R.string.ui_type_image)     -> {
+            AFJUtils.UI_TYPE.IMAGE.name     -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)

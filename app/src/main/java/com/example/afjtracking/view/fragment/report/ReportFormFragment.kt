@@ -39,6 +39,7 @@ import java.sql.Time
 import java.text.Format
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.xml.datatype.DatatypeConstants.DATETIME
 
 
 class ReportFormFragment : Fragment() {
@@ -293,8 +294,8 @@ class ReportFormFragment : Fragment() {
 
     fun createViewChecks(uiType: String, formData: InspectionForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
-        when (uiType) {
-            "TEXT" -> {
+        when (uiType.uppercase()) {
+            AFJUtils.UI_TYPE.TEXT.name -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
@@ -364,7 +365,7 @@ class ReportFormFragment : Fragment() {
 
             }
 
-            "MULTILINE" -> {
+            AFJUtils.UI_TYPE.MULTILINE.name -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val textTitleLable = view.findViewById<TextView>(R.id.text_label)
@@ -411,7 +412,7 @@ class ReportFormFragment : Fragment() {
             }
 
 
-            "OPTION" -> {
+            AFJUtils.UI_TYPE.OPTION.name -> {
 
                 val view = layoutInflater.inflate(R.layout.layout_spinner_view, null)
                 val textTitleLable = view.findViewById<TextView>(R.id.spLable)
@@ -442,7 +443,7 @@ class ReportFormFragment : Fragment() {
 
             }
 
-            "IMAGE" -> {
+            AFJUtils.UI_TYPE.IMAGE.name -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val titleLabel = view.findViewById<TextView>(R.id.text_label)
@@ -490,7 +491,7 @@ class ReportFormFragment : Fragment() {
             }
 
 
-            "FILE" -> {
+            AFJUtils.UI_TYPE.FILE.name -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val titleLabel = view.findViewById<TextView>(R.id.text_label)
@@ -545,7 +546,7 @@ class ReportFormFragment : Fragment() {
             }
 
 
-            "MULTISELECT" -> {
+            AFJUtils.UI_TYPE.MULTISELECT.name  -> {
 
 
 
@@ -613,7 +614,7 @@ class ReportFormFragment : Fragment() {
             }
 
 
-            "DATETIME" -> {
+            AFJUtils.UI_TYPE.DATETIME.name  -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val textTitleLable = view.findViewById<TextView>(R.id.text_label)

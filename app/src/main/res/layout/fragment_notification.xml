@@ -39,7 +39,7 @@
         android:gravity="center"
         android:padding="@dimen/_10sdp"
         android:text="Stat"
-        android:textSize="@dimen/text_body_normal_size"
+        android:textSize="@dimen/text_heading_body_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

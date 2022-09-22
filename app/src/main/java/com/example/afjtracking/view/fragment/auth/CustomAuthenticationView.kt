@@ -14,6 +14,7 @@ import com.example.afjtracking.databinding.FragmentAuthBinding
 import com.example.afjtracking.model.responses.QRFireDatabase
 import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.InternetDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
@@ -107,7 +108,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
         InternetDialog(context).internetStatus
 
-        mBaseActivity.dbReference = FirebaseDatabase.getInstance().getReference("qr_table")
+        mBaseActivity.dbReference = FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_QR_TABLE)
         mBaseActivity.dbReference?.child(AFJUtils.getDeviceDetail().deviceID.toString())
             ?.addValueEventListener(
                 object : ValueEventListener {

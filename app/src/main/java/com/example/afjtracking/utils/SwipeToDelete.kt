@@ -11,7 +11,7 @@ import com.example.afjtracking.R
 
 class SwipeToDelete(val listener: SwipeListener) : ItemTouchHelper.SimpleCallback(
     ItemTouchHelper.START or ItemTouchHelper.END,
-    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+    ItemTouchHelper.LEFT
 ) {
 
     override fun onMove(
@@ -40,7 +40,8 @@ class SwipeToDelete(val listener: SwipeListener) : ItemTouchHelper.SimpleCallbac
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
 
-         val background = ColorDrawable(viewHolder.itemView.context.resources.getColor(R.color.colorPrimary))
+        val background =
+            ColorDrawable(viewHolder.itemView.context.resources.getColor(R.color.colorPrimary))
 
         val itemView: View = viewHolder.itemView
         if (dX > 0) {
@@ -60,12 +61,17 @@ class SwipeToDelete(val listener: SwipeListener) : ItemTouchHelper.SimpleCallbac
         } else {
             background.setBounds(0, 0, 0, 0)
         }
-        background.draw(c)
+        // background.draw(c)
     }
+
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         var pos = viewHolder.adapterPosition
+        when (direction) {
+            ItemTouchHelper.LEFT -> {
+                listener.onSwiped(pos)
+            }
+        }
 
-        listener.onSwiped(pos)
     }
 
 

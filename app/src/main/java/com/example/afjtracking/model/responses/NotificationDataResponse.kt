@@ -16,7 +16,8 @@ data class NotificationData (
     @SerializedName("body"     ) var body     : String? = null,
     @SerializedName("type"     ) var type     : String? = null,
     @SerializedName("title"    ) var title    : String? = null,
-    @SerializedName("activity" ) var activity : String? = null
+    @SerializedName("activity" ) var activity : String? = null,
+
 
 )
 

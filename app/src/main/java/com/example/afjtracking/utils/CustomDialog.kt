@@ -1,7 +1,22 @@
 package com.example.afjtracking.utils
 
+
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.example.afjtracking.R
+
 
 class CustomDialog {
 
@@ -31,13 +46,11 @@ class CustomDialog {
             .setOKButtonHide(View.GONE)
             .setCancelButtonHide(View.GONE)
 
-        if(isShowTitle)
-        {
+        if (isShowTitle) {
             dialog.setTitleVisibility(View.VISIBLE)
             dialog.setTitle(titleText)
         }
-        if(isShowMessage)
-        {
+        if (isShowMessage) {
             dialog.setMessageVisibility(View.VISIBLE)
             dialog.setMessage(msgText)
         }
@@ -66,7 +79,7 @@ class CustomDialog {
     fun initializeProgressDialog(
         context: Context,
         lottieFile: Int
-    ) :LottieDialog{
+    ): LottieDialog {
         val dialog = LottieDialog(context)
         dialog.setAnimation(lottieFile)
             .setAnimationRepeatCount(LottieDialog.INFINITE)
@@ -82,18 +95,113 @@ class CustomDialog {
         return dialog
     }
 
+    fun showSimpleAlertMsg(
+        context: Context?, title: String? = null, message: String? = null,
+        textPositive: String? = null, positiveListener: (() -> Unit)? = null,
+        textNegative: String? = null, negativeListener: (() -> Unit)? = null,
+        cancelable: Boolean = false, canceledOnTouchOutside: Boolean = false
+    ): AlertDialog? {
+        if (context == null) return null
+        return AlertDialog.Builder(context).apply {
+            setTitle(title)
+            setMessage(message)
+            setPositiveButton(textPositive) { dialog, which ->
+                positiveListener?.invoke()
+            }
+            setNegativeButton(textNegative) { dialog, which ->
+                negativeListener?.invoke()
+            }
+            setCancelable(cancelable)
+
+        }.create().apply {
+            setCanceledOnTouchOutside(canceledOnTouchOutside)
+            show()
+        }
+    }
+
+
+    fun createCustomTextImageDialog(
+        context: Context,
+        cancelable: Boolean = false,
+        title: String? = null, message: String? = null, imageUrl: String? = null,
+        textPositive: String? = null, positiveListener: (() -> Unit)? = null,
+        textNegative: String? = null, negativeListener: (() -> Unit)? = null,
+        canceledOnTouchOutside: Boolean = false
+    ) {
+
+        val factory = LayoutInflater.from(context)
+        val view: View = factory.inflate(R.layout.custom_notification_dialog, null)
+
+        val alertDialog = AlertDialog.Builder(context)
+            .setView(view)
+            .create().apply {
+                setCancelable(cancelable)
+                setCanceledOnTouchOutside(canceledOnTouchOutside)
+               // window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+
+
+        val positiveButton = view.findViewById<Button>(R.id.btn_dialog_positive)
+        val negativeButton = view.findViewById<Button>(R.id.btn_dialog_negative)
+        val txtTitle = view.findViewById<TextView>(R.id.txtTitleNotificaiton)
+        val txtDesc = view.findViewById<TextView>(R.id.txtDescNotificaiton)
+        val img = view.findViewById<ImageView>(R.id.img_notfication)
+
+        if (textNegative == null) negativeButton.visibility = View.GONE
+        if (textPositive == null) positiveButton.visibility = View.GONE
+        if (title == null) txtTitle.visibility = View.GONE
+        if (message == null) txtDesc.visibility = View.GONE
+        if (imageUrl == null) img.visibility = View.GONE
+
+        txtDesc.text = message
+        txtTitle.text = title
+        positiveButton.text = textPositive
+        negativeButton.text = textNegative
+
+        if (imageUrl != null) {
+            Glide.with(context)
+                .asBitmap()
+                .load(imageUrl)
+                .into(object : CustomTarget<Bitmap?>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap?>?
+                    ) {
+                        img.setImageBitmap(resource)
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+
+                })
+
+        }
+
+        negativeButton.setOnClickListener {
+            alertDialog.dismiss()
+            negativeListener?.invoke()
+        }
+        positiveButton.setOnClickListener {
+            alertDialog.dismiss()
+            positiveListener?.invoke()
+        }
+        alertDialog.show()
+
+    }
+
+
 }
 
- interface CustomDialogListener {
+interface CustomDialogListener {
     fun onClick(var1: LottieDialog)
     fun onCancel(var1: LottieDialog)
 
 }
 
-interface DialogCustomInterface: CustomDialogListener
-{
+interface DialogCustomInterface : CustomDialogListener {
     override fun onClick(var1: LottieDialog) {
     }
+
     override fun onCancel(var1: LottieDialog) {
     }
 }

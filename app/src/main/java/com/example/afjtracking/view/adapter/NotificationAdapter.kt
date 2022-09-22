@@ -1,12 +1,20 @@
 package com.example.afjtracking.view.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Color.red
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.afjtracking.R
 import com.example.afjtracking.model.responses.Notifications
 import com.example.afjtracking.utils.AFJUtils
@@ -30,11 +38,10 @@ class NotificationAdapter
     }
 
     fun removeAt(position: Int) {
-        AFJUtils.writeLogs("Deleted item ${position}")
+        listner.onItemDelete(notificationList[position])
         notificationList.removeAt(position)
-
-
-
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position,itemCount)
     }
 
 
@@ -44,11 +51,12 @@ class NotificationAdapter
         holder.txtDescNotification.text = notificationData?.body
         if (notificationList[position].isRead == 1)
         {
-            holder.icNotification.setImageResource(R.drawable.ic_notification_list)
+            holder.icNotification.setImageResource(R.drawable.ic_notification)
         }
         else
         {
-            holder.icNotification.setImageResource(R.drawable.ic_notification_list_new)
+            holder.icNotification.setImageResource(R.drawable.ic_notification)
+            holder.icNotification.imageTintList= ColorStateList.valueOf(context.resources.getColor(R.color.red))
         }
 
         holder.itemView.setOnClickListener{
@@ -76,4 +84,6 @@ class NotificationAdapter
 interface NotificationItemListner
 {
     fun onItemClick(item:Notifications)
+
+    fun onItemDelete(item:Notifications)
 }

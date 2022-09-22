@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/all_app_bg"
+    android:paddingBottom="@dimen/_5sdp"
+
+    >
+
+    <TextView
+        android:id="@+id/txtTitleNotificaiton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title of Notificaiton"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+android:layout_marginTop="@dimen/_20sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/img_notfication"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_150sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:src="@drawable/afj_logo"
+        android:visibility="visible"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitleNotificaiton" />
+
+    <TextView
+
+        android:id="@+id/txtDescNotificaiton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message of notificaiton data"
+
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_notfication" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:id="@+id/btn_dialog_negative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close"
+        app:layout_constraintEnd_toStartOf="@+id/btn_dialog_positive"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescNotificaiton"
+   ></androidx.appcompat.widget.AppCompatButton>
+
+    <Button
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:id="@+id/btn_dialog_positive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btn_dialog_negative"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescNotificaiton"
+></Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

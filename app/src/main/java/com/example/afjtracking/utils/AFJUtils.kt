@@ -52,6 +52,26 @@ object AFJUtils {
     const val KEY_USER_DETAIL = "user_detail"
     const val KEY_API_STATUS = "background_service_status"
 
+    enum class NOTIFICATION_TYPE{
+        TEXT,
+        IMAGE,
+        LOCATION,
+        EVENT
+    }
+
+
+
+    enum class UI_TYPE{
+        TEXT,
+        IMAGE,
+        FILE,
+        MULTILINE,
+        OPTION,
+        MULTISELECT,
+        DATETIME
+    }
+
+
 
     fun setAnimation(
         @AnimRes id: Int,
@@ -59,6 +79,7 @@ object AFJUtils {
         fillAfter: Boolean,
         context: Context
     ): Animation? {
+
         val animation: Animation = AnimationUtils.loadAnimation(context, id)
         if (interpolator != null) {
             animation.interpolator = interpolator
