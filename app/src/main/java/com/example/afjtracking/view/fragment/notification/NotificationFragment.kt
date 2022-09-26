@@ -1,4 +1,4 @@
-package com.example.afjtracking.view.fragment.fuel
+package com.example.afjtracking.view.fragment.notification
 
 import android.content.Context
 import android.os.Bundle
@@ -19,7 +19,7 @@ import com.example.afjtracking.utils.SwipeToDelete
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.NotificationAdapter
 import com.example.afjtracking.view.adapter.NotificationItemListner
-import com.example.afjtracking.view.fragment.fuel.viewmodel.NotificationViewModel
+import com.example.afjtracking.view.fragment.notification.viewmodel.NotificationViewModel
 
 
 class NotificationFragment : Fragment(), NotificationItemListner {

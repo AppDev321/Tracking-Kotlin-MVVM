@@ -59,7 +59,7 @@ class FirebaseIdService : FirebaseMessagingService() {
                         )
                     }
                 }
-                AFJUtils.NOTIFICATION_TYPE.TEXT.name -> {
+                AFJUtils.NOTIFICATION_TYPE.LOCATION.name -> {
                     message.data.let {
                         NotificationUtils.showLocationNotification(
                             this,

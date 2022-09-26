@@ -1,21 +1,12 @@
 package com.example.afjtracking.view.fragment.fuel
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.app.TimePickerDialog.OnTimeSetListener
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputType
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.widget.CompoundButtonCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,9 +18,11 @@ import com.example.afjtracking.databinding.FragmentReportFromBinding
 import com.example.afjtracking.model.requests.SaveFormRequest
 import com.example.afjtracking.model.responses.InspectionForm
 import com.example.afjtracking.model.responses.Vehicle
-import com.example.afjtracking.utils.*
+import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.CustomWidget
+import com.example.afjtracking.utils.StoreCustomFormData
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
-import com.example.afjtracking.view.adapter.CustomDropDownAdapter
 import com.example.afjtracking.view.adapter.FileFormAdapter
 import com.example.afjtracking.view.adapter.ImageFormAdapter
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
@@ -38,8 +31,6 @@ import com.google.android.material.snackbar.Snackbar
 import java.sql.Time
 import java.text.Format
 import java.text.SimpleDateFormat
-import java.util.*
-import javax.xml.datatype.DatatypeConstants.DATETIME
 
 
 class ReportFormFragment : Fragment() {
@@ -47,7 +38,9 @@ class ReportFormFragment : Fragment() {
     private var _binding: FragmentReportFromBinding? = null
     private val binding get() = _binding!!
 
-    var storedData: ArrayList<StoreReportFormData> = arrayListOf()
+    var storedData: ArrayList<StoreCustomFormData> = arrayListOf()
+
+
 
     lateinit var reportViewModel: ReportViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
@@ -77,8 +70,6 @@ class ReportFormFragment : Fragment() {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
     }
-
-
 
 
     override fun onCreateView(
@@ -138,7 +129,7 @@ class ReportFormFragment : Fragment() {
         reportViewModel.getReportForm.observe(viewLifecycleOwner) {
             if (it != null) {
 
-           try {
+                try {
 
                     showReportFormField(it)
 
@@ -161,40 +152,21 @@ class ReportFormFragment : Fragment() {
             if (it != null) {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
-               // binding.txtErrorMsg.visibility = View.VISIBLE
+                // binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
-               // binding.layoutCreateInspection.visibility = View.GONE
+                // binding.layoutCreateInspection.visibility = View.GONE
                 reportViewModel.errorsMsg.value = null
             }
         })
 
-        reportViewModel.apiUploadStatus.observe(viewLifecycleOwner, {
+        reportViewModel.apiUploadStatus.observe(viewLifecycleOwner) {
             if (it) {
-              /*  mBaseActivity.onBackPressed()
+                mBaseActivity.onBackPressed()
                 mBaseActivity.showSnackMessage(
                     "Request saved", requireView()
-                )*/
-                CustomDialog().showTaskCompleteDialog(
-                    mBaseActivity,
-                    isShowTitle =  true,
-                    isShowMessage = true,
-                    titleText=getString(R.string.request_submited),
-                    msgText =getString(R.string.request_msg,"report"),
-                    lottieFile = R.raw.report,
-                    showOKButton = true,
-                    okButttonText = "Close",
-                    listner =object: DialogCustomInterface {
-                        override fun onClick(var1: LottieDialog) {
-                            super.onClick(var1)
-                            var1.dismiss()
-                            mBaseActivity.onBackPressed()
-                        }
-                    }
                 )
-
-
             }
-        })
+        }
 
 
 
@@ -203,7 +175,7 @@ class ReportFormFragment : Fragment() {
     }
 
 
-    fun showReportFormField(formList: List<InspectionForm>) {
+    private fun showReportFormField(formList: List<InspectionForm>) {
 
         binding.baseLayout.visibility = View.VISIBLE
         binding.txtErrorMsg.visibility = View.GONE
@@ -212,15 +184,36 @@ class ReportFormFragment : Fragment() {
 
         val odoReading = vehicle.odometerReading
         lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
-        odoReadingError = "Cannot less than previous reading $lastOdoReading"
+        odoReadingError = getString(R.string.odo_meter_error, lastOdoReading)
 
         for (i in formList.indices) {
             val formData = formList[i]
-         try {
-                createViewChecks(formData.type!!.uppercase(), formData, i)
-         } catch (e: Exception) {
-           mBaseActivity.writeExceptionLogs(e.toString())
-        }
+            try {
+                //
+                if (formData.type!!.uppercase().contains("IMAGE") || formData.type!!.uppercase()
+                        .contains("FILE")
+                ) {
+                    createViewChecks(formData.type!!.uppercase(), formData, i)
+                }
+                else {
+                    val customFormData = CustomWidget().createDynamicFormViews(
+                        mBaseActivity,
+                        formData,
+                        i,
+                        lastOdoReading,
+                        uniqueUploadId,
+                        requestType,
+                        binding.layoutVdiForm
+
+                    )
+                    if (customFormData != null) {
+                        storedData.add(customFormData)
+
+                    }
+                }
+            } catch (e: Exception) {
+                mBaseActivity.writeExceptionLogs(e.toString())
+            }
         }
 
 
@@ -234,7 +227,7 @@ class ReportFormFragment : Fragment() {
             if (imageForm.size > 0) {
                 for (i in imageForm.indices) {
                     if (imageForm[i].required == true) {
-                        if (imageForm[i].value!!.isEmpty() == true) {
+                        if (imageForm[i].value!!.isEmpty()) {
                             Snackbar.make(
                                 binding.root,
                                 "Please enter ${imageForm[i].title}",
@@ -242,6 +235,7 @@ class ReportFormFragment : Fragment() {
                             ).show()
                             isAllImageUploaded = false
                             break
+
                         }
                     }
 
@@ -249,13 +243,13 @@ class ReportFormFragment : Fragment() {
             }
 
 
-            if (isAllImageUploaded  && isOdoMeterErrorFound == false) {
+            if (isAllImageUploaded ) {
                 var isAllRequired = true
                 for (i in storedData.indices) {
                     formList[i].value = storedData[i].formData!!.value
 
                     if (storedData[i].formData?.required == true) {
-                        if (formList[i].value!!.isEmpty() == true) {
+                        if (formList[i].value!!.isEmpty()) {
 
                             mBaseActivity.showSnackMessage(
                                 "Please enter ${storedData[i].formData!!.title}",
@@ -276,10 +270,7 @@ class ReportFormFragment : Fragment() {
 
                 }
             }
-            else
-            {
-                mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-            }
+
         }
 
     }
@@ -294,156 +285,8 @@ class ReportFormFragment : Fragment() {
 
     fun createViewChecks(uiType: String, formData: InspectionForm, position: Int) {
         val containerChecks = binding.layoutVdiForm
-        when (uiType.uppercase()) {
-            AFJUtils.UI_TYPE.TEXT.name -> {
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
-                textTitleLable.setTextColor(Color.BLACK)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                containerChecks.addView(view)
-
-
-                view = layoutInflater.inflate(R.layout.layout_edit_text_view, null)
-                var inputText = view.findViewById<EditText>(R.id.edText)
-                inputText.hint = formData.comment
-                if (formData.accept == "number")
-                    inputText.inputType = InputType.TYPE_CLASS_NUMBER
-                else if (formData.accept == "float")
-                    inputText.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-                else if (formData.accept == "phone")
-                    inputText.inputType = InputType.TYPE_CLASS_PHONE
-                else if (formData.accept == "password")
-                    inputText.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-                else
-                    inputText.inputType = InputType.TYPE_CLASS_TEXT
-
-                val dataStore = StoreReportFormData(inputText, formData)
-
-
-                dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
-                    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                        if(!hasFocus) {
-                            val s =  dataStore.formData!!.value
-                            if (formData.title!!.lowercase().contains("odometer")) {
-                                if (!s.toString().isEmpty()) {
-                                    val reading = Integer.parseInt(s.toString())
-                                    if (reading < lastOdoReading) {
-                                        mBaseActivity.showSnackMessage(  odoReadingError,  binding.root  )
-                                        dataStore.editText.error=  odoReadingError
-                                        isOdoMeterErrorFound  = true
-                                    } else {
-                                        isOdoMeterErrorFound  = false
-                                        dataStore.editText.error = null
-                                        lastOdoReading = dataStore.formData!!.value!!.toInt()
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                dataStore.editText.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable) {
-                        dataStore.formData!!.value = s.toString()
-                    }
-                    override fun beforeTextChanged(
-                        s: CharSequence, start: Int,
-                        count: Int, after: Int
-                    ) {
-                    }
-                    override fun onTextChanged(
-                        s: CharSequence, start: Int,
-                        before: Int, count: Int
-                    ) {
-                    }
-                })
-
-                storedData.add(dataStore)
-
-                containerChecks.addView(view)
-
-            }
-
-            AFJUtils.UI_TYPE.MULTILINE.name -> {
-
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
-                textTitleLable.setTextColor(Color.BLACK)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                containerChecks.addView(view)
-
-
-                view = layoutInflater.inflate(R.layout.layout_multiline_comment_view, null)
-                val inputText = view.findViewById<EditText>(R.id.edMultiline)
-                inputText.hint = formData.comment
-
-                val dataStore = StoreReportFormData(inputText, formData)
-
-                dataStore.editText!!.onFocusChangeListener = object : View.OnFocusChangeListener {
-                    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                        if(!hasFocus) {
-                            val s = dataStore.formData!!.value
-                        }
-                    }
-
-                }
-
-                dataStore.editText.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable) {
-                        dataStore.formData!!.value = s.toString()
-                    }
-                    override fun beforeTextChanged(
-                        s: CharSequence, start: Int,
-                        count: Int, after: Int
-                    ) {
-                    }
-                    override fun onTextChanged(
-                        s: CharSequence, start: Int,
-                        before: Int, count: Int
-                    ) {
-                    }
-                })
-
-                storedData.add(dataStore)
-
-                containerChecks.addView(view)
-
-            }
-
-
-            AFJUtils.UI_TYPE.OPTION.name -> {
-
-                val view = layoutInflater.inflate(R.layout.layout_spinner_view, null)
-                val textTitleLable = view.findViewById<TextView>(R.id.spLable)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                textTitleLable.setTextColor(Color.BLACK)
-                val spinnerView = view.findViewById<Spinner>(R.id.spOption)
-                spinnerView.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        //AFJUtils.writeLogs(formData.options[p2].fieldName.toString())
-                        for (i in storedData.indices) {
-                            if (storedData[i].formData!!.inputNo == formData.inputNo) {
-                                storedData[i].formData!!.value =
-                                    formData.options[p2].fieldName.toString()
-                            }
-                        }
-                    }
-
-                    override fun onNothingSelected(p0: AdapterView<*>?) {
-                    }
-                }
-                val adapter = CustomDropDownAdapter(mBaseActivity, formData.options)
-                spinnerView.adapter = adapter
-                containerChecks.addView(view)
-
-
-                val dataStore = StoreReportFormData(null, formData)
-                storedData.add(dataStore)
-
-            }
-
-            AFJUtils.UI_TYPE.IMAGE.name -> {
+        when (uiType) {
+            "IMAGE" -> {
 
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val titleLabel = view.findViewById<TextView>(R.id.text_label)
@@ -489,17 +332,12 @@ class ReportFormFragment : Fragment() {
                 containerChecks.addView(addSpaceView())
 
             }
-
-
-            AFJUtils.UI_TYPE.FILE.name -> {
-
+            "FILE" -> {
                 var view = layoutInflater.inflate(R.layout.layout_text_view, null)
                 val titleLabel = view.findViewById<TextView>(R.id.text_label)
                 titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 titleLabel.setTextColor(Color.BLACK)
                 containerChecks.addView(view)
-
-
                 fileForm.add(InspectionForm(fieldName = "file", title = "Filename"))
                 // createMultipleImageView()
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
@@ -545,166 +383,6 @@ class ReportFormFragment : Fragment() {
 
             }
 
-
-            AFJUtils.UI_TYPE.MULTISELECT.name  -> {
-
-
-
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val titleLabel = view.findViewById<TextView>(R.id.text_label)
-                titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                titleLabel.setTextColor(Color.BLACK)
-                containerChecks.addView(view)
-                containerChecks.addView(addSpaceView())
-
-
-
-                val dataStore = StoreReportFormData(null, formData)
-                storedData.add(dataStore)
-
-
-                var arrayChecks = arrayListOf<String>()
-                for (i in formData.options.indices) {
-                    val data = formData.options[i]
-                    val checkBox = CheckBox(mBaseActivity)
-                    checkBox.text = data.title
-                    checkBox.isChecked = false
-                        if (Build.VERSION.SDK_INT < 21) {
-                            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(R.color.colorPrimary))//Use android.support.v4.widget.CompoundButtonCompat when necessary else
-                        } else {
-                            checkBox.buttonTintList = ColorStateList.valueOf(R.color.colorPrimary)//setButtonTintList is accessible directly on API>19
-                        }
-
-                    arrayChecks.add(data.fieldName.toString())
-                    checkBox.setOnCheckedChangeListener(object :
-                        CompoundButton.OnCheckedChangeListener {
-                        override fun onCheckedChanged(p0: CompoundButton?, isChecked: Boolean) {
-                            if (!isChecked) {
-                                arrayChecks[i] = ""
-                            } else {
-                                arrayChecks[i] = data.fieldName.toString()
-                            }
-
-                            for (i in storedData.indices) {
-                                if (storedData[i].formData!!.inputNo == formData.inputNo) {
-                                        var checkValue= ""
-                                    for (z in arrayChecks.indices) {
-                                        if(arrayChecks[z].isNotEmpty())
-                                        {
-                                            if(checkValue.isNotEmpty())
-                                                  checkValue = checkValue + "," + arrayChecks[z]
-                                            else
-                                                checkValue = arrayChecks[z]
-                                        }
-                                    }
-
-                                    storedData[i].formData!!.value = checkValue
-                                    AFJUtils.writeLogs(checkValue)
-
-
-                                }
-                            }
-                        }
-
-                    })
-                    containerChecks.addView(checkBox)
-                }
-
-                containerChecks.addView(addSpaceView())
-            }
-
-
-            AFJUtils.UI_TYPE.DATETIME.name  -> {
-
-                var view = layoutInflater.inflate(R.layout.layout_text_view, null)
-                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
-                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
-                textTitleLable.setTextColor(Color.BLACK)
-                containerChecks.addView(view)
-
-                containerChecks.addView(addSpaceView())
-                view = layoutInflater.inflate(R.layout.layout_date_time_view, null)
-                val txtDate = view.findViewById<TextView>(R.id.txtDate)
-                val btnDatePicker = view.findViewById<RelativeLayout>(R.id.btnDatePicker)
-                containerChecks.addView(view)
-
-                var year = 0
-                var month = 0
-                var day = 0
-
-                var mHour: Int
-                var mMinute: Int
-
-
-                lateinit var datePicker: DatePicker
-                lateinit var calendar: Calendar
-                calendar = Calendar.getInstance()
-                year = calendar.get(Calendar.YEAR)
-
-                month = calendar.get(Calendar.MONTH)
-                day = calendar.get(Calendar.DAY_OF_MONTH)
-
-
-                reportDate = "$year-${month + 1}-$day"
-
-
-                val c = Calendar.getInstance()
-                mHour = c[Calendar.HOUR_OF_DAY]
-                mMinute = c[Calendar.MINUTE]
-                reportDate = reportDate + " " + getTime(mHour, mMinute)
-                txtDate.text = reportDate
-                formData.value = reportDate
-
-                btnDatePicker.setOnClickListener {
-
-                    DatePickerDialog(
-                        mBaseActivity,
-                        object : DatePickerDialog.OnDateSetListener {
-                            override fun onDateSet(
-                                p0: DatePicker?,
-                                year: Int,
-                                month: Int,
-                                day: Int
-                            ) {
-
-                                reportDate = "$year-${month + 1}-$day"
-                                txtDate.text = reportDate
-
-
-                                // Get Current Time
-                                val c = Calendar.getInstance()
-                                mHour = c[Calendar.HOUR_OF_DAY]
-                                mMinute = c[Calendar.MINUTE]
-
-
-                                val timePickerDialog = TimePickerDialog(
-                                    mBaseActivity,
-                                    OnTimeSetListener { view, hourOfDay, minute ->
-                                        reportDate = reportDate + " " + getTime(hourOfDay, minute)
-                                        txtDate.text = reportDate
-
-                                        for (i in storedData.indices) {
-                                            if (storedData[i].formData!!.inputNo == formData.inputNo) {
-                                                storedData[i].formData!!.value = reportDate
-                                            }
-                                        }
-
-                                    },
-                                    mHour,
-                                    mMinute,
-                                    false
-                                )
-                                timePickerDialog.show()
-                            }
-
-                        }, year, month, day
-                    ).show()
-
-                }
-
-                val dataStore = StoreReportFormData(null, formData)
-                storedData.add(dataStore)
-            }
             else -> {
                 AFJUtils.writeLogs("not thing to create view")
             }
@@ -728,18 +406,6 @@ class ReportFormFragment : Fragment() {
     }
 
 
-    private fun getTime(hr: Int, min: Int): String {
-        val tme = Time(hr, min, 0)
-        val formatter: Format
-        formatter = SimpleDateFormat("H:mm")
-        return formatter.format(tme)
-    }
+
 }
 
-
-data class StoreReportFormData(
-    val editText: EditText? = null,
-    var formData: InspectionForm? = null
-
-
-)

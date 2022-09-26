@@ -7,13 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.afjtracking.model.requests.LoginRequest
 import com.example.afjtracking.model.requests.SaveFormRequest
-import com.example.afjtracking.model.responses.FuelForm
-import com.example.afjtracking.model.responses.GetFuelFormResponse
-import com.example.afjtracking.model.responses.LocationResponse
-import com.example.afjtracking.model.responses.Vehicle
+import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
 import com.example.afjtracking.retrofit.SuccessCallback
+import com.example.afjtracking.view.fragment.notification.viewmodel.NotificationViewModel
 import retrofit2.Response
 
 class FuelViewModel : ViewModel() {
@@ -24,8 +22,8 @@ class FuelViewModel : ViewModel() {
     var Password = MutableLiveData<String>()
 
 
-    val _fuelForm = MutableLiveData<List<FuelForm>>()
-    val getFuelForm: LiveData<List<FuelForm>> = _fuelForm
+    val _fuelForm = MutableLiveData<List<InspectionForm>>()
+    val getFuelForm: LiveData<List<InspectionForm>> = _fuelForm
 
 
     val _vehicle = MutableLiveData<Vehicle>()
@@ -61,10 +59,10 @@ class FuelViewModel : ViewModel() {
 
 
     companion object {
-        private var instance: NotificationViewModel? = null
+        private var instance: FuelViewModel? = null
         private var apiInterface: ApiInterface? = null
-        fun getInstance(context: Context?): NotificationViewModel? {
-            if (instance == null) instance = NotificationViewModel()
+        fun getInstance(context: Context?): FuelViewModel? {
+            if (instance == null) instance = FuelViewModel()
             if (apiInterface == null) apiInterface =
                 RetrofitUtil.getRetrofitHeaderInstance(context).create(
                     ApiInterface::class.java

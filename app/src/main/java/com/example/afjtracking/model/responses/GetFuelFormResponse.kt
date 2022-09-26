@@ -17,7 +17,7 @@ data class GetFuelFormResponse(
 
 data class FuelData(
 
-    @SerializedName("fuel_form" ) var fuelForm : ArrayList<FuelForm> = arrayListOf(),
+    @SerializedName("fuel_form" ) var fuelForm : ArrayList<InspectionForm> = arrayListOf(),
     @SerializedName("vehicle"   ) var vehicle  : Vehicle?            = Vehicle()
 
 )

@@ -90,13 +90,13 @@
 
     <fragment
         android:id="@+id/nav_notification"
-        android:name="com.example.afjtracking.view.fragment.fuel.NotificationFragment"
+        android:name="com.example.afjtracking.view.fragment.notification.NotificationFragment"
         android:label="@string/menu_notification"
         tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/nav_fuel_form"
-        android:name="com.example.afjtracking.view.fragment.fuel.NotificationFragment"
+        android:name="com.example.afjtracking.view.fragment.fuel.FuelFormFragment"
         android:label="@string/menu_fuel_fill"
         tools:layout="@layout/fragment_fuel_from" />
 

@@ -1,4 +1,4 @@
-package com.example.afjtracking.view.fragment.fuel.viewmodel
+package com.example.afjtracking.view.fragment.notification.viewmodel
 
 import android.content.Context
 import android.view.View

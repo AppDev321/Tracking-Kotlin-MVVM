@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+
 import com.example.afjtracking.databinding.FragmentDeviceFormBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
-import com.example.afjtracking.view.fragment.fuel.viewmodel.NotificationViewModel
+
 
 
 class DeviceInfoFragment : Fragment() {
@@ -23,8 +23,7 @@ class DeviceInfoFragment : Fragment() {
     private val TAG = DeviceInfoFragment::class.java.simpleName
 
 
-    private var _fuelViewModel: NotificationViewModel? = null
-    private val fuelViewModel get() = _fuelViewModel!!
+
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
@@ -38,7 +37,6 @@ class DeviceInfoFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _fuelViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
 
         _binding = FragmentDeviceFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
