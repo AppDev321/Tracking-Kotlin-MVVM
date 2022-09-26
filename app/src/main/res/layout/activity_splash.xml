@@ -26,7 +26,7 @@
             android:layout_height="@dimen/_180sdp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/afj_logo"
+            android:src="@drawable/ic_launcher"
             app:layout_constraintBottom_toBottomOf="@+id/container_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

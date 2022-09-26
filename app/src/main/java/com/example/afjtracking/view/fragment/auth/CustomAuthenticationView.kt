@@ -1,7 +1,7 @@
 package com.example.afjtracking.view.fragment.auth
 
+
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.CountDownTimer
 import android.util.AttributeSet
@@ -18,8 +18,6 @@ import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.InternetDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
-
-
 import com.example.afjtracking.view.fragment.auth.viewmodel.QRImageCallback
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -213,26 +211,24 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             authViewModel.attendanceReponse.observe(this) {
                 if (it != null) {
                     if (mBaseActivity.timer == null) {
-                        fetchAndGenerateQRCode(it.qrCode,it.timeOut,true)
+                          fetchAndGenerateQRCode(it.qrCode,it.timeOut)
                     }
                     authViewModel._attendanceResponse.value = null
                 }
-
             }
         } catch (e: Exception) {
             AFJUtils.writeLogs(e.toString())
         }
     }
 
-    private fun fetchAndGenerateQRCode(qrCode:String, timeout:Int, runWithCoroutine: Boolean)
+    private  fun fetchAndGenerateQRCode(qrCode:String, timeout:Int)
     {
-        if(runWithCoroutine) {
-      lifecycleScope.async(onPre = {
+            lifecycleScope.async(onPre = {
                 binding.layoutScan.txtTimeExpire.text =
                     "Please wait QR Code is generating"
                 binding.layoutScan.idIVQrcode.setImageBitmap(null)
             }, background = {
-                AFJUtils.writeLogs("Qr fetching ...")
+
                 authViewModel.getQrCodeBitmap(
                     qrCode,
                     mBaseActivity,
@@ -240,7 +236,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             }, onPost = {
                 if (it != null) {
                     cancelCountDownTimer()
-                    AFJUtils.writeLogs("Qr generating ...")
+
                     binding.layoutScan.idIVQrcode.setImageBitmap(it)
                     mBaseActivity.timer =
                         object :
@@ -251,6 +247,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                             }
 
                             override fun onFinish() {
+
+                                cancelCountDownTimer()
                                 authViewModel.getQRCode(mBaseActivity, qrType)
 
                             }
@@ -261,38 +259,9 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                 }
             })
 
-        }
-        else{
 
-            authViewModel.getQrCodeBitmap(qrCode,mBaseActivity,object : QRImageCallback {
-                override fun onRendered(bitmap: Bitmap) {
-                    AFJUtils.writeLogs("Qr generating ...")
 
-                    binding.layoutScan.idIVQrcode.setImageBitmap(bitmap)
-                    mBaseActivity.timer =  object : CountDownTimer(1000 * timeout.toLong(), 1000) {
-                        override fun onTick(millisUntilFinished: Long) {
-                            binding.layoutScan.txtTimeExpire.text =
-                                "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
-                        }
 
-                        override fun onFinish() {
-                            binding.layoutScan.txtTimeExpire.text =
-                                "Please wait QR Code is generating"
-                            binding.layoutScan.idIVQrcode.setImageBitmap(null)
-                            cancelCountDownTimer()
-                            authViewModel.getQRCode(mBaseActivity, qrType)
-                        }
-                    }
-
-                    if (  mBaseActivity.timer != null)
-                        mBaseActivity.timer?.start()
-                }
-
-                override fun onError(e: Exception) {
-
-                }
-        })
-        }
     }
 
 
@@ -331,7 +300,13 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         val userObject =
             AFJUtils.getObjectPref(context, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
         if (userObject.full_name != null) {
-            showCredentialSessionDialog(userObject)
+            try {
+                showCredentialSessionDialog(userObject)
+            }
+            catch (e : Exception)
+            {
+                mBaseActivity.showSnackMessage("There is some issue in user already login form",binding.root)
+            }
         } else {
             binding.containerLoginView.visibility = View.GONE
             binding.containerQrScan.visibility = View.VISIBLE
@@ -380,7 +355,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             }
         }
 
-        fun instance(context: Context,authListeners: AuthListeners): CustomAuthenticationView? {
+        fun instance(context: Context,authListeners: CustomAuthenticationView.AuthListeners): CustomAuthenticationView? {
             if (INSTANCE != null) {
                     //                return INSTANCE
                 killPrevInstance()

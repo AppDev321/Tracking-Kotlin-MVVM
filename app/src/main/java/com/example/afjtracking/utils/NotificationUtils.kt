@@ -55,7 +55,7 @@ class NotificationUtils {
             val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             notificationBuilder.setAutoCancel(false)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.afj_logo)
+                .setSmallIcon(R.drawable.ic_track_notificaiton)
                 .setSound(notificationSound).priority = Notification.PRIORITY_MAX
             if (msg.length > 200) {
                 notificationBuilder.setStyle(

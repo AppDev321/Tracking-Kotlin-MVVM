@@ -186,6 +186,7 @@ class FuelFormFragment : Fragment() {
             mBaseActivity.onBackPressed()
         }
         binding.btnSubmit.setOnClickListener {
+            isOdoMeterErrorFound = false
             for (i in storedData.indices) {
                 if (storedData[i].isOdoMeterErrorFound == true) {
                     isOdoMeterErrorFound = true

@@ -15,10 +15,13 @@ import com.example.afjtracking.retrofit.ApiInterface
 import com.example.afjtracking.retrofit.RetrofitUtil
 import com.example.afjtracking.retrofit.SuccessCallback
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 import kotlin.concurrent.thread
 
@@ -58,7 +61,7 @@ class AuthViewModel : ViewModel() {
 
 
     fun getQRCode(context: Context?, qrType: String = "ATTENDANCE") {
-        var request = FCMRegistrationRequest()
+        val request = FCMRegistrationRequest()
         request.vehicleDeviceId = AFJUtils.getDeviceDetail().deviceID
         request.qrType = qrType
         getInstance(context)
@@ -99,9 +102,8 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    fun getQrCodeBitmap(text: String, context: AppCompatActivity, callback: QRImageCallback?) {
+    fun getQrCodeBitmap(text: String, context: NavigationDrawerActivity, callback: QRImageCallback?) {
 
-        context.runOnUiThread{
                 try {
                     val size = 512 //pixels
                     val qrCodeContent = text
@@ -136,7 +138,7 @@ class AuthViewModel : ViewModel() {
                     callback?.onError(e)
                 }
 
-            }
+
 
     }
     fun getQrCodeBitmap(text: String, context: AppCompatActivity):Bitmap? {

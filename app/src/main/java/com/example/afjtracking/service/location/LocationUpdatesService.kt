@@ -206,7 +206,7 @@ class LocationUpdatesService : Service() {
                 .setContentTitle(getLocationTitle(this))
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setSmallIcon(R.drawable.afj_logo)
+                .setSmallIcon(R.drawable.ic_track_notificaiton)
                 .setTicker(text)
                 .setSilent(true)
                 .setWhen(System.currentTimeMillis())
