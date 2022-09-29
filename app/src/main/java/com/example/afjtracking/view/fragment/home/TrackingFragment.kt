@@ -89,6 +89,7 @@ class TrackingFragment : Fragment() {
         }
 
         override fun trackingSetting() {
+            AFJUtils.writeLogs("IS Tracking Action recevedied")
             super.trackingSetting()
             setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
         }
@@ -478,12 +479,12 @@ class TrackingFragment : Fragment() {
                 } else {
                     mLastClickTime = SystemClock.elapsedRealtime()
                     if (trackingViewModel != null) {
-                        AFJUtils.writeLogs("Location API: null ni hon")
+                        AFJUtils.writeLogs("Location API: not null")
                         trackingViewModel.postLocationData(request, context)
                     } else {
                         _trackingViewModel =
                             ViewModelProvider(context as ViewModelStoreOwner).get(TrackingViewModel::class.java)
-                        AFJUtils.writeLogs("Location API: null hon ma")
+                        AFJUtils.writeLogs("Location API:  null")
                         trackingViewModel.postLocationData(request, context)
                     }
 

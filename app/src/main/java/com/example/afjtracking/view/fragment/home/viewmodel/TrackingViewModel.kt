@@ -107,7 +107,7 @@ class TrackingViewModel : ViewModel() {
                             errorPosted = "0"
 
                         )
-                        LocationTableRepo.insertLocationData(context!!, locationTable)
+                       // LocationTableRepo.insertLocationData(context!!, locationTable)
                         AFJUtils.writeLogs("Location Data insert in table")
 
 

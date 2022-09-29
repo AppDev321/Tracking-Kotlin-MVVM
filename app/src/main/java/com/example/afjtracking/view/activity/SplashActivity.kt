@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.ActivitySplashBinding
+import com.example.afjtracking.firebase.FirebaseConfig
 import com.example.afjtracking.model.requests.LoginRequest
 import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.ota.ForceUpdateChecker
@@ -38,7 +39,7 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
 
 
 
-
+        FirebaseConfig.fetchLocationServiceTime()
 
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         binding = DataBindingUtil.setContentView(this@SplashActivity, R.layout.activity_splash)

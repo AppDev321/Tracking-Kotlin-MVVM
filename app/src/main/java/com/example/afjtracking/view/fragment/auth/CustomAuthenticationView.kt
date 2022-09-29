@@ -379,8 +379,12 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         onPre()
         withContext(Dispatchers.IO) {
             background()
-        }.let(onPost)
+        }.let(
+            onPost
+        )
     }
+
+
 
 
 }

@@ -17,7 +17,7 @@ class AFJApplication : MultiDexApplication() {
 
         FirebaseConfig.init()
         FirebaseConfig.setTokenFirebase(this)
-        FirebaseConfig.fetchLocationServiceTime()
+
 
 
 

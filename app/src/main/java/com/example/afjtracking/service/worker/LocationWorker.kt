@@ -21,7 +21,7 @@ class LocationWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
 
-            sendApiDataToServer()
+            //sendApiDataToServer()
            uploadErrorToServer()
 
         return Result.success()

@@ -36,7 +36,7 @@ object FirebaseConfig {
 
 
         val dbReference = FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_TRACKING_SETTING)
-        dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString()).setValue(TrackingSettingFirebase("123",false))
+       // dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString()).setValue(TrackingSettingFirebase("123",false))
         dbReference.child(AFJUtils.getDeviceDetail().deviceID.toString())
             .addValueEventListener(
                 object : ValueEventListener {
@@ -84,6 +84,7 @@ object FirebaseConfig {
             .addOnCompleteListener(OnCompleteListener<Boolean?> { task ->
                 if (task.isSuccessful) {
                     val timeSeconds = getLocationServiceTimeValue()
+                    AFJUtils.writeLogs("LocationTime = $timeSeconds")
                     Constants.LOCATION_SERVICE_IN_SECONDS = (timeSeconds * 1000)
 
                     val queryData= getDataQueryLimit()
