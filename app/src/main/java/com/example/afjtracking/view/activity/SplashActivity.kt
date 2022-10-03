@@ -47,7 +47,7 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
         binding.loginViewModel = loginViewModel
 
         ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
-
+        AFJUtils.setRequestingLocationUpdates(this, true)
 
 
     }

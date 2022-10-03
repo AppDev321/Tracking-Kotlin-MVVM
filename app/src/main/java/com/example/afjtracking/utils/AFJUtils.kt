@@ -50,7 +50,7 @@ object AFJUtils {
     const val KEY_USER_TOKEN = "user_token"
     const val KEY_VEHICLE_DETAIL = "vehicle_detail"
     const val KEY_USER_DETAIL = "user_detail"
-    const val KEY_API_STATUS = "background_service_status"
+    const val KEY_LOCATION_RECEVIER = "location_receiver_register"
 
     enum class NOTIFICATION_TYPE{
         TEXT,
@@ -155,16 +155,16 @@ object AFJUtils {
     }
 
 
-    fun getAPICountStatus(context: Context): Int {
+    fun isLocationReceiverRegister(context: Context): Boolean {
         return getPrefs(context)
-            .getInt(KEY_API_STATUS, 0)
+            .getBoolean(KEY_LOCATION_RECEVIER, false)
     }
 
 
-    fun setAPICountStatus(context: Context, apiCount: Int) {
+    fun setLocationReceiverRegister(context: Context, status: Boolean) {
         getPrefs(context)
             .edit()
-            .putInt(KEY_API_STATUS, apiCount)
+            .putBoolean(KEY_LOCATION_RECEVIER, status)
             .apply()
     }
 

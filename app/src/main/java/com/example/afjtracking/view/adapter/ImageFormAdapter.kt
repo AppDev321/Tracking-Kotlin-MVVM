@@ -89,7 +89,7 @@ class ImageFormAdapter(
                                 .placeholder(
                                     AppCompatResources.getDrawable(
                                         mContext,
-                                        R.drawable.ic_launch
+                                        R.drawable.ic_no_image
                                     )
                                 )
 
@@ -104,7 +104,7 @@ class ImageFormAdapter(
                                     .setDataAndType(
                                         if (VERSION.SDK_INT >= VERSION_CODES.N) FileProvider.getUriForFile(
                                             mContext,
-                                            mContext.getPackageName().toString() + ".provider",
+                                            mContext.packageName.toString() + ".provider",
                                             File(path)
                                         ) else Uri.fromFile(File(path)),
                                         "image/*"
@@ -149,10 +149,7 @@ class ImageFormAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     inner class ImageItemViewHolder(val itemImageView: LayoutImageBoxBinding) :
-        RecyclerView.ViewHolder(itemImageView.root) {
-
-    }
-
+        RecyclerView.ViewHolder(itemImageView.root)
 
 
     interface ImageFormListner {
@@ -191,7 +188,7 @@ class ImageFormAdapter(
             .placeholder(
                 AppCompatResources.getDrawable(
                     mContext,
-                    R.drawable.ic_launch
+                    R.drawable.ic_no_image
                 )
             )
             .into(ivPreview)

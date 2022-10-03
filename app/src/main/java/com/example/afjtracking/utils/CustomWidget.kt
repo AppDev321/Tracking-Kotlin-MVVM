@@ -237,7 +237,7 @@ class CustomWidget {
                                     .placeholder(
                                         AppCompatResources.getDrawable(
                                             view.context,
-                                            R.drawable.ic_launch
+                                            R.drawable.ic_no_image
                                         )
                                     )
 

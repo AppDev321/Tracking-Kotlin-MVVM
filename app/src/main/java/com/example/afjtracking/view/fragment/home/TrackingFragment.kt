@@ -89,7 +89,6 @@ class TrackingFragment : Fragment() {
         }
 
         override fun trackingSetting() {
-            AFJUtils.writeLogs("IS Tracking Action recevedied")
             super.trackingSetting()
             setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
         }
@@ -123,7 +122,7 @@ class TrackingFragment : Fragment() {
             }
        // }
 
-
+        AFJUtils.setRequestingLocationUpdates(mBaseActivity, true)
           onSetViews()
 
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
@@ -367,10 +366,15 @@ class TrackingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        LocalBroadcastManager.getInstance(mBaseActivity).registerReceiver(
-            myReceiver!!,
-            IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
-        )
+
+     val isRegister = AFJUtils.isLocationReceiverRegister(mBaseActivity)
+        if(!isRegister) {
+            LocalBroadcastManager.getInstance(mBaseActivity).registerReceiver(
+                myReceiver!!,
+                IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+            )
+           AFJUtils.setLocationReceiverRegister(mBaseActivity,true)
+        }
 
 
     }
@@ -443,7 +447,10 @@ class TrackingFragment : Fragment() {
     }
 
     inner class MyReceiver : BroadcastReceiver() {
+
+
         override fun onReceive(context: Context, intent: Intent) {
+
             val location =
                 intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
             if (location != null) {

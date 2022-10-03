@@ -53,8 +53,7 @@ class LocationUpdatesService : Service() {
     //private  val UPDATE_INTERVAL_IN_MILLISECONDS = (10000 * 1).toLong()
 
     private  var UPDATE_INTERVAL_IN_MILLISECONDS = Constants.LOCATION_SERVICE_IN_SECONDS
-    private  val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-        UPDATE_INTERVAL_IN_MILLISECONDS / 2
+    private  val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =  UPDATE_INTERVAL_IN_MILLISECONDS /// 2
 
     private  val NOTIFICATION_ID = 12211
 
@@ -75,6 +74,8 @@ class LocationUpdatesService : Service() {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
+
+
                 onNewLocation(locationResult.lastLocation)
             }
         }
@@ -195,7 +196,7 @@ class LocationUpdatesService : Service() {
             )
             val builder = NotificationCompat.Builder(this)
                 .addAction(
-                    R.drawable.ic_launch, getString(R.string.launch_activity),
+                    R.drawable.ic_my_location, getString(R.string.launch_activity),
                     activityPendingIntent
                 )
                 .addAction(
@@ -247,6 +248,9 @@ class LocationUpdatesService : Service() {
         if (serviceIsRunningInForeground(this)) {
             mNotificationManager!!.notify(NOTIFICATION_ID, notification)
        }
+
+
+
     }
 
     private fun createLocationRequest() {
