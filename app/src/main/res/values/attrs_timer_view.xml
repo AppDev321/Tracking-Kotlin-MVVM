@@ -1,0 +1,16 @@
+<resources>
+    <declare-styleable name="TimerView">
+
+        <attr name="textSize" format="float|reference" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="textStyle">
+            <flag name="normalText" value="0" />
+            <flag name="boldText" value="1" />
+            <flag name="italicText" value="2" />
+        </attr>
+        <attr name="stringTime" format="string" />
+        <attr name="intTime" format="string" />
+    </declare-styleable>
+
+
+</resources>

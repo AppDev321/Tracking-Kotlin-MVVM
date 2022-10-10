@@ -74,8 +74,6 @@ class LocationUpdatesService : Service() {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-
-
                 onNewLocation(locationResult.lastLocation)
             }
         }

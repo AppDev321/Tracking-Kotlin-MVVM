@@ -2,6 +2,9 @@ package com.example.afjtracking.view.fragment.vehicle_daily_inspection
 
 
 import android.content.Context
+import android.content.Context.SENSOR_SERVICE
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +18,7 @@ import com.example.afjtracking.databinding.ItemDailyPtsInspectionCheckBinding
 import com.example.afjtracking.model.responses.Checks
 import com.example.afjtracking.model.responses.InspectionCheckData
 import com.example.afjtracking.model.responses.PTSCheck
+import com.example.afjtracking.model.responses.SensorData
 import com.example.afjtracking.utils.*
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
@@ -32,21 +36,70 @@ class PTSInspectionForm : Fragment() {
     var checkIndex: Int = 0
     var inpsectionTypeIndex = 0
     var previousCounter = 0
-    var isPreviousClicked= false
+    var isPreviousClicked = false
+
+
+    private var mSensorManager: SensorManager? = null
+    private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
+    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
+    private var mLinearSensorData: MutableList<FloatArray> = arrayListOf()
+
 
     private lateinit var apiRequestParams: InspectionCheckData
-    companion object
-    {
-        val argumentParams ="form_data"
+
+    companion object {
+        val argumentParams = "form_data"
     }
 
     var totalChecksCount = 0
     var inpsecitonTitle = "Inspection Completed: "
 
-    lateinit var inspectionViewModel : DailyInspectionViewModel
+
+    lateinit var inspectionViewModel: DailyInspectionViewModel
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
+    }
+
+
+    private val inspectionSensor = object : InspectionSensor() {
+
+        override fun sendSensorValue(data: ArrayList<FloatArray>) {
+            mAccelerometerData.add(data[0])
+            mGyroSensorData.add(data[1])
+            mLinearSensorData.add(data[2])
+        }
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        mSensorManager = mBaseActivity.getSystemService(SENSOR_SERVICE) as SensorManager
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also { accelerometer ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.also { gyroscope ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                gyroscope,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)?.also { linear ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                linear,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
     }
 
     override fun onCreateView(
@@ -55,10 +108,9 @@ class PTSInspectionForm : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        inspectionViewModel=  ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
+        inspectionViewModel = ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
 
         _binding = FragmentDailyInpsectionFormBinding.inflate(inflater, container, false)
-
 
         val root: View = binding.root
         root.hideKeyboard()
@@ -74,6 +126,14 @@ class PTSInspectionForm : Fragment() {
             inspectionViewModel._vehicleClassChecks.value = inpsecitonData.ptsChecks
             binding.inspectionModel = inspectionViewModel
             apiRequestParams = inpsecitonData
+
+            binding.timerView.setListener(object:TimerListener{
+
+                override fun getStringTime(time: String) {
+                     apiRequestParams.inspectionTimeSpent = time
+                }
+
+            })
 
 
 
@@ -119,19 +179,19 @@ class PTSInspectionForm : Fragment() {
             {
                 mBaseActivity.showProgressDialog(false)
                 if (it) {
-                 //   mBaseActivity.closeFragment(this)
-                   /* mBaseActivity.toast("Inspection Completed")
-                    mBaseActivity.onBackPressed()*/
+                    //   mBaseActivity.closeFragment(this)
+                    /* mBaseActivity.toast("Inspection Completed")
+                     mBaseActivity.onBackPressed()*/
                     CustomDialog().showTaskCompleteDialog(
                         mBaseActivity,
-                        isShowTitle =  true,
+                        isShowTitle = true,
                         isShowMessage = true,
-                        titleText=getString(R.string.request_submited),
-                        msgText =getString(R.string.request_msg,"inspection form"),
+                        titleText = getString(R.string.request_submited),
+                        msgText = getString(R.string.request_msg, "inspection form"),
                         lottieFile = R.raw.inspection_complete,
                         showOKButton = true,
                         okButttonText = "Close",
-                        listner =object: DialogCustomInterface {
+                        listner = object : DialogCustomInterface {
                             override fun onClick(var1: LottieDialog) {
                                 super.onClick(var1)
                                 var1.dismiss()
@@ -145,9 +205,7 @@ class PTSInspectionForm : Fragment() {
                 }
             }
 
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
             mBaseActivity.writeExceptionLogs(e.toString())
         }
 
@@ -162,6 +220,7 @@ class PTSInspectionForm : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        mSensorManager!!.unregisterListener(inspectionSensor)
     }
 
 
@@ -184,33 +243,30 @@ class PTSInspectionForm : Fragment() {
             view.btnPreviousCehck.visibility = View.VISIBLE
         }
 
-        if(check.type!! == "quantity")
-        {
+        if (check.type!! == "quantity") {
             view.edQuantityVehicle.filters = arrayOf(InputFilterMinMax("0", check.message!!))
         }
 
         view.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
 
-                if (isChecked) {
-                    view.containerIssueFound.visibility = View.VISIBLE
-                    view.containerWornRefit.visibility = View.GONE
-                }
-                else{
-                    view.containerIssueFound.visibility = View.GONE
-                    view.containerWornRefit.visibility = View.GONE
-                }
+            if (isChecked) {
+                view.containerIssueFound.visibility = View.VISIBLE
+                view.containerWornRefit.visibility = View.GONE
+            } else {
+                view.containerIssueFound.visibility = View.GONE
+                view.containerWornRefit.visibility = View.GONE
             }
+        }
 
         view.issueCheck.setOnCheckedChangeListener { buttonView, isChecked ->
 
             if (isChecked) {
 
                 view.containerWornRefit.visibility = View.VISIBLE
-            }
-            else{
+            } else {
                 view.containerWornRefit.visibility = View.GONE
                 view.edWorn.text.clear()
-               // solvedInspection!!.wornRefit = view.edWorn.text.toString()
+                // solvedInspection!!.wornRefit = view.edWorn.text.toString()
             }
         }
 
@@ -220,17 +276,15 @@ class PTSInspectionForm : Fragment() {
 
             val solvedInspection = view.checkList!!.savedInspection
 
-            solvedInspection!!.checked  =  view.checkbox.isChecked
+            solvedInspection!!.checked = view.checkbox.isChecked
             solvedInspection.issueCheck = view.issueCheck.isChecked
 
             //***** Saved Inspection Data*******
             solvedInspection.wornRefit = view.edWorn.text.toString()
 
-            if(solvedInspection.issueCheck == true && solvedInspection.wornRefit!!.isEmpty())
-            {
-                 mBaseActivity.showSnackMessage("Please enter details of issue",binding.root)
-            }
-            else {
+            if (solvedInspection.issueCheck == true && solvedInspection.wornRefit!!.isEmpty()) {
+                mBaseActivity.showSnackMessage("Please enter details of issue", binding.root)
+            } else {
 
                 solvedInspection.fleetNo = view.edFleetId.text.toString()
                 solvedInspection.quantity = view.edQuantity.text.toString()
@@ -272,7 +326,7 @@ class PTSInspectionForm : Fragment() {
                     } else {
                         mBaseActivity.showProgressDialog(true)
                         apiRequestParams.ptsChecks = mInspectionTypeList
-
+                        apiRequestParams.sensorData = SensorData(mAccelerometerData,mGyroSensorData,mLinearSensorData)
                         inspectionViewModel.postInspectionVDI(mBaseActivity, apiRequestParams)
 
                     }
@@ -294,7 +348,7 @@ class PTSInspectionForm : Fragment() {
             if (checkIndex > 0) {
                 checkIndex--
                 createPSTInspectionView(mInspectionChecks[checkIndex])
-                AFJUtils.startOutAnimation(mBaseActivity,binding.layoutContainerCheck)
+                AFJUtils.startOutAnimation(mBaseActivity, binding.layoutContainerCheck)
 
             } else {
                 if (inpsectionTypeIndex > 0) {
@@ -303,7 +357,7 @@ class PTSInspectionForm : Fragment() {
                     mInspectionChecks = mInspectionTypeList[inpsectionTypeIndex].checks
                     checkIndex = mInspectionChecks.size - 1
                     createPSTInspectionView(mInspectionChecks[checkIndex])
-                    AFJUtils.startOutAnimation(mBaseActivity,binding.layoutContainerCheck)
+                    AFJUtils.startOutAnimation(mBaseActivity, binding.layoutContainerCheck)
                 }
             }
         }

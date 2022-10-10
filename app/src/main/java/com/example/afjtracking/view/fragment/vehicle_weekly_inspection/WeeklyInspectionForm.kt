@@ -2,6 +2,8 @@ package com.example.afjtracking.view.fragment.vehicle_weekly_inspection
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +14,6 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.widget.CompoundButtonCompat
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,24 +23,21 @@ import com.example.afjtracking.databinding.LayoutWeeklyInspectionCheckItemBindin
 import com.example.afjtracking.model.requests.SavedInspection
 import com.example.afjtracking.model.requests.SavedWeeklyInspection
 import com.example.afjtracking.model.requests.SingleInspectionRequest
-import com.example.afjtracking.model.responses.RadioCheckOption
-import com.example.afjtracking.model.responses.WeeklyInspectionCheck
-import com.example.afjtracking.model.responses.WeeklyInspectionCheckData
-import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.model.responses.*
+import com.example.afjtracking.utils.*
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
-import com.example.afjtracking.utils.CustomDialog
-import com.example.afjtracking.utils.DialogCustomInterface
-import com.example.afjtracking.utils.LottieDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
 
 
+
 class WeeklyInspectionForm : Fragment() {
     private var _binding: FragmentWeeklyInspectionFormBinding? = null
     private val binding get() = _binding!!
     private lateinit var mBaseActivity: NavigationDrawerActivity
+    var inspectionTimeSpent= ""
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
@@ -47,7 +45,7 @@ class WeeklyInspectionForm : Fragment() {
 
 
     private var checkIndex = 0
-    var inpsecitonTitle = "Inspection Completed: "
+    private var inpsecitonTitle = "Inspection Completed: "
     var listChecks: ArrayList<WeeklyInspectionCheck> = arrayListOf()
     var listRadioOption: ArrayList<RadioCheckOption> = arrayListOf()
     var totalCountChecks = 0
@@ -56,13 +54,66 @@ class WeeklyInspectionForm : Fragment() {
 
     var radioOption = ""
     lateinit var weeklyInspectionViewModel: WeeklyInspectionViewModel
+
+
+    private var mSensorManager: SensorManager? = null
+    private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
+    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
+    private var mLinearSensorData: MutableList<FloatArray> = arrayListOf()
+
+    private var mInspectionTypeList: ArrayList<PSVCheck> = arrayListOf()
+
+    private val inspectionSensor = object : InspectionSensor() {
+
+        override fun sendSensorValue(data: ArrayList<FloatArray>) {
+            mAccelerometerData.add(data[0])
+            mGyroSensorData.add(data[1])
+            mLinearSensorData.add(data[2])
+        }
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        mSensorManager = mBaseActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also { accelerometer ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.also { gyroscope ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                gyroscope,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)?.also { linear ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                linear,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+    }
+
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        weeklyInspectionViewModel =  ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
+        weeklyInspectionViewModel =
+            ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
 
         _binding = FragmentWeeklyInspectionFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -92,6 +143,7 @@ class WeeklyInspectionForm : Fragment() {
                     binding.mainLayout.addView(authView)
                 }
             }
+
             override fun onAuthForceClose(boolean: Boolean) {
                 mBaseActivity.onBackPressed()
             }
@@ -99,6 +151,14 @@ class WeeklyInspectionForm : Fragment() {
 
 
 
+        binding.timerView.setListener(object:TimerListener{
+
+            override fun getStringTime(time: String) {
+                inspectionTimeSpent= time
+            }
+
+        })
+        binding.timerView.getTimerVariable().stop()
 
 
 
@@ -108,7 +168,7 @@ class WeeklyInspectionForm : Fragment() {
         }
         weeklyInspectionViewModel.apiHasData.observe(viewLifecycleOwner) {
             if (!it) {
-            mBaseActivity.onBackPressed()
+                mBaseActivity.onBackPressed()
             }
         }
 
@@ -118,35 +178,37 @@ class WeeklyInspectionForm : Fragment() {
 
         weeklyInspectionViewModel.weeklyInspectionCheck.observe(viewLifecycleOwner)
         {
-                if(it != null) {
-                    binding.inspectionModel = weeklyInspectionViewModel
+            if (it != null) {
+                binding.inspectionModel = weeklyInspectionViewModel
 
-                    try {
-                        createViews(it)
-                    } catch (e: Exception) {
-                        mBaseActivity.writeExceptionLogs(e.toString())
-                    }
+                try {
 
-                   // weeklyInspectionViewModel._weeklyInspectionCheck.value = null
+                    binding.timerView.getTimerVariable().start()
+                    createViews(it)
+                } catch (e: Exception) {
+                    mBaseActivity.writeExceptionLogs(e.toString())
                 }
+
+                // weeklyInspectionViewModel._weeklyInspectionCheck.value = null
+            }
 
         }
 
         weeklyInspectionViewModel.apiCompleted.observe(viewLifecycleOwner)
         {
             if (it) {
-              //  mBaseActivity.toast("Inspection Successfully Completed")
-              //  mBaseActivity.onBackPressed()
+                //  mBaseActivity.toast("Inspection Successfully Completed")
+                //  mBaseActivity.onBackPressed()
                 CustomDialog().showTaskCompleteDialog(
                     mBaseActivity,
-                    isShowTitle =  true,
+                    isShowTitle = true,
                     isShowMessage = true,
-                    titleText=getString(R.string.request_submited),
-                    msgText =getString(R.string.request_msg,"inspection form"),
+                    titleText = getString(R.string.request_submited),
+                    msgText = getString(R.string.request_msg, "inspection form"),
                     lottieFile = R.raw.inspection_complete,
                     showOKButton = true,
                     okButttonText = "Close",
-                    listner =object: DialogCustomInterface {
+                    listner = object : DialogCustomInterface {
                         override fun onClick(var1: LottieDialog) {
                             super.onClick(var1)
                             var1.dismiss()
@@ -163,10 +225,12 @@ class WeeklyInspectionForm : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        mSensorManager!!.unregisterListener(inspectionSensor)
     }
 
 
-    fun createViews(data: WeeklyInspectionCheckData) {
+    private fun createViews(data: WeeklyInspectionCheckData) {
 
         binding.progressHorizontal.max = data.totalCount!!
         totalCountChecks = data.totalCount!!
@@ -183,7 +247,7 @@ class WeeklyInspectionForm : Fragment() {
     }
 
 
-    fun createInspectionChecksView(
+    private fun createInspectionChecksView(
         check: WeeklyInspectionCheck,
         data: WeeklyInspectionCheckData,
     ) {
@@ -229,7 +293,7 @@ class WeeklyInspectionForm : Fragment() {
         addRadioButtons(listRadioOption, view.radioCheckGroup, check.savedInspections)
 
 
-        view.radioCheckGroup.setOnCheckedChangeListener({ group, checkedId ->
+        view.radioCheckGroup.setOnCheckedChangeListener { group, checkedId ->
             val rb = group.findViewById(checkedId) as RadioButton
             radioOption = rb.tag.toString()
 
@@ -240,7 +304,7 @@ class WeeklyInspectionForm : Fragment() {
             }
 
 
-        })
+        }
 
         if (check.savedInspections.size > 0) {
             if (check.savedInspections[0].code != satisfactoryCode) {
@@ -262,8 +326,7 @@ class WeeklyInspectionForm : Fragment() {
     }
 
 
-
-    fun saveInspectionToList(
+    private fun saveInspectionToList(
         data: WeeklyInspectionCheckData,
         check: WeeklyInspectionCheck,
         edComent: EditText, isPrevious: Boolean
@@ -285,21 +348,26 @@ class WeeklyInspectionForm : Fragment() {
 
 
                     createInspectionChecksView(listChecks[checkIndex], data)
-                    AFJUtils.startOutAnimation(mBaseActivity,binding.layoutContainerCheck)
+                    AFJUtils.startOutAnimation(mBaseActivity, binding.layoutContainerCheck)
                 }
             } else {
                 if (checkIndex < listChecks.size - 1) {
                     checkIndex++
 
 
-                     createInspectionChecksView(listChecks[checkIndex], data)
-                    AFJUtils.startInAnimation(mBaseActivity,binding.layoutContainerCheck)
-
+                    createInspectionChecksView(listChecks[checkIndex], data)
+                    AFJUtils.startInAnimation(mBaseActivity, binding.layoutContainerCheck)
 
 
                 } else {
-                    val body = SavedWeeklyInspection(inspectionID, listChecks)
-                    weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body,false)
+                    binding.timerView.getTimerVariable().stop()
+                    val body = SavedWeeklyInspection(
+                        inspectionID,
+                        listChecks,
+                        SensorData(mAccelerometerData, mGyroSensorData, mLinearSensorData),
+                        inspectionTimeSpent
+                    )
+                    weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body, false)
                 }
             }
         } catch (e: Exception) {
@@ -307,13 +375,13 @@ class WeeklyInspectionForm : Fragment() {
         }
     }
 
-    fun addRadioButtons(
+    private fun addRadioButtons(
         radioButtonTexts: ArrayList<RadioCheckOption>,
         rg: RadioGroup,
         savedInspection: ArrayList<SavedInspection>
     ) {
         for (text in radioButtonTexts) {
-            var newRadioButton = RadioButton(context)
+            val newRadioButton = RadioButton(context)
 
 
             newRadioButton.layoutParams = LinearLayout.LayoutParams(
@@ -325,9 +393,13 @@ class WeeklyInspectionForm : Fragment() {
 
 
             if (Build.VERSION.SDK_INT < 21) {
-                CompoundButtonCompat.setButtonTintList(newRadioButton, ColorStateList.valueOf(R.color.colorPrimary))//Use android.support.v4.widget.CompoundButtonCompat when necessary else
+                CompoundButtonCompat.setButtonTintList(
+                    newRadioButton,
+                    ColorStateList.valueOf(R.color.colorPrimary)
+                )
             } else {
-                newRadioButton.buttonTintList = ColorStateList.valueOf(R.color.colorPrimary)//setButtonTintList is accessible directly on API>19
+                newRadioButton.buttonTintList =
+                    ColorStateList.valueOf(R.color.colorPrimary)
             }
 
             rg.addView(newRadioButton)
@@ -347,7 +419,7 @@ class WeeklyInspectionForm : Fragment() {
     }
 
 
-    fun savedInspectionData(
+    private fun savedInspectionData(
         data: WeeklyInspectionCheckData,
         check: WeeklyInspectionCheck,
         edComent: EditText
@@ -366,8 +438,13 @@ class WeeklyInspectionForm : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        val body = SavedWeeklyInspection(inspectionID, listChecks)
-        weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body,true)
+        val body = SavedWeeklyInspection(
+            inspectionID,
+            listChecks,
+            SensorData(mAccelerometerData, mGyroSensorData, mLinearSensorData),
+            inspectionTimeSpent
+        )
+        weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body, true)
     }
 
 

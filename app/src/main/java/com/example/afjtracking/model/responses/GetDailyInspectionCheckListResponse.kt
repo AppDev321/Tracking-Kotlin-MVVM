@@ -37,9 +37,25 @@ data class InspectionCheckData(
     @SerializedName("isCompleted") var isCompleted: Boolean? = false,
     @SerializedName("upload_id") var uploadID: String? = "abc",
     @SerializedName("request_name") var requestName: String? = "PTS",
-    @SerializedName("vehicle_type") var vehicleType: String? = ""
+    @SerializedName("vehicle_type") var vehicleType: String? = "",
+    @SerializedName("sensor_data") var sensorData: SensorData? = SensorData(),
+    @SerializedName("time_spent") var inspectionTimeSpent:String? = null
 
 
+
+) : Parcelable
+
+@Parcelize
+data class SensorData(
+    @SerializedName("accelerometer")
+    var acceleroMeterReding: List<FloatArray>? = arrayListOf(),
+
+    @SerializedName("gyrometer")
+    var gyroSensorReding: List<FloatArray>? = arrayListOf(),
+
+
+    @SerializedName("linear")
+    var linearSensorReading: List<FloatArray>? = arrayListOf()
 ) : Parcelable
 
 
@@ -58,12 +74,10 @@ data class Inspection(
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null
 
-) : Parcelable
-{
-    fun getReadableDate( ):String
-    {
-        if(date.toString().contains("T"))
-       return AFJUtils.convertServerDateTime(date.toString(),false)
+) : Parcelable {
+    fun getReadableDate(): String {
+        if (date.toString().contains("T"))
+            return AFJUtils.convertServerDateTime(date.toString(), false)
         else
             return date.toString()
     }
@@ -78,13 +92,13 @@ data class Vehicle(
     @SerializedName("type") var type: String? = null,
     @SerializedName("make") var make: String? = null,
     @SerializedName("model") var model: String? = null,
-    @SerializedName("odometer_reading") var odometerReading : String? = null,
+    @SerializedName("odometer_reading") var odometerReading: String? = null,
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
     @SerializedName("detail") var detail: Detail? = Detail(),
 
 
-) : Parcelable
+    ) : Parcelable
 
 
 @Parcelize
@@ -125,7 +139,7 @@ data class Checks(
     @SerializedName("check_no") var checkNo: Int? = null,
     @SerializedName("class") var classCheck: String? = null,
     @SerializedName("type") var type: String? = null,
-    @SerializedName("issue_check") var issueCheck :Boolean? = null,
+    @SerializedName("issue_check") var issueCheck: Boolean? = null,
     @SerializedName("name") var name: String? = null,
     @SerializedName("message") var message: String? = null,
     @SerializedName("data") var data: String? = null,
@@ -172,21 +186,20 @@ data class InspectionForm(
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
     @SerializedName("value") var value: String? = null,
-    @SerializedName("options") var options   : ArrayList<Options> = arrayListOf(),
+    @SerializedName("options") var options: ArrayList<Options> = arrayListOf(),
 
 
-): Parcelable
+    ) : Parcelable
 
 
 @Parcelize
-data class Options (
+data class Options(
 
-    @SerializedName("option"     ) var option    : Int?    = null,
-    @SerializedName("title"      ) var title     : String? = null,
-    @SerializedName("field_value" ) var fieldName : String? = null
+    @SerializedName("option") var option: Int? = null,
+    @SerializedName("title") var title: String? = null,
+    @SerializedName("field_value") var fieldName: String? = null
 
-): Parcelable
-
+) : Parcelable
 
 
 @Parcelize
@@ -197,7 +210,7 @@ data class PSVCheck(
     @SerializedName("name") var name: String? = null,
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
- //   @SerializedName("saved_inspection") var savedInspection: Boolean? = null,
+    //   @SerializedName("saved_inspection") var savedInspection: Boolean? = null,
     @SerializedName("inspection_data") var savedInspection: SolvedInspection? = SolvedInspection()
 
 ) : Parcelable {

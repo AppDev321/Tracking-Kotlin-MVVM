@@ -2,6 +2,8 @@ package com.example.afjtracking.view.fragment.vehicle_daily_inspection
 
 
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +16,9 @@ import com.example.afjtracking.databinding.FragmentDailyInpsectionFormBinding
 import com.example.afjtracking.databinding.ItemDailyPsvInspectionCheckBinding
 import com.example.afjtracking.model.responses.InspectionCheckData
 import com.example.afjtracking.model.responses.PSVCheck
-import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.model.responses.SensorData
+import com.example.afjtracking.utils.*
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
-import com.example.afjtracking.utils.CustomDialog
-import com.example.afjtracking.utils.DialogCustomInterface
-import com.example.afjtracking.utils.LottieDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
 import kotlinx.android.synthetic.main.fragment_daily_inpsection_form.view.*
@@ -30,7 +30,8 @@ class PSVInspectionForm : Fragment() {
     private val binding get() = _binding!!
 
 
-    private var mInspectionTypeList: ArrayList<PSVCheck> = arrayListOf()
+
+
     private lateinit var mBaseActivity: NavigationDrawerActivity
     var checkIndex: Int = 0
 
@@ -48,6 +49,55 @@ class PSVInspectionForm : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
+    }
+
+
+
+
+    private var mSensorManager: SensorManager? = null
+    private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
+    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
+    private var mLinearSensorData: MutableList<FloatArray> = arrayListOf()
+    private var mInspectionTypeList: ArrayList<PSVCheck> = arrayListOf()
+
+    private val inspectionSensor = object : InspectionSensor() {
+
+        override fun sendSensorValue(data: ArrayList<FloatArray>) {
+            mAccelerometerData.add(data[0])
+            mGyroSensorData.add(data[1])
+            mLinearSensorData.add(data[2])
+        }
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        mSensorManager = mBaseActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also { accelerometer ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.also { gyroscope ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                gyroscope,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)?.also { linear ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                linear,
+                SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
     }
 
     override fun onCreateView(
@@ -75,6 +125,15 @@ class PSVInspectionForm : Fragment() {
             inspectionViewModel._vehicleInfo.value = inspectionData.vehicle
 
             binding.inspectionModel = inspectionViewModel
+
+
+            binding.timerView.setListener(object:TimerListener{
+
+                override fun getStringTime(time: String) {
+                    apiRequestParams.inspectionTimeSpent = time
+                }
+
+            })
 
 
             //Save count check
@@ -156,6 +215,7 @@ class PSVInspectionForm : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        mSensorManager!!.unregisterListener(inspectionSensor)
     }
 
 
@@ -230,6 +290,8 @@ class PSVInspectionForm : Fragment() {
                 } else {
                     mBaseActivity.showProgressDialog(true)
                     apiRequestParams.psvChecks = mInspectionTypeList
+                    apiRequestParams.sensorData = SensorData(mAccelerometerData,mGyroSensorData,mLinearSensorData)
+
                     inspectionViewModel.postInspectionVDI(mBaseActivity, apiRequestParams)
                 }
             }

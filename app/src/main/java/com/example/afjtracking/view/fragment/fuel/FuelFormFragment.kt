@@ -33,7 +33,7 @@ class FuelFormFragment : Fragment() {
     lateinit var fuelViewModel: FuelViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
     val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
-    var requestType = ""
+    var requestType = "fuel"
 
 
     var isOdoMeterErrorFound = false
@@ -161,20 +161,45 @@ class FuelFormFragment : Fragment() {
             val formData = fuelList[i]
             try {
                 //createViewChecks(formData.type!!.uppercase(), formData, i)
-                val customFormData = CustomWidget().createDynamicFormViews(
-                    mBaseActivity,
-                    formData,
-                    i,
-                    lastOdoReading,
-                    uniqueUploadId,
-                    requestType,
-                    binding.layoutVdiForm
+                if (formData.type!!.uppercase().contains("IMAGE")   )
+                {
+                    val customFormData = CustomWidget().getSingleImageCallBackInFuelForm(
+                        mBaseActivity,
+                        formData,
+                        i,
+                        lastOdoReading,
+                        uniqueUploadId,
+                        requestType,
+                        binding.layoutVdiForm
 
-                )
-                if (customFormData != null) {
-                    storedData.add(customFormData)
+                    ){
 
+                        fuelViewModel.runTextRecognition(it,mBaseActivity)
+
+                    }
+
+                    if (customFormData != null) {
+                        storedData.add(customFormData)
+
+                    }
                 }
+                else {
+                    val customFormData = CustomWidget().createDynamicFormViews(
+                        mBaseActivity,
+                        formData,
+                        i,
+                        lastOdoReading,
+                        uniqueUploadId,
+                        requestType,
+                        binding.layoutVdiForm
+
+                    )
+                    if (customFormData != null) {
+                        storedData.add(customFormData)
+
+                    }
+                }
+
             } catch (e: Exception) {
                 mBaseActivity.writeExceptionLogs(e.toString())
             }

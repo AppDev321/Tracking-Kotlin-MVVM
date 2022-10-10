@@ -56,7 +56,7 @@ interface DAOAccess {
 
 
     suspend fun insertFileUpload(tableUploadFile : TableUploadFile) {
-        val itemsFromDB = getFileData(tableUploadFile.uploadID!!,tableUploadFile.fieldName)
+        val itemsFromDB = getFileData(tableUploadFile.uploadID,tableUploadFile.fieldName)
 
         if (itemsFromDB != null  ) {
             tableUploadFile.Id = itemsFromDB.Id
@@ -71,8 +71,6 @@ interface DAOAccess {
 
 
     //************ API TABLE ****************//
-
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun InsertAPIData(tableApiData : TableAPIData)
 

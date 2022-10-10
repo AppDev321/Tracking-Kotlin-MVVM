@@ -196,14 +196,11 @@ class CustomWidget {
                 textTitleLable.setTextColor(Color.BLACK)
                 //  containerChecks.addView(view)
 
-
                 view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
                 var textDescLable = view.findViewById<TextView>(R.id.text_label)
                 textDescLable.setTypeface(null, Typeface.NORMAL)
                 textDescLable.text = formData.comment
-
                 //  containerChecks.addView(view)
-
 
                 view = context.layoutInflater.inflate(R.layout.layout_image_box, null)
                 var imagePreview = view.findViewById<ImageView>(R.id.img_preview)
@@ -212,9 +209,6 @@ class CustomWidget {
                 imagePreview.visibility = View.GONE
                 btnPickImage.visibility = View.VISIBLE
                 btnImageDel.visibility = View.GONE
-
-
-
 
                 btnPickImage.setOnClickListener {
                     val dialog = FileUploadDialog.newInstance(
@@ -228,10 +222,7 @@ class CustomWidget {
                             }
 
                             override fun onFilePathReceived(path: String) {
-
                                 formData.value = uniqueFileId.toString()
-
-
                                 Glide.with(view.context)
                                     .load(path)
                                     .placeholder(
@@ -240,7 +231,6 @@ class CustomWidget {
                                             R.drawable.ic_no_image
                                         )
                                     )
-
                                     .into(imagePreview)
                                 btnPickImage.visibility = View.GONE
                                 btnImageDel.visibility = View.VISIBLE
@@ -493,6 +483,78 @@ class CustomWidget {
         return tv
 
     }
+
+    fun getSingleImageCallBackInFuelForm( context: AppCompatActivity,
+                                formData: InspectionForm,
+                                position: Int,
+                                lastOdoReading: Int? = null,
+                                uniqueFileId: String? = null,
+                                inpsectionType: String? = null,
+                                containerChecks: LinearLayout,
+                                 onImagePathReceived :(path:String)->Unit
+    )  : StoreCustomFormData
+    {
+        var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
+        val textTitleLable = view.findViewById<TextView>(R.id.text_label)
+        textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
+        textTitleLable.setTextColor(Color.BLACK)
+          containerChecks.addView(view)
+
+        view = context.layoutInflater.inflate(R.layout.layout_image_box, null)
+        val imagePreview = view.findViewById<ImageView>(R.id.img_preview)
+        val btnPickImage = view.findViewById<ImageView>(R.id.img_add)
+        val btnImageDel = view.findViewById<ImageView>(R.id.img_del)
+        imagePreview.visibility = View.GONE
+        btnPickImage.visibility = View.VISIBLE
+        btnImageDel.visibility = View.GONE
+
+        btnPickImage.setOnClickListener {
+            val dialog = FileUploadDialog.newInstance(
+                isDocumentPickShow = false,
+                inpsectionType = inpsectionType.toString(), //This will be change after
+                uniqueFileId = uniqueFileId.toString(),
+                fieldName = formData.fieldName!!,
+                fileUploadListner = (object : UploadDialogListener {
+                    override fun onUploadCompleted(completedData: UploadFileAPiResponse) {
+
+                    }
+
+                    override fun onFilePathReceived(path: String) {
+                        formData.value = uniqueFileId.toString()
+                        Glide.with(view.context)
+                            .load(path)
+                            .placeholder(
+                                AppCompatResources.getDrawable(
+                                    view.context,
+                                    R.drawable.ic_no_image
+                                )
+                            )
+                            .into(imagePreview)
+                        btnPickImage.visibility = View.GONE
+                        btnImageDel.visibility = View.VISIBLE
+                        imagePreview.visibility = View.VISIBLE
+
+                        onImagePathReceived.invoke(path)
+                    }
+
+                })
+            )
+            dialog.isCancelable = false
+            dialog.show(context.supportFragmentManager, null)
+
+        }
+        btnImageDel.setOnClickListener {
+            btnImageDel.visibility = View.GONE
+            btnPickImage.visibility = View.VISIBLE
+            imagePreview.visibility = View.GONE
+        }
+
+        //val dataStore = StoreFormData(null, formData)
+        //storedData.add(dataStore)
+        containerChecks.addView(view)
+        return StoreCustomFormData(null, formData)
+    }
+
     private fun getTime(hr: Int, min: Int): String {
         val tme = Time(hr, min, 0)
         val formatter: Format

@@ -47,7 +47,7 @@ object FirebaseConfig {
                         }
 
                       AFJUtils.setRequestingLocationUpdates(context, trackingSetting.tracking!!)
-                        AFJUtils.writeLogs("Tracking status =${AFJUtils.requestingLocationUpdates(context)}")
+                       AFJUtils.writeLogs("Tracking status =${AFJUtils.requestingLocationUpdates(context)}")
                         Intent().also { intent ->
                             intent.action=Constants.NOTIFICATION_BROADCAST
                             intent.putExtra(TrackingAppBroadcast.BroadcastObect.intentData, TrackingAppBroadcast.BroadcastObect.trackingSettingEvent)

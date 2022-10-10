@@ -2,6 +2,8 @@ package com.example.afjtracking.view.fragment.home
 
 import android.content.Context
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Transformations.map
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.MenuDashboardBinding
+import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.InspectionSensor
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.MenuItemListner
 import com.example.afjtracking.view.adapter.MenuModel
@@ -80,7 +84,15 @@ class MainMenuFragment : Fragment(), MenuItemListner {
         menuItemsList = listOf(menuList1)
 
 
+
+
+
+
     }
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

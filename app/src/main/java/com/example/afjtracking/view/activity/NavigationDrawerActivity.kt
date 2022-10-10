@@ -1,6 +1,9 @@
 package com.example.afjtracking.view.activity
 
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
@@ -15,6 +18,7 @@ import com.example.afjtracking.databinding.ActivityNavigationBinding
 import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.InspectionSensor
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -27,6 +31,7 @@ class NavigationDrawerActivity : BaseActivity() {
     private lateinit var drawerLayout: DrawerLayout
     var dbReference: DatabaseReference? = null
     var timer: CountDownTimer? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +98,10 @@ class NavigationDrawerActivity : BaseActivity() {
         })
 
 
+
+
     }
+
 
     fun toolbarVisibility(isShow: Boolean) {
         if (supportActionBar != null) {

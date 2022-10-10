@@ -32,6 +32,7 @@ import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.service.location.LocationUpdatesService
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.TimerListener
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -122,8 +123,8 @@ class TrackingFragment : Fragment() {
             }
        // }
 
-        AFJUtils.setRequestingLocationUpdates(mBaseActivity, true)
-          onSetViews()
+
+       onSetViews()
 
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
         mBaseActivity.addChildFragment(MainMenuFragment(), this, R.id.frame_tracking)
@@ -365,18 +366,19 @@ class TrackingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+       // val isRegister = AFJUtils.isLocationReceiverRegister(mBaseActivity)
+        //   if(!isRegister) {
+                LocalBroadcastManager.getInstance(mBaseActivity).registerReceiver(
+                    myReceiver!!,
+                    IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+                )
+      //     AFJUtils.setLocationReceiverRegister(mBaseActivity,true)
+       // }
+    }
 
-
-     val isRegister = AFJUtils.isLocationReceiverRegister(mBaseActivity)
-        if(!isRegister) {
-            LocalBroadcastManager.getInstance(mBaseActivity).registerReceiver(
-                myReceiver!!,
-                IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
-            )
-           AFJUtils.setLocationReceiverRegister(mBaseActivity,true)
-        }
-
-
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(mBaseActivity).unregisterReceiver(myReceiver!!)
     }
 
     override fun onStop() {
@@ -495,7 +497,7 @@ class TrackingFragment : Fragment() {
                         trackingViewModel.postLocationData(request, context)
                     }
 
-                    // **** Checking Service Status of Tracking
+                    // **** Checking Service Status of Tracking ****//
                     if(mService != null) {
                         val checkTrackingStatus = AFJUtils.requestingLocationUpdates(mBaseActivity)
                         if (checkTrackingStatus == true) {
