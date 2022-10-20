@@ -1,5 +1,6 @@
 package com.example.afjtracking.view.fragment.vehicle_weekly_inspection
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.hardware.Sensor
@@ -28,6 +29,7 @@ import com.example.afjtracking.utils.*
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
+import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
 
@@ -113,15 +115,22 @@ class WeeklyInspectionForm : Fragment() {
     ): View {
 
         weeklyInspectionViewModel =
-            ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
+            ViewModelProvider(this)[WeeklyInspectionViewModel::class.java]
 
         _binding = FragmentWeeklyInspectionFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        root.hideKeyboard()
-        val inspectionId =
-            arguments?.getInt(PTSInspectionForm.argumentParams)!!
 
+        binding.timerView.setListener(object:TimerListener{
+            override fun getStringTime(time: String) {
+                inspectionTimeSpent = time
+            }
+
+        })
+        binding.timerView.getTimerVariable().stop()
+        root.hideKeyboard()
+
+        val inspectionId = arguments?.getInt(InspectionReviewFragment.argumentParams)!!
         val body = SingleInspectionRequest("$inspectionId")
 
         binding.baseLayout.visibility = View.GONE
@@ -150,19 +159,6 @@ class WeeklyInspectionForm : Fragment() {
         })
 
 
-
-        binding.timerView.setListener(object:TimerListener{
-
-            override fun getStringTime(time: String) {
-                inspectionTimeSpent= time
-            }
-
-        })
-        binding.timerView.getTimerVariable().stop()
-
-
-
-
         weeklyInspectionViewModel.showDialog.observe(viewLifecycleOwner) {
             mBaseActivity.showProgressDialog(it)
         }
@@ -180,9 +176,7 @@ class WeeklyInspectionForm : Fragment() {
         {
             if (it != null) {
                 binding.inspectionModel = weeklyInspectionViewModel
-
                 try {
-
                     binding.timerView.getTimerVariable().start()
                     createViews(it)
                 } catch (e: Exception) {
@@ -375,6 +369,7 @@ class WeeklyInspectionForm : Fragment() {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private fun addRadioButtons(
         radioButtonTexts: ArrayList<RadioCheckOption>,
         rg: RadioGroup,

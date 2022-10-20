@@ -58,7 +58,7 @@ class InspectionReviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        dailyInspectionViewModel=  ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
+        dailyInspectionViewModel= ViewModelProvider(this)[DailyInspectionViewModel::class.java]
         _binding = FragmentDailyInpsectionFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
         root.hideKeyboard()

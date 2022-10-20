@@ -11,11 +11,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentWeeklyInspectionListBinding
+import com.example.afjtracking.model.requests.DailyInspectionListRequest
+import com.example.afjtracking.model.requests.WeeklyVehicleInspectionRequest
+import com.example.afjtracking.model.responses.InspectionCheckData
 import com.example.afjtracking.model.responses.Inspections
+import com.example.afjtracking.model.responses.WeeklyInspectionData
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
+import com.example.afjtracking.utils.PaginatedAdapter
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.DailyInspectionAdapter
+import com.example.afjtracking.view.adapter.WeeklyInspectionAdapter
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
 
@@ -25,7 +31,7 @@ class DailyInspectionList : Fragment() {
     private val binding get() = _binding!!
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
-
+    var loadMoreApi = false
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
@@ -45,46 +51,84 @@ class DailyInspectionList : Fragment() {
         binding.btnAddInspection.visibility = View.GONE
         binding.baseLayout.visibility = View.VISIBLE
         root.hideKeyboard()
-        dailyInspectionViewModel.getDailyInspectionList(mBaseActivity)
+
+
+
 
 
         dailyInspectionViewModel.showDialog.observe(viewLifecycleOwner) {
+            if(!loadMoreApi)
             mBaseActivity.showProgressDialog(it)
         }
 
+        val adapter = DailyInspectionAdapter(mBaseActivity)
+        adapter.setPageSize(10)
+        adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
+        adapter.setListenerClick(object : WeeklyInspectionAdapter.ClickWeeklyInspectionListener{
 
+
+            override fun <T> handleContinueButtonClick(data: T) {
+                val data = data as Inspections
+                val bundle =
+                    bundleOf(InspectionReviewFragment.argumentParams to data.id)
+
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_daily_inspection_review, bundle
+                )
+            }
+        })
+
+        adapter.setOnPaginationListener(object : PaginatedAdapter.OnPaginationListener {
+            override fun onCurrentPage(page: Int) {
+
+            }
+
+            override fun onNextPage(page: Int) {
+                loadMoreApi = true
+                adapter.addLoadingFooter(Inspections())
+                val body = DailyInspectionListRequest(
+                    page,
+                    adapter.getPageSize(),
+                   AFJUtils.getDeviceDetail()
+                )
+                dailyInspectionViewModel.getDailyInspectionList(mBaseActivity,body)
+
+            }
+
+            override fun onFinish() {
+              //  mBaseActivity.showSnackMessage("Reached to end",binding.root)
+            }
+        })
+
+        val body = DailyInspectionListRequest(
+            adapter.getStartPage(),
+            adapter.getPageSize(),
+            AFJUtils.getDeviceDetail()
+        )
+        dailyInspectionViewModel.getDailyInspectionList(mBaseActivity,body)
 
         dailyInspectionViewModel.getInspectionList.observe(viewLifecycleOwner) {
             if (it != null) {
                 try {
-                    if (it.size > 0) {
-                        val adapter = DailyInspectionAdapter(mBaseActivity, it)
-                        adapter.setListnerClick(object :
-                            DailyInspectionAdapter.ClickWeeklyInspectionListner {
-                            override fun handleContinueButtonClick(data: Inspections) {
-                                val bundle =
-                                    bundleOf(InspectionReviewFragment.argumentParams to data.id)
-
-                                mBaseActivity.moveFragmentToNextFragment(
-                                    binding.root,
-                                    R.id.nav_daily_inspection_review, bundle
-                                )
-                            }
-                        })
-
-                        val layoutManager = LinearLayoutManager(mBaseActivity)
-                        binding.recWeeklyInspectionList.layoutManager = layoutManager
-                        binding.recWeeklyInspectionList.adapter = adapter
+                    if (it.isNotEmpty()) {
 
                         binding.txtNoData.visibility = View.GONE
                         binding.recWeeklyInspectionList.visibility = View.VISIBLE
 
                     } else {
-                        binding.txtNoData.visibility = View.VISIBLE
-                        binding.recWeeklyInspectionList.visibility = View.GONE
+                        if(!loadMoreApi) {
+                            binding.txtNoData.visibility = View.VISIBLE
+                            binding.recWeeklyInspectionList.visibility = View.GONE
+                        }
                     }
 
                     binding.btnAddInspection.visibility = View.VISIBLE
+
+                    //Adding loading more data in adapter
+                    adapter.removeLoadingFooter()
+                    adapter.submitItems(it)
+
 
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())

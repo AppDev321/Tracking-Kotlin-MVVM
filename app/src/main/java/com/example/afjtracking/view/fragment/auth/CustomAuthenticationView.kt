@@ -2,6 +2,7 @@ package com.example.afjtracking.view.fragment.auth
 
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.os.CountDownTimer
 import android.util.AttributeSet
@@ -92,7 +93,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         mBaseActivity = context as NavigationDrawerActivity
 
 
-        _authViewModel = ViewModelProvider(context).get(AuthViewModel::class.java)
+        _authViewModel = ViewModelProvider(context)[AuthViewModel::class.java]
 
         _binding =
             FragmentAuthBinding.inflate((context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater))
@@ -117,7 +118,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                             showAuthOptionDialog()
                             return
                         }
-                        if (AFJUtils.dateComparison(user.expiresAt.toString(), true)) {
+                        if (AFJUtils.dateComparison(user.expiresAt.toString(), withTime = true)) {
                             if (user.status == false) {
                                 if (!isInitView)
                                     mBaseActivity.toast(
@@ -198,13 +199,13 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             //mBaseActivity.showProgressDialog(it)
         }
 
-        authViewModel.errorsMsg.observe(this, {
+        authViewModel.errorsMsg.observe(this) {
             if (it != null) {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
                 authViewModel.errorsMsg.value = null
             }
-        })
+        }
 
 
         try {
@@ -268,15 +269,14 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     fun showAuthOptionDialog() {
 
 
-        /*
-
+/*
         binding.containerLoginView.visibility = View.GONE
         binding.containerQrScan.visibility = View.VISIBLE
 
         binding.layoutScan.idIVQrcode.setImageBitmap(null)
-        binding.layoutScan.txtTimeExpire.text =""*/
+        binding.layoutScan.txtTimeExpire.text =""
 
-        /*val choice = arrayOf<CharSequence>("QR Scan", "Password")
+        val choice = arrayOf<CharSequence>("QR Scan", "Password")
         val alert: AlertDialog.Builder = AlertDialog.Builder(mBaseActivity)
         alert.setTitle("Choose Authentication Option")
         alert.setSingleChoiceItems(choice, 0,

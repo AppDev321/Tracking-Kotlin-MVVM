@@ -46,13 +46,14 @@ import java.util.*
 
 
 object AFJUtils {
-    const val KEY_REQUESTING_LOCATION_UPDATES = "requesting_locaction_updates"
-    const val KEY_USER_TOKEN = "user_token"
+    private const val KEY_REQUESTING_LOCATION_UPDATES = "requesting_locaction_updates"
+    private const val KEY_USER_TOKEN = "user_token"
     const val KEY_VEHICLE_DETAIL = "vehicle_detail"
     const val KEY_USER_DETAIL = "user_detail"
-    const val KEY_LOCATION_RECEVIER = "location_receiver_register"
+    const val KEY_LOGIN_RESPONSE = "login_response"
+    private const val KEY_LOCATION_RECEVIER = "location_receiver_register"
 
-    enum class NOTIFICATION_TYPE{
+    enum class NOTIFICATIONTYPE{
         TEXT,
         IMAGE,
         LOCATION,
@@ -68,7 +69,10 @@ object AFJUtils {
         MULTILINE,
         OPTION,
         MULTISELECT,
-        DATETIME
+        DATETIME,
+        TIME,
+        DATE,
+        RADIO
     }
 
 
@@ -114,7 +118,7 @@ object AFJUtils {
     }
 
     @JvmStatic
-    fun requestingLocationUpdates(context: Context?): Boolean {
+    fun getRequestingLocationUpdates(context: Context?): Boolean {
         return getPrefs(context!!)
             .getBoolean(KEY_REQUESTING_LOCATION_UPDATES, false)
     }
@@ -181,7 +185,7 @@ object AFJUtils {
     }
 
 
-    fun getPrefs(context: Context): SharedPreferences {
+    private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(
             context.getString(R.string.app_name),
             Context.MODE_PRIVATE
@@ -356,10 +360,10 @@ object AFJUtils {
         val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
         if (is24Hour) {
             val requiredSdf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
-            return requiredSdf.format(sourceSdf.parse(date))
+            return sourceSdf.parse(date).let { requiredSdf.format(it!!) }
         } else {
             val requiredSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            return requiredSdf.format(sourceSdf.parse(date))
+            return sourceSdf.parse(date).let { requiredSdf.format(it!!) }
         }
     }
 
@@ -371,39 +375,37 @@ object AFJUtils {
             val sourceSdf = SimpleDateFormat(inputDateFormat, Locale.getDefault())
             if (withTime) {
                 // val requiredSdf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
-                val compareDateTime = sourceSdf.parse(uTCToLocal(inputDateFormat,inputDateFormat,date))
+                val compareDateTime = uTCToLocal(inputDateFormat,inputDateFormat,date)?.let {
+                    sourceSdf.parse(
+                        it
+                    )
+                }
                 val currentDateTime = sourceSdf.parse(sourceSdf.format(Date()))
-
-
-                when {
-
-                    currentDateTime.before(compareDateTime) -> {
-
-                        return true
-                    }
-                    currentDateTime.after(compareDateTime) -> {
-
-                        return false
-                    }
-
-                    currentDateTime.after(compareDateTime) -> {
-
-                        return false
+                if (currentDateTime != null) {
+                    when {
+                        currentDateTime.before(compareDateTime) -> {
+                            return true
+                        }
+                        currentDateTime.after(compareDateTime) -> {
+                            return false
+                        }
+                        currentDateTime.after(compareDateTime) -> {
+                            return false
+                        }
                     }
                 }
-
-
             } else {
                 val requiredSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                requiredSdf.format(sourceSdf.parse(date))
+                sourceSdf.parse(date).let {
+                    if (it != null) {
+                        requiredSdf.format(it)
+                    }
+                }
             }
-
         }
         catch (e:Exception){
                 writeLogs("Date Parsing issuee .....")
-
         }
-
        return false
     }
 
@@ -446,10 +448,9 @@ object AFJUtils {
     fun getCurrentDateTime(): String {
 
         val sdf = SimpleDateFormat("dd-M-yyyy hh:mm:ss")
-        val currentDate = sdf.format(Date())
 
 
-        return currentDate
+        return sdf.format(Date())
     }
 
     fun getFileSizeInMB(file: File): String {
@@ -459,7 +460,7 @@ object AFJUtils {
 
         val sizeInMbStr = "%.2f".format(sizeInMb)
 
-        return "${sizeInMbStr} MB"
+        return "$sizeInMbStr MB"
     }
 
 
@@ -479,7 +480,7 @@ object AFJUtils {
 
 
     fun getDeviceDetail(): DeviceDetail {
-        var deviceData = DeviceDetail()
+        val deviceData = DeviceDetail()
         deviceData.brand = Build.BRAND
         deviceData.model = Build.MODEL
         deviceData.androidVersion = Build.VERSION.RELEASE
@@ -505,9 +506,8 @@ object AFJUtils {
     }
     fun getGreetingMessage():String{
         val c = Calendar.getInstance()
-        val timeOfDay = c.get(Calendar.HOUR_OF_DAY)
 
-        return when (timeOfDay) {
+        return when (c.get(Calendar.HOUR_OF_DAY)) {
             in 0..11 -> "Good Morning"
             in 12..15 -> "Good Afternoon"
             in 16..20 -> "Good Evening"

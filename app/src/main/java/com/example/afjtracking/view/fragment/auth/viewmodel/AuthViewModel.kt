@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.afjtracking.R
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.responses.LocationResponse
@@ -19,11 +18,7 @@ import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import retrofit2.Response
-import kotlin.concurrent.thread
 
 
 class AuthViewModel : ViewModel() {
@@ -165,12 +160,12 @@ class AuthViewModel : ViewModel() {
                         }
                     }
                 }
-                //  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo )
-                //  myLogo= getResizedBitmap(myLogo,80)
-                //  return mergeBitmaps(qrBitmap, myLogo)
+               /*  var myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.afj_logo )
+                 myLogo= Bitmap.createScaledBitmap(myLogo, 100, 100, false)
+                  return mergeBitmaps(qrBitmap, myLogo)
+*/
 
-
-           return  qrBitmap
+         return  qrBitmap
 
 
             } catch (e: Exception) {
@@ -179,6 +174,7 @@ class AuthViewModel : ViewModel() {
 
 
     }
+
 
 
     fun mergeBitmaps(qrCode: Bitmap, myLogo: Bitmap): Bitmap {
@@ -194,7 +190,6 @@ class AuthViewModel : ViewModel() {
         )
         return bmOverlay
     }
-
     fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap? {
         var width = image.width
         var height = image.height

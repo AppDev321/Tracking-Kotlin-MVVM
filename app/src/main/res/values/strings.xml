@@ -40,15 +40,14 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_notification">Notification</string>
     <string name="menu_fuel_fill">Fuel Filling Form</string>
-    <string name="menu_report_fill">Report Form</string>
-    <string name="menu_attendance">Attendance</string>
+    <string name="menu_report_fill">Form</string>
+    <string name="menu_attendance">QR Scan</string>
     <string name="menu_device_info">Device Info</string>
     <string name="menu_shift_form">My Shift</string>
     <string name="menu_weekly_inspection">Inspections</string>
     <string name="menu_weekly_inspection_form">Inspection</string>
     <string name="menu_map">Map</string>
     <string name="title_daily_inspection_check">Daily Inspection</string>
-    <string name="vdi_desc">Please fill out this form BEFORE your shift, thank you.\nTyre Pressure + Tread Depth checks MUST be carried out and submitted every day.\nNOTES: - Tyre pressures should be 60PSI - Tread depth should be 2MM or ABOVE  Please seek assistance from OPERATIONS or MAINTENANCE staff, if you encounter any difficulties or if any of the vehicular roadworthy conditions (mentioned above) have not been met.</string>
     <string name="email_not_empty">Enter an E-Mail Address</string>
     <string name="email_not_valid">Enter a Valid E-mail Address</string>
     <string name="password_not_empty">Enter a Password</string>
@@ -68,5 +67,7 @@
     <string name="request_inspection_completed">Inspection Completed</string>
 
     <string name="odo_meter_error">Cannot less than previous reading %1$d</string>
+    <string name="networ_error_text">Your are offline now</string>
+    <string name="initiated">initiated</string>
 
 </resources>

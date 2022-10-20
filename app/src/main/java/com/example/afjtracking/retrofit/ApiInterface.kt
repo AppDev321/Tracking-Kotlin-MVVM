@@ -58,13 +58,13 @@ interface ApiInterface {
 
 
     @GET("vehicles/get-fuel-form")
-    fun getFuelForm(): Call<GetFuelFormResponse?>
+    fun getFuelForm(): Call<GetFormResponse?>
 
     @POST("vehicles/save-fuel-form")
     fun saveFuelForm(@Body body: SaveFormRequest): Call<LocationResponse?>
 
-    @GET("vehicles/get-reporting-form")
-    fun getReportForm(): Call<GetReportFormResponse?>
+    @POST("vehicles/get-form")
+    fun getFormData(@Body body:FormRequest): Call<GetFormResponse?>
 
     @POST("vehicles/save-reporting-form")
     fun saveReportForm(@Body body: SaveFormRequest): Call<LocationResponse?>

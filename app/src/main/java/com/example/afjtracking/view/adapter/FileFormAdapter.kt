@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutFileChooseBoxBinding
-import com.example.afjtracking.model.responses.InspectionForm
+import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
@@ -20,7 +20,7 @@ class FileFormAdapter(
     private val uploadId: String,
     private val mContext: AppCompatActivity,
 
-    private var imageList: ArrayList<InspectionForm>,
+    private var imageList: ArrayList<Form>,
     private val mShowGallaryPicker: Boolean =false,
 ) : RecyclerView.Adapter<FileFormAdapter.ImageItemViewHolder>() {
 
@@ -88,14 +88,11 @@ class FileFormAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     inner class ImageItemViewHolder(val itemImageView: LayoutFileChooseBoxBinding) :
-        RecyclerView.ViewHolder(itemImageView.root) {
-
-    }
-
+        RecyclerView.ViewHolder(itemImageView.root)
 
 
     interface ImageFormListner {
-        fun onPreviewGenerated(uploadForm: InspectionForm, position: Int)
+        fun onPreviewGenerated(uploadForm: Form, position: Int)
 
     }
 

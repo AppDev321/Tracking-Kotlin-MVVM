@@ -4,12 +4,12 @@ import android.provider.Settings
 import android.support.multidex.MultiDexApplication
 import com.example.afjtracking.firebase.FirebaseConfig
 import com.example.afjtracking.utils.Constants
-
+import kotlinx.coroutines.GlobalScope
 
 
 class AFJApplication : MultiDexApplication() {
 
-
+    val applicationScope = GlobalScope
     override fun onCreate() {
         super.onCreate()
 

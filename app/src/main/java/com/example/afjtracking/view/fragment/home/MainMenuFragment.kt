@@ -2,23 +2,19 @@ package com.example.afjtracking.view.fragment.home
 
 import android.content.Context
 import android.graphics.Color
-import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Transformations.map
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.MenuDashboardBinding
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.InspectionSensor
+import com.example.afjtracking.model.responses.VehicleMenu
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.MenuItemListner
-import com.example.afjtracking.view.adapter.MenuModel
 import com.example.afjtracking.view.adapter.ViewPagerAdapter
+import com.example.afjtracking.view.fragment.forms.FormsFragment
 
 
 class MainMenuFragment : Fragment(), MenuItemListner {
@@ -26,72 +22,20 @@ class MainMenuFragment : Fragment(), MenuItemListner {
     private var _binding: MenuDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var menuItemsList: List<List<MenuModel>>
+    private lateinit var menuItemsList: List<VehicleMenu>
 
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
+    companion object {
+        fun getInstance(menuItemsList: List<VehicleMenu>)= MainMenuFragment().apply {
+            this.menuItemsList = menuItemsList
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val menuList1 = arrayListOf(
-            MenuModel(
-                0,
-                "Navigation",
-                R.drawable.location
-            ),
-            MenuModel(
-                1,
-                "Daily Inspection",
-                R.drawable.inspection
-            ),
-            MenuModel(
-                2,
-                "Inspection",
-                R.drawable.weekly_inspection
-            ),
-            MenuModel(
-                3,
-                "Attendance",
-                R.drawable.qr_scan
-            ),
-            MenuModel(
-                4,
-                "Fuel Form",
-                R.drawable.fuel_pump
-            ),
-            MenuModel(
-                5,
-                "Report Form",
-                R.drawable.incident
-            ),
-            MenuModel(
-                6,
-                "Device Info",
-                R.drawable.info
-            ),
-        )
-        /* val menuList2= arrayListOf(
-             MenuModel(7,"Vehicle Info", ResourcesCompat.getDrawable(resources, R.drawable.ic_device_info, null)),
-             MenuModel(8,"Device Info", ResourcesCompat.getDrawable(resources, R.drawable.ic_device_info, null)),
-         )*/
-
-        menuItemsList = listOf(menuList1)
-
-
-
-
-
-
-    }
-
-
-
 
 
     override fun onCreateView(
@@ -119,50 +63,54 @@ class MainMenuFragment : Fragment(), MenuItemListner {
         _binding = null
     }
 
-    override fun onMenuItemClick(item: MenuModel) {
+    override fun onMenuItemClick(item: VehicleMenu) {
         mBaseActivity.toolbarVisibility(true)
 
-        when (item.id) {
-            0 -> {
+        when (item.identifier) {
+            "vehicle_navigation" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.map_nav
                 )
             }
-            1 -> {
+            "vehicle_daily_inspection" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.nav_vdi_inspection_list
                 )
             }
-            2 -> {
+            "vehicle_inspection" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.nav_weekly_inspection
                 )
             }
-            3 -> {
+            "vehicle_attendance" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.nav_attendance_form
                 )
             }
-            4 -> {
+            "vehicle_fuel_form",
+            "vehicle_shift_job_form",
+            "vehicle_report_form" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
-                    R.id.nav_fuel_form
+                    R.id.nav_report_form,
+                    argument = bundleOf(FormsFragment.FORM_IDENTIFIER_ARGUMENT to item)
                 )
             }
-            5 -> {
-                mBaseActivity.moveFragmentToNextFragment(
-                    binding.root,
-                    R.id.nav_report_form
-                )
-            }
-            6 -> {
+            "vehicle_device_info" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.nav_device_info
+                )
+            }
+
+            "vehicle_change_driver" -> {
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_attendance_form
                 )
             }
         }

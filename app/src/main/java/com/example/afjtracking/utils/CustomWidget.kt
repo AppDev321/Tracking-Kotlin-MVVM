@@ -18,7 +18,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.CompoundButtonCompat
 import com.bumptech.glide.Glide
 import com.example.afjtracking.R
-import com.example.afjtracking.model.responses.InspectionForm
+import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.CustomDropDownAdapter
@@ -36,7 +36,7 @@ class CustomWidget {
 
     fun createDynamicFormViews(
         context: AppCompatActivity,
-        formData: InspectionForm,
+        formData: Form,
         position: Int,
         lastOdoReading: Int? = null,
         uniqueFileId: String? = null,
@@ -51,16 +51,14 @@ class CustomWidget {
 
 
         when (formData.type?.uppercase()) {
-          AFJUtils.UI_TYPE.TEXT.name -> {
+            AFJUtils.UI_TYPE.TEXT.name -> {
                 var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.setTextColor(Color.BLACK)
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 containerChecks.addView(view)
-
-
                 view = context.layoutInflater.inflate(R.layout.layout_edit_text_view, null)
-                var inputText = view.findViewById<EditText>(R.id.edText)
+                val inputText = view.findViewById<EditText>(R.id.edText)
                 inputText.hint = formData.comment
                 if (formData.accept == "number")
                     inputText.inputType = InputType.TYPE_CLASS_NUMBER
@@ -141,14 +139,14 @@ class CustomWidget {
             AFJUtils.UI_TYPE.FILE.name -> {
                 // "FILE" -> {
                 var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 textTitleLable.setTextColor(Color.BLACK)
                 containerChecks.addView(view)
 
 
                 view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textDescLable = view.findViewById<TextView>(R.id.text_label)
+                val textDescLable = view.findViewById<TextView>(R.id.text_label)
                 textDescLable.setTypeface(null, Typeface.NORMAL)
                 textDescLable.text = formData.comment
 
@@ -156,8 +154,8 @@ class CustomWidget {
 
 
                 view = context.layoutInflater.inflate(R.layout.layout_file_choose_box, null)
-                var imagePath = view.findViewById<TextView>(R.id.txtImagePath)
-                var btnPickImage = view.findViewById<Button>(R.id.btnPickImage)
+                val imagePath = view.findViewById<TextView>(R.id.txtImagePath)
+                val btnPickImage = view.findViewById<Button>(R.id.btnPickImage)
 
 
                 btnPickImage.setOnClickListener {
@@ -182,30 +180,25 @@ class CustomWidget {
                     dialog.show(context.supportFragmentManager, null)
 
                 }
-
-
                 containerChecks.addView(view)
                 return StoreCustomFormData(null, formData)
-
             }
             AFJUtils.UI_TYPE.IMAGE.name-> {
-
                 var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
                 textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 textTitleLable.setTextColor(Color.BLACK)
                 //  containerChecks.addView(view)
-
                 view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
-                var textDescLable = view.findViewById<TextView>(R.id.text_label)
+                val textDescLable = view.findViewById<TextView>(R.id.text_label)
                 textDescLable.setTypeface(null, Typeface.NORMAL)
                 textDescLable.text = formData.comment
                 //  containerChecks.addView(view)
 
                 view = context.layoutInflater.inflate(R.layout.layout_image_box, null)
-                var imagePreview = view.findViewById<ImageView>(R.id.img_preview)
-                var btnPickImage = view.findViewById<ImageView>(R.id.img_add)
-                var btnImageDel = view.findViewById<ImageView>(R.id.img_del)
+                val imagePreview = view.findViewById<ImageView>(R.id.img_preview)
+                val btnPickImage = view.findViewById<ImageView>(R.id.img_add)
+                val btnImageDel = view.findViewById<ImageView>(R.id.img_del)
                 imagePreview.visibility = View.GONE
                 btnPickImage.visibility = View.VISIBLE
                 btnImageDel.visibility = View.GONE
@@ -248,28 +241,17 @@ class CustomWidget {
                     btnPickImage.visibility = View.VISIBLE
                     imagePreview.visibility = View.GONE
                 }
-
-                //val dataStore = StoreFormData(null, formData)
-                //storedData.add(dataStore)
-                // containerChecks.addView(view)
-
-
                 return StoreCustomFormData(null, formData)
             }
             AFJUtils.UI_TYPE.MULTISELECT.name-> {
-                var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
+                val view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
                 val titleLabel = view.findViewById<TextView>(R.id.text_label)
                 titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 titleLabel.setTextColor(Color.BLACK)
                 containerChecks.addView(view)
                 containerChecks.addView(addSpaceView(context))
-
-
-
                 val dataStore = StoreCustomFormData(null, formData)
-
-
-                var arrayChecks = arrayListOf<String>()
+                val arrayChecks = arrayListOf<String>()
                 for (i in dataStore.formData!!.options.indices) {
                     val data = dataStore.formData!!.options[i]
                     val checkBox = CheckBox(context)
@@ -366,22 +348,13 @@ class CustomWidget {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                         dataStore.formData!!.value =
                             formData.options[p2].fieldName.toString()
-                        /* for (i in storedData.indices) {
-                             if (storedData[i].formData!!.inputNo == formData.inputNo) {
-                                 storedData[i].formData!!.value =
-                                     formData.options[p2].fieldName.toString()
-                             }
-                         }*/
                     }
-
                     override fun onNothingSelected(p0: AdapterView<*>?) {
                     }
                 }
                 val adapter = CustomDropDownAdapter(context, formData.options)
                 spinnerView.adapter = adapter
                 containerChecks.addView(view)
-
-
                 return dataStore
 
             }
@@ -425,14 +398,11 @@ class CustomWidget {
                 formData.value = reportDate
 
                 btnDatePicker.setOnClickListener {
-
                     DatePickerDialog(
                         context,
                         { _, year, month, day ->
                             reportDate = "$year-${month + 1}-$day"
                             txtDate.text = reportDate
-
-
                             // Get Current Time
                             val c = Calendar.getInstance()
                             mHour = c[Calendar.HOUR_OF_DAY]
@@ -461,14 +431,84 @@ class CustomWidget {
 
                 return dataStore
             }
+            AFJUtils.UI_TYPE.DATE.name -> {
+                val dataStore = StoreCustomFormData(null, formData)
+                var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                textTitleLable.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
+                containerChecks.addView(addSpaceView( context))
+                view =  context.layoutInflater.inflate(R.layout.layout_date_time_view, null)
+                val txtDate = view.findViewById<TextView>(R.id.txtDate)
+                val btnDatePicker = view.findViewById<RelativeLayout>(R.id.btnDatePicker)
+                containerChecks.addView(view)
+                var year = 0
+                var month = 0
+                var day = 0
+                val calendar: Calendar = Calendar.getInstance()
+                year = calendar.get(Calendar.YEAR)
+                month = calendar.get(Calendar.MONTH)
+                day = calendar.get(Calendar.DAY_OF_MONTH)
+                var  reportDate = "$year-${month + 1}-$day"
+                txtDate.text = reportDate
+                formData.value = reportDate
+                btnDatePicker.setOnClickListener {
+                    DatePickerDialog(
+                        context,
+                        { _, year, month, day ->
+                            reportDate = "$year-${month + 1}-$day"
+                            txtDate.text = reportDate
+                            dataStore.formData!!.value = reportDate
+                        }, year, month, day
+                    ).show()
+
+                }
+                return dataStore
+            }
+            AFJUtils.UI_TYPE.TIME.name -> {
+                val dataStore = StoreCustomFormData(null, formData)
+                var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
+                val textTitleLable = view.findViewById<TextView>(R.id.text_label)
+                textTitleLable.text = formData.title + "${if (formData.required!!) "*" else ""}"
+                textTitleLable.setTextColor(Color.BLACK)
+                containerChecks.addView(view)
+                containerChecks.addView(addSpaceView( context))
+                view =  context.layoutInflater.inflate(R.layout.layout_date_time_view, null)
+                val txtDate = view.findViewById<TextView>(R.id.txtDate)
+                val btnDatePicker = view.findViewById<RelativeLayout>(R.id.btnDatePicker)
+                containerChecks.addView(view)
+                var mHour: Int
+                var mMinute: Int
+                var  reportDate = ""
+                val c = Calendar.getInstance()
+                mHour = c[Calendar.HOUR_OF_DAY]
+                mMinute = c[Calendar.MINUTE]
+                reportDate = getTime(mHour, mMinute)
+                txtDate.text = reportDate
+                formData.value = reportDate
+                btnDatePicker.setOnClickListener {
+                    val timePickerDialog = TimePickerDialog(
+                        context,
+                        { _, hourOfDay, minute ->
+                            reportDate = getTime(hourOfDay, minute)
+                            txtDate.text = reportDate
+                            dataStore.formData!!.value = reportDate
+                        },
+                        mHour,
+                        mMinute,
+                        false
+                    )
+                    timePickerDialog.show()
+                }
+                return dataStore
+            }
+
             else -> {
                 AFJUtils.writeLogs("not thing to create view")
                 return null
             }
-
         }
-
-
     }
 
     private fun addSpaceView(context: Context): View {
@@ -479,19 +519,18 @@ class CustomWidget {
             30
         )
         tv.layoutParams = layoutParams
-
         return tv
 
     }
 
-    fun getSingleImageCallBackInFuelForm( context: AppCompatActivity,
-                                formData: InspectionForm,
-                                position: Int,
-                                lastOdoReading: Int? = null,
-                                uniqueFileId: String? = null,
-                                inpsectionType: String? = null,
-                                containerChecks: LinearLayout,
-                                 onImagePathReceived :(path:String)->Unit
+    fun getSingleImageCallBackInFuelForm(context: AppCompatActivity,
+                                         formData: Form,
+                                         position: Int,
+                                         lastOdoReading: Int? = null,
+                                         uniqueFileId: String? = null,
+                                         inpsectionType: String? = null,
+                                         containerChecks: LinearLayout,
+                                         onImagePathReceived :(path:String)->Unit
     )  : StoreCustomFormData
     {
         var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
@@ -565,7 +604,7 @@ class CustomWidget {
 
 data class StoreCustomFormData(
     val editText: EditText? = null,
-    var formData: InspectionForm? = null,
+    var formData: Form? = null,
     var isOdoMeterErrorFound: Boolean? = false,
     var lastOdoReading: Int? = 0
 )

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentWeeklyInspectionListBinding
 import com.example.afjtracking.model.requests.WeeklyVehicleInspectionRequest
@@ -16,16 +15,20 @@ import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.model.responses.WeeklyInspectionData
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
+import com.example.afjtracking.utils.PaginatedAdapter.OnPaginationListener
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.WeeklyInspectionAdapter
-import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
+import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
+
+
 
 class WeeklyInspectionList : Fragment() {
 
     private var _binding: FragmentWeeklyInspectionListBinding? = null
     private val binding get() = _binding!!
     private lateinit var mBaseActivity: NavigationDrawerActivity
+    var loadMoreApi = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -39,7 +42,7 @@ class WeeklyInspectionList : Fragment() {
     ): View {
 
         val weeklyInspectionViewModel =
-            ViewModelProvider(this).get(WeeklyInspectionViewModel::class.java)
+            ViewModelProvider(this)[WeeklyInspectionViewModel::class.java]
 
         _binding = FragmentWeeklyInspectionListBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -47,7 +50,8 @@ class WeeklyInspectionList : Fragment() {
 
         root.hideKeyboard()
         weeklyInspectionViewModel.showDialog.observe(mBaseActivity) {
-            mBaseActivity.showProgressDialog(it)
+            if(!loadMoreApi)
+                mBaseActivity.showProgressDialog(it)
         }
 
         //Save vehicle object
@@ -56,43 +60,80 @@ class WeeklyInspectionList : Fragment() {
             AFJUtils.KEY_VEHICLE_DETAIL,
             VehicleDetail::class.java
         )
-        val body = WeeklyVehicleInspectionRequest(vehicleDetail.id.toString(), deviceDetail = AFJUtils.getDeviceDetail())
+
+
+        val adapter = WeeklyInspectionAdapter(mBaseActivity)
+        adapter.setPageSize(10)
+        adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
+        adapter.setListnerClick(object :WeeklyInspectionAdapter.ClickWeeklyInspectionListener{
+
+
+            override fun <T> handleContinueButtonClick(data: T) {
+                val dataInspection = data as WeeklyInspectionData
+                val bundle =   bundleOf(InspectionReviewFragment.argumentParams to dataInspection.id)
+                mBaseActivity.moveFragmentToNextFragment( binding.root,   R.id.nav_weekly_inspection_form, bundle  )
+            }
+
+        })
+
+        adapter.setOnPaginationListener(object : OnPaginationListener {
+            override fun onCurrentPage(page: Int) {
+
+            }
+
+            override fun onNextPage(page: Int) {
+                loadMoreApi = true
+                adapter.addLoadingFooter(WeeklyInspectionData())
+                val body = WeeklyVehicleInspectionRequest(
+                    page,
+                    adapter.getPageSize(),
+                    vehicleDetail.id.toString(),
+                    deviceDetail = AFJUtils.getDeviceDetail()
+                )
+                weeklyInspectionViewModel.getWeeklyVehicleInspectionCheckList(mBaseActivity, body)
+
+            }
+
+            override fun onFinish() {
+              //      mBaseActivity.showSnackMessage("Reached to end",binding.root)
+            }
+        })
+
+        val body = WeeklyVehicleInspectionRequest(
+            adapter.getStartPage(),
+            adapter.getPageSize(),
+            vehicleDetail.id.toString(),
+            deviceDetail = AFJUtils.getDeviceDetail()
+        )
         weeklyInspectionViewModel.getWeeklyVehicleInspectionCheckList(mBaseActivity, body)
 
 
         weeklyInspectionViewModel.vehicleData.observe(viewLifecycleOwner) {
 
             if (it != null) {
+
                 try {
-                    if (it.inspections.size > 0) {
-
-                        val adapter = WeeklyInspectionAdapter(mBaseActivity, it.inspections)
-                        adapter.setListnerClick(object :
-                            WeeklyInspectionAdapter.ClickWeeklyInspectionListner {
-                            override fun handleContinueButtonClick(data: WeeklyInspectionData) {
-
-
-                                val bundle = bundleOf(PTSInspectionForm.argumentParams to data.id)
-                                mBaseActivity.moveFragmentToNextFragment(
-                                    binding.root,
-                                    R.id.nav_weekly_inspection_form, bundle
-                                )
-                            }
-
-                        })
-                        val layoutManager = LinearLayoutManager(mBaseActivity)
-                        binding.recWeeklyInspectionList.layoutManager = layoutManager
-                        binding.recWeeklyInspectionList.adapter = adapter
+                    if (it.inspections.isNotEmpty()) {
 
                         binding.txtNoData.visibility = View.GONE
                         binding.recWeeklyInspectionList.visibility = View.VISIBLE
+
                     } else {
-                        binding.txtNoData.visibility = View.VISIBLE
-                        binding.recWeeklyInspectionList.visibility = View.GONE
+                        if(!loadMoreApi) {
+                            binding.txtNoData.visibility = View.VISIBLE
+                            binding.recWeeklyInspectionList.visibility = View.GONE
+                        }
                     }
                     binding.txtInspectionTitle.text =
                         "Inspection | ${it.vrn} (${it.detail!!.vehicleType})"
                     binding.btnAddInspection.visibility = View.VISIBLE
+
+
+                    //Addimg loading more data in adapter
+                    adapter.removeLoadingFooter()
+                    adapter.submitItems(it.inspections)
+
+
 
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())
@@ -107,7 +148,7 @@ class WeeklyInspectionList : Fragment() {
         binding.btnAddInspection.setOnClickListener {
             mBaseActivity.moveFragmentToNextFragment(
                 binding.root,
-                R.id.nav_create_weekly_inspection
+                com.example.afjtracking.R.id.nav_create_weekly_inspection
             )
         }
         return root

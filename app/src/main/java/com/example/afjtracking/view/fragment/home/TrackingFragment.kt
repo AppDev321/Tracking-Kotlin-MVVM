@@ -1,38 +1,34 @@
 package com.example.afjtracking.view.fragment.home
 
 import android.Manifest
-import android.app.AlertDialog
+import android.app.ActivityManager
 import android.content.*
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.os.SystemClock
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.observe
 import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
 import com.example.afjtracking.broadcast.TrackingAppBroadcast
+import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
 import com.example.afjtracking.databinding.FragmentTrakingBinding
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.requests.LocationApiRequest
+import com.example.afjtracking.model.responses.LoginResponse
 import com.example.afjtracking.model.responses.VehicleDetail
-import com.example.afjtracking.service.location.LocationUpdatesService
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
-import com.example.afjtracking.utils.TimerListener
+import com.example.afjtracking.service.location.ForegroundLocationService
+import com.example.afjtracking.service.location.hasPermission
+import com.example.afjtracking.utils.*
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -48,27 +44,24 @@ class TrackingFragment : Fragment() {
     private val trackingViewModel get() = _trackingViewModel!!
 
 
-    private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
+    private var locationService: ForegroundLocationService? = null
+    private var locationServiceBound = false
+
+    private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 
 
-    private val LOCATION_PERMISSION_CODE = 1
-    private val BACKGROUND_LOCATION_PERMISSION_CODE = 2
-    private var myReceiver: TrackingFragment.MyReceiver? = null
-    private var mService: LocationUpdatesService? = null
-    private var mBound = false
-    private var mLastClickTime: Long = 0
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as LocationUpdatesService.LocalBinder
-            mService = binder.service
-            mBound = true
+            val binder = service as ForegroundLocationService.LocalBinder
+            locationService = binder.service
+            locationServiceBound = true
             //Set Service to be active
-            setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
+            setButtonsState(AFJUtils.getRequestingLocationUpdates(mBaseActivity))
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            mService = null
-            mBound = false
+            locationService = null
+            locationServiceBound = false
         }
     }
 
@@ -78,23 +71,58 @@ class TrackingFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
+
     }
 
-    private val notificationBroadCast = object :TrackingAppBroadcast(){
+    private val notificationBroadCast = object : TrackingAppBroadcast() {
         override fun refreshNotificationCount() {
             super.refreshNotificationCount()
-            if(trackingViewModel != null)
-            {
-                trackingViewModel.getNotificationCount(mBaseActivity)
-            }
+            trackingViewModel.getNotificationCount(mBaseActivity)
         }
 
         override fun trackingSetting() {
             super.trackingSetting()
-            setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
-        }
-    }
+            setButtonsState(AFJUtils.getRequestingLocationUpdates(mBaseActivity))
 
+
+        }
+
+        override fun onLocationReceived(location: Location?) {
+            super.onLocationReceived(location)
+            val vehicleDetail =
+                AFJUtils.getObjectPref(
+                    mBaseActivity,
+                    AFJUtils.KEY_VEHICLE_DETAIL,
+                    VehicleDetail::class.java
+                )
+            val request = LocationApiRequest()
+            request.vehicleID = "" + vehicleDetail.id
+            request.accuracy = "" + location?.accuracy
+            request.altitude = "" + location?.altitude
+            request.heading = "" + location?.bearing
+            request.latitude = "" + location?.latitude
+            request.longitude = "" + location?.longitude
+            request.speed = "" + location?.speed
+            request.time = "" + location?.time
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                request.speedAccuracy = "" + location?.speedAccuracyMetersPerSecond
+            } else {
+                request.speedAccuracy = "" + location?.speed
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                request.isMocked = location?.isMock
+            } else {
+                request.isMocked = false
+            }
+            /*    val trackingViewModel =
+                    ViewModelProvider(context as ViewModelStoreOwner)[TrackingViewModel::class.java]
+            */
+
+            trackingViewModel.postLocationData(request, context)
+
+        }
+
+    }
 
 
     override fun onCreateView(
@@ -103,9 +131,13 @@ class TrackingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        myReceiver = MyReceiver()
 
-        mBaseActivity.registerReceiver(notificationBroadCast,IntentFilter(Constants.NOTIFICATION_BROADCAST))
+        if (mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            subscribeToLocationUpdates()
+        } else {
+            requestForegroundPermissions()
+        }
+
 
 
         _trackingViewModel = ViewModelProvider(this).get(TrackingViewModel::class.java)
@@ -115,29 +147,28 @@ class TrackingFragment : Fragment() {
         binding.trackingViewModel = trackingViewModel
         mBaseActivity.toolbarVisibility(false)
 
-
-        // Check that the user hasn't revoked permissions by going to Settings.
-       // if (AFJUtils.requestingLocationUpdates(activity)) {
-            if (!checkPermission()) {
-                requestPermissions()
-            }
-       // }
-
-
-       onSetViews()
-
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
-        mBaseActivity.addChildFragment(MainMenuFragment(), this, R.id.frame_tracking)
+
+
+        val vehicleLoginResponse =
+            AFJUtils.getObjectPref(
+                mBaseActivity,
+                AFJUtils.KEY_LOGIN_RESPONSE,
+                LoginResponse::class.java
+            )
+
+      val menuFragment  = MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
+        mBaseActivity.addChildFragment(
+            menuFragment ,
+            this,
+            R.id.frame_tracking
+        )
 
         binding.txtGreeting.text = AFJUtils.getGreetingMessage()
 
 
         //Save vehicle object
-        val vehicleDetail = AFJUtils.getObjectPref(
-            mBaseActivity,
-            AFJUtils.KEY_VEHICLE_DETAIL,
-            VehicleDetail::class.java
-        )
+        val vehicleDetail = vehicleLoginResponse.data!!.vehicle!!
         binding.txtVRN.text = vehicleDetail.vrn ?: Constants.NULL_DEFAULT_VALUE
         binding.txtOdoMeter.text = vehicleDetail.odometerReading ?: Constants.NULL_DEFAULT_VALUE
         binding.txtType.text = vehicleDetail.type ?: Constants.NULL_DEFAULT_VALUE
@@ -161,10 +192,10 @@ class TrackingFragment : Fragment() {
         trackingViewModel.notificationCount.observe(viewLifecycleOwner) {
             binding.txtNotificationCount.visibility = View.VISIBLE
             binding.txtNotificationCount.text = it.toString()
-            AFJUtils.writeLogs("observer count")
+
         }
 
-        binding.btnNotification.setOnClickListener{
+        binding.btnNotification.setOnClickListener {
             mBaseActivity.moveFragmentToNextFragment(
                 binding.root,
                 R.id.nav_notification
@@ -182,130 +213,35 @@ class TrackingFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        mBaseActivity.unregisterReceiver(notificationBroadCast)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
+        mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
     }
 
 
-    private fun onSetViews() {
-
-
-        // Bind to the service. If the service is in foreground mode, this signals to the service
-        // that since this activity is in the foreground, the service can exit foreground mode.
-        /*    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-           startForegroundService(new Intent(MainActivity.this, LocationUpdatesService.class));
-        }
-        else
-        {*/
-
-        mBaseActivity.bindService(
-            Intent(mBaseActivity, LocationUpdatesService::class.java), mServiceConnection,
-            AppCompatActivity.BIND_AUTO_CREATE
-        )
-
-
-        //}
-        binding.btnTracking.setOnClickListener {
-            var checkTrackingStatus = AFJUtils.requestingLocationUpdates(mBaseActivity)
-            if (checkTrackingStatus == true) {
-                if (!checkPermission()) {
-                    requestPermissions()
-                } else {
-                    mService!!.requestLocationUpdates()
-                    checkTrackingStatus = true
-                }
-            } else {
-                mService!!.removeLocationUpdates()
-                checkTrackingStatus = false
-
-            }
-            AFJUtils.setRequestingLocationUpdates(mBaseActivity, checkTrackingStatus)
-            setButtonsState(AFJUtils.requestingLocationUpdates(mBaseActivity))
-
-        }
-
-
-    }
-
-    private fun checkPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(
-                mBaseActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                return if (ContextCompat.checkSelfPermission(
-                        mBaseActivity,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    true
-                } else {
-                    askPermissionForBackgroundUsage()
-                    false
-                }
-            }
-        } else {
-            askForLocationPermission()
-            return false
-        }
-        return true
-    }
-
-    private fun askForLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                mBaseActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION
+    private fun requestForegroundPermissions() {
+        val provideRationale = mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (provideRationale) {
+            Snackbar.make(
+                binding.root,
+                R.string.permission_rationale,
+                Snackbar.LENGTH_LONG
             )
-        ) {
-            AlertDialog.Builder(mBaseActivity)
-                .setTitle("Permission Needed!")
-                .setMessage("Location Permission Needed!")
-                .setPositiveButton("OK") { dialog, which ->
-                    ActivityCompat.requestPermissions(
-                        mBaseActivity, arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ), LOCATION_PERMISSION_CODE
+                .setAction(R.string.ok) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
                     )
                 }
-                .setNegativeButton("CANCEL") { dialog, which ->
-                    // Permission is denied by the user
-                }
-                .create().show()
+                .show()
         } else {
-            ActivityCompat.requestPermissions(
-                mBaseActivity,
+
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_CODE
-            )
-        }
-    }
-
-    private fun askPermissionForBackgroundUsage() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                mBaseActivity,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
-        ) {
-            AlertDialog.Builder(mBaseActivity)
-                .setTitle("Permission Needed!")
-                .setMessage("Background Location Permission Needed!, tap \"Allow all time in the next screen\"")
-                .setPositiveButton("OK") { dialog, which ->
-                    ActivityCompat.requestPermissions(
-                        mBaseActivity, arrayOf(
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        ), BACKGROUND_LOCATION_PERMISSION_CODE
-                    )
-                }
-                .setNegativeButton("CANCEL") { dialog, which ->
-                    // User declined for Background Location Permission.
-                }
-                .create().show()
-        } else {
-            ActivityCompat.requestPermissions(
-                mBaseActivity,
-                arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                BACKGROUND_LOCATION_PERMISSION_CODE
+                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         }
     }
@@ -316,199 +252,123 @@ class TrackingFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    if (ContextCompat.checkSelfPermission(
-                            mBaseActivity,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        ) ==
-                        PackageManager.PERMISSION_GRANTED
-                    ) {
-                        mService!!.requestLocationUpdates()
-                    } else {
-                        askPermissionForBackgroundUsage()
-                    }
+        when (requestCode) {
+            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
+                grantResults.isEmpty() ->
+                    AFJUtils.writeLogs("User interaction was cancelled.")
+                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
+                    // Permission was granted.
+                    subscribeToLocationUpdates()
+                else -> {
+                    // Permission denied.
+                    Snackbar.make(
+                        binding.root,
+                        R.string.permission_denied_explanation,
+                        Snackbar.LENGTH_LONG
+                    )
+                        .setAction(R.string.settings) {
+                            // Build intent that displays the App settings screen.
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts(
+                                "package",
+                                BuildConfig.APPLICATION_ID,
+                                null
+                            )
+                            intent.data = uri
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        }
+                        .show()
                 }
-            } else {
-                permissionNotGranted()
-            }
-        } else if (requestCode == BACKGROUND_LOCATION_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mService!!.requestLocationUpdates()
-            } else {
-                permissionNotGranted()
             }
         }
-    }
-
-    private fun permissionNotGranted() {
-        setButtonsState(false)
-        Snackbar.make(
-            binding.root,
-            R.string.permission_denied_explanation,
-            Snackbar.LENGTH_INDEFINITE
-        )
-            .setAction(R.string.settings) {
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                val uri = Uri.fromParts(
-                    "package",
-                    BuildConfig.APPLICATION_ID, null
-                )
-                intent.data = uri
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            }
-            .show()
     }
 
 
     override fun onResume() {
         super.onResume()
-       // val isRegister = AFJUtils.isLocationReceiverRegister(mBaseActivity)
-        //   if(!isRegister) {
-                LocalBroadcastManager.getInstance(mBaseActivity).registerReceiver(
-                    myReceiver!!,
-                    IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
-                )
-      //     AFJUtils.setLocationReceiverRegister(mBaseActivity,true)
-       // }
+        mBaseActivity.registerReceiver(
+            notificationBroadCast,
+            IntentFilter(
+                NOTIFICATION_BROADCAST
+            )
+        )
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        LocalBroadcastManager.getInstance(mBaseActivity).unregisterReceiver(myReceiver!!)
+        AFJUtils.writeLogs("tacking destroy")
+        mBaseActivity.unregisterReceiver(notificationBroadCast)
     }
 
     override fun onStop() {
-        if (mBound) {
+        if (locationServiceBound) {
 
             mBaseActivity.unbindService(mServiceConnection)
-            mBound = false
+            locationServiceBound = false
         }
         super.onStop()
-    }
-
-    private fun requestPermissions() {
-        val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-            mBaseActivity,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (shouldProvideRationale) {
-            Snackbar.make(
-                binding.root,
-                R.string.permission_rationale,
-                Snackbar.LENGTH_INDEFINITE
-            )
-                .setAction(R.string.ok) { // Request permission
-                    ActivityCompat.requestPermissions(
-                        mBaseActivity,
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        ),
-                        REQUEST_PERMISSIONS_REQUEST_CODE
-                    )
-                }
-                .show()
-        } else {
-            ActivityCompat.requestPermissions(
-                mBaseActivity,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ),
-                REQUEST_PERMISSIONS_REQUEST_CODE
-            )
-        }
     }
 
 
     private fun setButtonsState(requestingLocationUpdates: Boolean) {
         if (requestingLocationUpdates) {
-            binding.btnTracking.text = "Stop Tracking"
-            binding.btnTracking.backgroundTintList =
-                AppCompatResources.getColorStateList(mBaseActivity, R.color.black)
-            if (mService != null) {
-                if (!checkPermission()) {
-                    requestPermissions()
+            if (locationService != null) {
+                if (mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    subscribeToLocationUpdates()
                 } else {
-                    mService!!.requestLocationUpdates()
+                    requestForegroundPermissions()
                 }
+
             }
-
-
         } else {
-            binding.btnTracking.text = "Start Tracking"
-            binding.btnTracking.backgroundTintList =
-                AppCompatResources.getColorStateList(mBaseActivity, R.color.colorPrimary)
+            CustomDialog().showTaskCompleteDialog(
+                mBaseActivity,
+                isShowTitle = true,
+                isShowMessage = true,
+                titleText = "Critical Message",
+                msgText = "Your vehicle tracking is off, Please contact to admin",
+                lottieFile = R.raw.alert,
+                showOKButton = true,
+                okButttonText = "Close",
+                listner = object : DialogCustomInterface {
+                    override fun onClick(var1: LottieDialog) {
+                        super.onClick(var1)
+                        var1.dismiss()
+
+                    }
+                }
+            )
+            // unsubscribeToLocationUpdates()
         }
 
 
     }
 
-    inner class MyReceiver : BroadcastReceiver() {
 
+    private fun subscribeToLocationUpdates() {
 
-        override fun onReceive(context: Context, intent: Intent) {
-
-            val location =
-                intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
-            if (location != null) {
-                val vehicleDetail =
-                    AFJUtils.getObjectPref(
-                        mBaseActivity,
-                        AFJUtils.KEY_VEHICLE_DETAIL,
-                        VehicleDetail::class.java
-                    )
-                val request = LocationApiRequest()
-                request.vehicleID = "" + vehicleDetail.id
-                request.accuracy = "" + location.accuracy
-                request.altitude = "" + location.altitude
-                request.heading = "" + location.bearing
-                request.latitude = "" + location.latitude
-                request.longitude = "" + location.longitude
-                request.speed = "" + location.speed
-                request.time = "" + location.time
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    request.speedAccuracy = "" + location.speedAccuracyMetersPerSecond
-                } else {
-                    request.speedAccuracy = "" + location.speed
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    request.isMocked = location.isMock
-                } else {
-                    request.isMocked = false
-                }
-
-
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return
-                } else {
-                    mLastClickTime = SystemClock.elapsedRealtime()
-                    if (trackingViewModel != null) {
-                        AFJUtils.writeLogs("Location API: not null")
-                        trackingViewModel.postLocationData(request, context)
-                    } else {
-                        _trackingViewModel =
-                            ViewModelProvider(context as ViewModelStoreOwner).get(TrackingViewModel::class.java)
-                        AFJUtils.writeLogs("Location API:  null")
-                        trackingViewModel.postLocationData(request, context)
-                    }
-
-                    // **** Checking Service Status of Tracking ****//
-                    if(mService != null) {
-                        val checkTrackingStatus = AFJUtils.requestingLocationUpdates(mBaseActivity)
-                        if (checkTrackingStatus == true) {
-                            mService!!.requestLocationUpdates()
-                        } else {
-                            mService!!.removeLocationUpdates()
-                        }
-                    }
-                }
-            }
+        val serviceStatus = mBaseActivity.isServiceRunning(ForegroundLocationService::class.java)
+       // AFJUtils.writeLogs("Service Status = $serviceStatus")
+        if (!serviceStatus) {
+            val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
+            mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
+
+        locationService?.subscribeToLocationUpdates()
     }
 
+    private fun unsubscribeToLocationUpdates() {
+
+        locationService?.unsubscribeToLocationUpdates()
+
+    }
+
+    fun <T> Context.isServiceRunning(service: Class<T>): Boolean {
+        return (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
+            .getRunningServices(Integer.MAX_VALUE)
+            .any { it -> it.service.className == service.name }
+    }
 }

@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutImageBoxBinding
-import com.example.afjtracking.model.responses.InspectionForm
+import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
@@ -31,7 +31,7 @@ class ImageFormAdapter(
     private val uploadId: String,
     private val mContext: AppCompatActivity,
 
-    private var imageList: ArrayList<InspectionForm>,
+    private var imageList: ArrayList<Form>,
     private val mShowGallaryPicker: Boolean =false,
 ) : RecyclerView.Adapter<ImageFormAdapter.ImageItemViewHolder>() {
 
@@ -140,7 +140,7 @@ class ImageFormAdapter(
 
     }
 
-     fun addRows(data:InspectionForm)
+     fun addRows(data:Form)
     {
         imageList.add(data)
         notifyDataSetChanged()
@@ -153,7 +153,7 @@ class ImageFormAdapter(
 
 
     interface ImageFormListner {
-        fun onPreviewGenerated(uploadForm: InspectionForm, position: Int)
+        fun onPreviewGenerated(uploadForm: Form, position: Int)
 
     }
 

@@ -92,7 +92,7 @@ class NotificationFragment : Fragment(), NotificationItemListner {
     override fun onItemClick(item: Notifications) {
         notificationViewModel.updateNotificationStatus(mBaseActivity, item.id!!)
         when (item.type.toString().uppercase()) {
-            AFJUtils.NOTIFICATION_TYPE.TEXT.name ->
+            AFJUtils.NOTIFICATIONTYPE.TEXT.name ->
             {
                         CustomDialog().showSimpleAlertMsg(
                             context = mBaseActivity,
@@ -101,7 +101,7 @@ class NotificationFragment : Fragment(), NotificationItemListner {
                            textPositive = "Close")
             }
 
-            AFJUtils.NOTIFICATION_TYPE.IMAGE.name ->
+            AFJUtils.NOTIFICATIONTYPE.IMAGE.name ->
             {
                 CustomDialog().createCustomTextImageDialog(
                     mBaseActivity,

@@ -9,9 +9,6 @@ import android.widget.FrameLayout
 import com.example.afjtracking.R
 
 
-/**
- * TODO: document your custom view class.
- */
 class TimerView : FrameLayout {
 
     private lateinit var timerListener: TimerListener
@@ -36,6 +33,10 @@ class TimerView : FrameLayout {
         initView(context, attrs)
     }
 
+    private fun isListenerActive(): Boolean {
+
+        return ::timerListener.isInitialized
+    }
 
     fun setListener(timerListener: TimerListener) {
         this.timerListener = timerListener
@@ -46,9 +47,9 @@ class TimerView : FrameLayout {
         attrs: AttributeSet?,
 
         ) {
-        val a = context.obtainStyledAttributes(attrs,R.styleable.TimerView)
-        val textStyle    = a.getInt(R.styleable.TimerView_textStyle, 0)
-        val textSize     = a.getFloat(R.styleable.TimerView_textSize, 5.0f)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TimerView)
+        val textStyle = a.getInt(R.styleable.TimerView_textStyle, 0)
+        val textSize = a.getFloat(R.styleable.TimerView_textSize, 5.0f)
         val circleColour = a.getColor(R.styleable.TimerView_textColor, Color.BLACK)
 
 
@@ -88,10 +89,11 @@ class TimerView : FrameLayout {
                     minutes = parts[1].toInt()
                     seconds = parts[2].toInt()
                 }
-                if (timerListener != null) {
+                if (isListenerActive()) {
                     timerListener.getStringTime(it.text.toString())
                     timerListener.getIntegerTime(hours, minutes, seconds)
                 }
+
             }
         }
         a.recycle()
@@ -103,5 +105,9 @@ class TimerView : FrameLayout {
 interface TimerListener {
     fun getIntegerTime(hours: Int, minutes: Int, seconds: Int) {}
     fun getStringTime(time: String) {}
+    fun isListnerActive(){}
 
 }
+
+
+

@@ -4,11 +4,11 @@ import java.util.concurrent.TimeUnit
 
 object Constants {
 
-   // const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
- // const val FAILED_API_TAG = "vmi808920.contaboserver.net"
+    // const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
+    // const val FAILED_API_TAG = "vmi808920.contaboserver.net"
 
-    const val BASE_URL = "http://192.168.1.21:8000/api/"
-const val FAILED_API_TAG = "192.168.1.21:8000"
+    const val BASE_URL = "http://afjdev.hnhtechpk.com/api/"
+    const val FAILED_API_TAG = "afjdev.hnhtechpk.com"
 
     const val FIREBASE_QR_TABLE = "qr_table"
     const val FIREBASE_TRACKING_SETTING = "tracking_setting"
@@ -25,10 +25,10 @@ const val FAILED_API_TAG = "192.168.1.21:8000"
     var DEVICE_FCM_TOKEN = ""
 
     //Location Service Time
-    val SECONDS: Int = 30
+    const val SECONDS: Int = 30
 
 
-    var LOCATION_SERVICE_IN_SECONDS: Long = 10 * 1000
+    var LOCATION_SERVICE_IN_SECONDS: Long = 1//10 * 1000
     //******************************
 
     const val dateFormat = "yyyy-MM-dd"
@@ -39,18 +39,15 @@ const val FAILED_API_TAG = "192.168.1.21:8000"
 
 
     //Endpoints
-    val DAILY_INSPECTION_CHECKS = "vehicles/daily-inspection/checks"
-    val WEEKLY_INSPECTION_CHECKS = "vehicles/inspections"
-    val LOCATION_API = "update-location"
-    val FILE_UPLOAD_API = "upload"
-    val DAILY_INSPECTION_LIST = "vehicles/daily-inspection/all"
-    val REPORT_FORM = "vehicles/get-reporting-form"
+    const val DAILY_INSPECTION_CHECKS = "vehicles/daily-inspection/checks"
+    const val WEEKLY_INSPECTION_CHECKS = "vehicles/inspections"
+    const val LOCATION_API = "update-location"
+    const val FILE_UPLOAD_API = "upload"
+    const val DAILY_INSPECTION_LIST = "vehicles/daily-inspection/all"
+    const val REPORT_FORM = "vehicles/get-reporting-form"
 
     //Predefined Value of Nullable
-    val NULL_DEFAULT_VALUE = "N/A"
-
-
-    val NOTIFICATION_BROADCAST = "notification_boradcast"
+    const val NULL_DEFAULT_VALUE = "N/A"
 
 
 }

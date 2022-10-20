@@ -27,15 +27,15 @@ class FirebaseIdService : FirebaseMessagingService() {
             intent.action = Constants.NOTIFICATION_BROADCAST
             sendBroadcast(intent)*/
             Intent().also { intent ->
-                intent.action=Constants.NOTIFICATION_BROADCAST
-                intent.putExtra( TrackingAppBroadcast.BroadcastObect.intentData, TrackingAppBroadcast.BroadcastObect.firebaseEvent)
+                intent.action= TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
+                intent.putExtra( TrackingAppBroadcast.TrackingBroadCastObject.intentData, TrackingAppBroadcast.TrackingBroadCastObject.firebaseEvent)
                 sendBroadcast(intent)
             }
 
             val type = data["type"]!!
             when (type.uppercase()) {
-                AFJUtils.NOTIFICATION_TYPE.TEXT.name,
-                AFJUtils.NOTIFICATION_TYPE.EVENT.name
+                AFJUtils.NOTIFICATIONTYPE.TEXT.name,
+                AFJUtils.NOTIFICATIONTYPE.EVENT.name
                 ->  {
                     message.data.let {
                         NotificationUtils.showTextImageNotification(
@@ -46,7 +46,7 @@ class FirebaseIdService : FirebaseMessagingService() {
                         )
                     }
                 }
-                AFJUtils.NOTIFICATION_TYPE.IMAGE.name-> {
+                AFJUtils.NOTIFICATIONTYPE.IMAGE.name-> {
 
                     message.data.let {
                         NotificationUtils.showTextImageNotification(
@@ -59,7 +59,7 @@ class FirebaseIdService : FirebaseMessagingService() {
                         )
                     }
                 }
-                AFJUtils.NOTIFICATION_TYPE.LOCATION.name -> {
+                AFJUtils.NOTIFICATIONTYPE.LOCATION.name -> {
                     message.data.let {
                         NotificationUtils.showLocationNotification(
                             this,

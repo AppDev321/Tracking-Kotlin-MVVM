@@ -7,7 +7,9 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
+import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,6 +24,8 @@ import com.example.afjtracking.utils.InspectionSensor
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class NavigationDrawerActivity : BaseActivity() {
@@ -90,15 +94,24 @@ class NavigationDrawerActivity : BaseActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(false)
 
 
-        navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener({ menuItem ->
+
+
+        navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener {
             AFJUtils.setUserToken(this, "")
             finish()
             startActivity(Intent(this, LoginActivity::class.java))
             true
-        })
+        }
 
 
-
+        lifecycleScope.launch{
+            isNetWorkConnected.collectLatest {
+                if(!it)
+               binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
+                else
+                    binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.GONE
+            }
+        }
 
     }
 

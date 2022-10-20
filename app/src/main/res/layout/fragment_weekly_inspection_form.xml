@@ -53,12 +53,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:paddingRight="@dimen/_8sdp"
                         app:textColor="@color/black"
                         app:textSize="18"
-                        app:textStyle="boldText"
-                        android:paddingRight="@dimen/_8sdp"
-
-                        />
+                        app:textStyle="boldText" />
 
                 </RelativeLayout>
 

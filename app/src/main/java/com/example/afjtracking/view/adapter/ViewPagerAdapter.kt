@@ -9,11 +9,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import com.example.afjtracking.R
+import com.example.afjtracking.model.responses.VehicleMenu
 
 class ViewPagerAdapter
     (
     private val mContext: Context,
-    private val groupedMenuItemsList: List<List<MenuModel>>,
+    private val groupedMenuItemsList: List<VehicleMenu>,
     private val listner: MenuItemListner
 ) : PagerAdapter() {
 
@@ -33,14 +34,14 @@ class ViewPagerAdapter
             recyclerView.layoutManager = this
         }
         recyclerView.layoutParams = params
-        recyclerView.adapter = MenuModelAdapter(mContext,groupedMenuItemsList[position],listner)
+        recyclerView.adapter = MenuModelAdapter(mContext,groupedMenuItemsList,listner)
         container.addView(recyclerView)
         return recyclerView
     }
 
-
+//we make it single view either multiple pages or single page'
     override fun getCount(): Int {
-        return groupedMenuItemsList.size
+        return 1 //groupedMenuItemsList.size
     }
     override fun isViewFromObject(view: View, obj: Any): Boolean {
         return view === obj

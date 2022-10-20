@@ -76,8 +76,7 @@ class DailyInspectionViewModel : ViewModel() {
     }
 
 
-    fun getDailyInspectionList(context: Context) {
-        var body = DailyInspectionListRequest(startPage, limit, deviceDetail = AFJUtils.getDeviceDetail())
+    fun getDailyInspectionList(context: Context,body:DailyInspectionListRequest) {
         getInstance(context)
         _dialogShow.postValue(true)
         apiInterface!!.getDailyInspectionList(body)

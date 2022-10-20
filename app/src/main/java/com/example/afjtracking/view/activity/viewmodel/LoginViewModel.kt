@@ -123,9 +123,19 @@ fun onRetryClick(view:View)
                     super.onSuccess(response)
                     // mUserToken!!.postValue(response.body()!!.data!!.token!!)
                     mUserToken!!.postValue("0")
-                    //Save vehicle object
+
+
+                    //Save LognigREsponse object
                     AFJUtils.saveObjectPref(
                         context!!,
+                        AFJUtils.KEY_LOGIN_RESPONSE,
+                        response.body()!!
+                    )
+
+
+                    //Save vehicle object
+                    AFJUtils.saveObjectPref(
+                        context,
                         AFJUtils.KEY_VEHICLE_DETAIL,
                         response.body()!!.data!!.vehicle
                     )
@@ -135,6 +145,8 @@ fun onRetryClick(view:View)
                         AFJUtils.KEY_USER_DETAIL,
                         response.body()!!.data!!.user
                     )
+
+
 
                 }
                 override fun onFailure(response: Response<LoginResponse?>) {

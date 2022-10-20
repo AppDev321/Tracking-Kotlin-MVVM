@@ -12,40 +12,37 @@ import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutWeeklyInspectionItemBinding
 import com.example.afjtracking.model.responses.Inspections
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.PaginatedAdapter
 
 
 class DailyInspectionAdapter(
 
     private val mContext: AppCompatActivity,
-    private var inspectionList: List<Inspections>
-) : RecyclerView.Adapter<DailyInspectionAdapter.WeeklyInspectionItem>() {
+) : PaginatedAdapter<Inspections, DailyInspectionAdapter.WeeklyInspectionItem>() {
 
 
-    lateinit var listners: ClickWeeklyInspectionListner
+    lateinit var listners: WeeklyInspectionAdapter.ClickWeeklyInspectionListener
 
 
-    fun setListnerClick(listener: ClickWeeklyInspectionListner) {
+    fun setListenerClick(listener: WeeklyInspectionAdapter.ClickWeeklyInspectionListener) {
         this.listners = listener
     }
 
 
-    override fun getItemCount(): Int {
-        return inspectionList.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeeklyInspectionItem {
-
+    override fun createCustomViewHolder(parent: ViewGroup, viewType: Int): WeeklyInspectionItem {
         val itemView = DataBindingUtil.inflate(
-            LayoutInflater.from(mContext), R.layout.layout_weekly_inspection_item,
-            parent, false
+            LayoutInflater.from(mContext),
+            com.example.afjtracking.R.layout.layout_weekly_inspection_item,
+            parent,
+            false
         ) as LayoutWeeklyInspectionItemBinding
         return WeeklyInspectionItem(itemView)
     }
 
 
-    override fun onBindViewHolder(holder: WeeklyInspectionItem, position: Int) {
+    override fun customBindHolder(holder: WeeklyInspectionItem, position: Int) {
 
-        val data = inspectionList[position]
+        val data = getItem(position)
         holder.itemWeeklyInspection.txtCreatedDate.text =
             AFJUtils.convertServerDateTime(data.createdAt.toString(), true)
         holder.itemWeeklyInspection.txtInspectionDate.text = data.date
@@ -78,13 +75,7 @@ class DailyInspectionAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     inner class WeeklyInspectionItem(val itemWeeklyInspection: LayoutWeeklyInspectionItemBinding) :
-        RecyclerView.ViewHolder(itemWeeklyInspection.root) {
+        RecyclerView.ViewHolder(itemWeeklyInspection.root)
 
-    }
 
-    interface ClickWeeklyInspectionListner {
-
-        fun handleContinueButtonClick(data: Inspections)
-
-    }
 }

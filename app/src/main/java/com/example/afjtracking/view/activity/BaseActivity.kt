@@ -20,11 +20,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.*
 
 
 open class BaseActivity : AppCompatActivity() {
-
+    lateinit var  isNetWorkConnected : Flow<Boolean>
     override fun onStart() {
         super.onStart()
         AFJUtils.setPeriodicWorkRequest(this)
@@ -46,6 +49,13 @@ open class BaseActivity : AppCompatActivity() {
     lateinit var customProgressDialog: LottieDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        isNetWorkConnected = LiveNetworkState(this).isConnected
+
+
+
+
 
         customProgressDialog = CustomDialog().initializeProgressDialog(
             this,
@@ -96,6 +106,9 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun toast(msg: String, showToast: Boolean = true) {
+
+        AFJUtils.writeLogs("Api Error:$msg")
+
         if (msg.lowercase(Locale.getDefault())
                 .contains(resources.getString(R.string.unauthenticated))
         ) {

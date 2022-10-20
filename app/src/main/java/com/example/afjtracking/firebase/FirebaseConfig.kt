@@ -41,16 +41,14 @@ object FirebaseConfig {
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val trackingSetting = dataSnapshot.getValue(TrackingSettingFirebase::class.java)
-                        if (trackingSetting == null) {
-                            return
-                        }
+                        val trackingSetting =  dataSnapshot.getValue(TrackingSettingFirebase::class.java) ?: return
 
-                      AFJUtils.setRequestingLocationUpdates(context, trackingSetting.tracking!!)
-                       AFJUtils.writeLogs("Tracking status =${AFJUtils.requestingLocationUpdates(context)}")
+                        AFJUtils.setRequestingLocationUpdates(context, trackingSetting.tracking!!)
+                       AFJUtils.writeLogs("Tracking status =${AFJUtils.getRequestingLocationUpdates(context)}")
                         Intent().also { intent ->
-                            intent.action=Constants.NOTIFICATION_BROADCAST
-                            intent.putExtra(TrackingAppBroadcast.BroadcastObect.intentData, TrackingAppBroadcast.BroadcastObect.trackingSettingEvent)
+                            intent.action=
+                                TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
+                            intent.putExtra(TrackingAppBroadcast.TrackingBroadCastObject.intentData, TrackingAppBroadcast.TrackingBroadCastObject.trackingSettingEvent)
                             context.sendBroadcast(intent)
                         }
                     }
@@ -85,8 +83,8 @@ object FirebaseConfig {
                 if (task.isSuccessful) {
                     val timeSeconds = getLocationServiceTimeValue()
                     AFJUtils.writeLogs("LocationTime = $timeSeconds")
-                    Constants.LOCATION_SERVICE_IN_SECONDS = (timeSeconds * 1000)
-
+                  //  Constants.LOCATION_SERVICE_IN_SECONDS = (timeSeconds * 1000)
+                    Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
 

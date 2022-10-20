@@ -94,18 +94,13 @@
         android:label="@string/menu_notification"
         tools:layout="@layout/fragment_notification" />
 
-    <fragment
-        android:id="@+id/nav_fuel_form"
-        android:name="com.example.afjtracking.view.fragment.fuel.FuelFormFragment"
-        android:label="@string/menu_fuel_fill"
-        tools:layout="@layout/fragment_fuel_from" />
 
 
     <fragment
         android:id="@+id/nav_report_form"
-        android:name="com.example.afjtracking.view.fragment.fuel.ReportFormFragment"
+        android:name="com.example.afjtracking.view.fragment.forms.FormsFragment"
         android:label="@string/menu_report_fill"
-        tools:layout="@layout/fragment_report_from" />
+        tools:layout="@layout/fragment_forms" />
 
 
     <fragment

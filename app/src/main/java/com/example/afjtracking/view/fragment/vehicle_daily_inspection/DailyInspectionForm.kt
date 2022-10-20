@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentVdiCreateInspectionBinding
 import com.example.afjtracking.model.responses.InspectionCheckData
-import com.example.afjtracking.model.responses.InspectionForm
+import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.CustomWidget
 import com.example.afjtracking.utils.StoreCustomFormData
@@ -36,7 +36,7 @@ class DailyInspectionForm : Fragment() {
     private val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
     var requestType = ""
 
-    var imageForm: ArrayList<InspectionForm> = arrayListOf()
+    var imageForm: ArrayList<Form> = arrayListOf()
     var formIndex: ArrayList<Int> = arrayListOf()
     var lastOdoReading = 0
     var odoReadingError = ""
@@ -209,7 +209,7 @@ class DailyInspectionForm : Fragment() {
             val imageFormAdapter =
                 ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
             imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                override fun onPreviewGenerated(uploadForm: InspectionForm, positon: Int) {
+                override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
 
                     val index = formIndex[positon]
                     imageForm[positon] = uploadForm
@@ -227,7 +227,7 @@ class DailyInspectionForm : Fragment() {
     }
 
     private fun proceedVerification(
-        data: ArrayList<InspectionForm>,
+        data: ArrayList<Form>,
         inspectionData: InspectionCheckData
     ) {
         isOdoMeterErrorFound = false

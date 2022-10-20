@@ -37,6 +37,9 @@ class WeeklyInspectionViewModel : ViewModel() {
     val apiHasData: LiveData<Boolean> = _hasData
 
 
+
+
+
     val _weeklyInspectionCheck = MutableLiveData<WeeklyInspectionCheckData>()
     val weeklyInspectionCheck: LiveData<WeeklyInspectionCheckData> = _weeklyInspectionCheck
 

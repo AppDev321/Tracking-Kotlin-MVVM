@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_app_bg">
+
+    <RelativeLayout
+        android:id="@+id/base_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/txtInspectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_heading_body_size"
+       />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/txtInspectionTitle"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp"
+            android:scrollbars="none">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/layout_vdi_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:orientation="vertical"></LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/container_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="right"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnPreviousCehck"
+                        android:layout_width="@dimen/btn_width"
+                        android:layout_height="@dimen/btn_height"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:background="@drawable/ripple_bg_button"
+                        android:backgroundTint="@color/white"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:text="Cancel"
+                        android:textColor="@color/black"
+                        android:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSubmit"
+                        android:layout_width="@dimen/btn_width"
+                        android:layout_height="@dimen/btn_height"
+                        android:background="@drawable/ripple_bg_button"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:text="Submit"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <TextView
+            android:id="@+id/txtErrorMsg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"
+            android:text="Stat"
+            android:textSize="@dimen/text_body_normal_size"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+

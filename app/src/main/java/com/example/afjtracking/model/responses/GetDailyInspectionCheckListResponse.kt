@@ -32,8 +32,8 @@ data class InspectionCheckData(
     @SerializedName("total_count_checks") var totalCountChecks: Int? = 0,
     @SerializedName("total_count_form") var totalCountForm: Int? = 0,
     @SerializedName("inspection") var inspection: Inspection? = Inspection(),
-    @SerializedName("psv_form") var psvForm: ArrayList<InspectionForm> = arrayListOf(),
-    @SerializedName("pts_form") var ptsForm: ArrayList<InspectionForm> = arrayListOf(),
+    @SerializedName("psv_form") var psvForm: ArrayList<Form> = arrayListOf(),
+    @SerializedName("pts_form") var ptsForm: ArrayList<Form> = arrayListOf(),
     @SerializedName("isCompleted") var isCompleted: Boolean? = false,
     @SerializedName("upload_id") var uploadID: String? = "abc",
     @SerializedName("request_name") var requestName: String? = "PTS",
@@ -173,7 +173,7 @@ data class SolvedInspection(
 ) : Parcelable
 
 @Parcelize
-data class InspectionForm(
+data class Form(
 
     @SerializedName("id") var id: Int? = null,
     @SerializedName("input_no") var inputNo: Int? = null,

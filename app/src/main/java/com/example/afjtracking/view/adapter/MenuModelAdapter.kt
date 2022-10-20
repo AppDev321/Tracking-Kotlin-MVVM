@@ -9,14 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.RenderMode
+import com.bumptech.glide.Glide
 import com.example.afjtracking.R
+import com.example.afjtracking.model.responses.VehicleMenu
 
 
-class MenuModelAdapter (private val context: Context,private val menuList: List<MenuModel>,private val listner: MenuItemListner)
+class MenuModelAdapter (private val context: Context,private val menuList: List<VehicleMenu>,private val listner: MenuItemListner)
         : RecyclerView.Adapter<MenuModelAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(
@@ -33,10 +36,19 @@ class MenuModelAdapter (private val context: Context,private val menuList: List<
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
            val menuModel = menuList[position]
-            holder.titleTextView.text = menuModel.title
+            holder.titleTextView.text = menuModel.name
 
-            holder.iconLottie.setImageResource(menuModel.lottieJson)
+           // holder.iconLottie.setImageResource(menuModel.lottieJson)
+            Glide.with(context)
+                .load(menuModel.icon)
+                .placeholder(
+                    AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.ic_no_image
+                    )
+                )
 
+                .into(holder.iconLottie)
 
 
             val colorsTxt: Array<String> =
@@ -81,6 +93,5 @@ class MenuModelAdapter (private val context: Context,private val menuList: List<
 
 interface MenuItemListner
 {
-        fun onMenuItemClick(item:MenuModel)
+        fun onMenuItemClick(item:VehicleMenu)
 }
-data class MenuModel(val id: Int, val title: String, val lottieJson: Int)

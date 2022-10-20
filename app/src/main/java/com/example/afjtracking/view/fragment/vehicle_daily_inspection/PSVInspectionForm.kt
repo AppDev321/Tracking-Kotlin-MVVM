@@ -106,7 +106,7 @@ class PSVInspectionForm : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        inspectionViewModel = ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
+        inspectionViewModel = ViewModelProvider(this)[DailyInspectionViewModel::class.java]
         _binding = FragmentDailyInpsectionFormBinding.inflate(inflater, container, false)
         val root: View = binding.root
         root.hideKeyboard()
