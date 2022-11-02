@@ -20,7 +20,7 @@ internal abstract class SuccessCallback<T> : BaseRetrofitCallBack<T>(), Callback
         loadingDialog(false)
 
 
-        if (response.code() >= 400 && response.code() < 599) {
+        if (response.code() in 400..598) {
             if (response.body() == null) {
                 when (response.code()) {
                     405 -> {

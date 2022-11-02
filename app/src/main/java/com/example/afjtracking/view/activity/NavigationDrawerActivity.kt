@@ -21,6 +21,7 @@ import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.InspectionSensor
+import com.example.afjtracking.utils.InternetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -106,10 +107,13 @@ class NavigationDrawerActivity : BaseActivity() {
 
         lifecycleScope.launch{
             isNetWorkConnected.collectLatest {
-                if(!it)
-               binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
-                else
+                if(!it) {
+                    binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
+                    InternetDialog(this@NavigationDrawerActivity).showNoInternetDialog()
+                }
+                else {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.GONE
+                }
             }
         }
 

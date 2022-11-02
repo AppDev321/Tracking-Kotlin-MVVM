@@ -1,10 +1,9 @@
 package com.example.afjtracking.utils
 
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -95,6 +94,42 @@ class CustomDialog {
         return dialog
     }
 
+
+    fun showIncomingCallDialog(
+        context: Activity?,
+        title: String,
+        positiveListener: (() -> Unit)? = null,
+        negativeListener: (() -> Unit)? = null,
+        canceledOnTouchOutside: Boolean = false
+    ): AlertDialog? {
+        if (context == null) return null
+
+        lateinit var buttonAnswer: Button
+        lateinit var buttonDecline: Button
+        return AlertDialog.Builder(context).apply {
+
+        }.create().apply {
+            setCanceledOnTouchOutside(canceledOnTouchOutside)
+            val view = context.layoutInflater.inflate(R.layout.custom_call_notification, null)
+            buttonAnswer = view.findViewById<Button>(R.id.btnAnswer)
+            buttonDecline = view.findViewById<Button>(R.id.btnDecline)
+            val txtCallerName = view.findViewById<TextView>(R.id.callerName)
+            txtCallerName.text = title
+            setView(view)
+            buttonAnswer.setOnClickListener {
+                this.dismiss()
+                positiveListener?.invoke()
+            }
+            buttonDecline.setOnClickListener {
+                this.dismiss()
+                negativeListener?.invoke()
+            }
+
+            show()
+        }
+    }
+
+
     fun showSimpleAlertMsg(
         context: Context?, title: String? = null, message: String? = null,
         textPositive: String? = null, positiveListener: (() -> Unit)? = null,
@@ -137,7 +172,7 @@ class CustomDialog {
             .create().apply {
                 setCancelable(cancelable)
                 setCanceledOnTouchOutside(canceledOnTouchOutside)
-               // window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                // window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
 
 

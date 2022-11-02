@@ -61,8 +61,14 @@ android {
 }
 
 
+
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
+
+    //****************WebRTC dependency
+    implementation 'org.webrtc:google-webrtc:1.0.32006'
+    //*****************************************************
+
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -121,6 +127,5 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
 
-
-
+    implementation 'com.guolindev.permissionx:permissionx:1.6.1'
 }

@@ -22,16 +22,22 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutFileUploadBoxBinding
+import com.example.afjtracking.firebase.FirebaseConfig
+import com.example.afjtracking.ota.ForceUpdateChecker
 import com.example.afjtracking.room.model.TableUploadFile
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.BitmapUtils
+import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.activity.viewmodel.LoginViewModel
 import com.example.afjtracking.view.fragment.fileupload.viewmodel.FileUploadModel
+import com.permissionx.guolindev.PermissionX
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileNotFoundException
@@ -92,6 +98,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         val builder = AlertDialog.Builder(context)
         val dialogBinding: LayoutFileUploadBoxBinding = LayoutFileUploadBoxBinding.inflate(
             LayoutInflater.from(mBaseActivity),
@@ -207,23 +214,27 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     }
 
     private fun checkPermissions(): Boolean {
-        var result: Int
-        val listPermissionsNeeded: MutableList<String> = ArrayList()
-        for (p in permissions) {
-            result = ContextCompat.checkSelfPermission(requireActivity(), p)
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(p)
-            }
-        }
-        if (listPermissionsNeeded.isNotEmpty()) {
-            requestPermissions(
-                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                MULTIPLE_PERMISSIONS
-            )
+      var  isAllowed  = true
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-            return false
-        }
-        return true
+                ).request{ allGranted, _ ,_ ->
+                if (allGranted){
+                    isAllowed=  true
+                } else {
+                    isAllowed = false
+                    CustomDialog().showSimpleAlertMsg(mBaseActivity,"Alert",
+                        "Please allow permission for working",
+                        textNegative = "Close",
+                        negativeListener = {
+                          mBaseActivity.onBackPressed()
+
+                        })
+                }
+            }
+        return isAllowed
     }
 
     private fun showFileChooser() {
@@ -335,11 +346,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             var filetype = "image"
             if (!isImageUpload) {
                 filetype = "application"
-                listnerUploadDialog.onFilePathReceived(file!!.path)
+                listnerUploadDialog.onFilePathReceived(file.path)
             }
             else
             {
-                listnerUploadDialog.onFilePathReceived(file!!.path)
+                listnerUploadDialog.onFilePathReceived(file.path)
               //  listnerUploadDialog.onFilePathReceived(originalFile!!.path)
             }
 
@@ -487,39 +498,4 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         object DifferentResult : OpenFileResult()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            MULTIPLE_PERMISSIONS -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openCamera()
-                } else {
-                    val builder =
-                        AlertDialog.Builder(mBaseActivity).apply {
-                            setTitle("Permissions Required")
-                            setMessage("Please allow permission to continue")
-                            setCancelable(false)
-                        }
-                    builder.setPositiveButton(android.R.string.ok) { dialog, which ->
-                        dialog.dismiss()
-                        val intent = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                        )
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                    }
-                    builder.setNegativeButton(android.R.string.no)
-                    { dialog, which ->
-                        dialog.dismiss()
-                    }
-                    builder.show()
-                }
-                return
-            }
-        }
-    }
 }

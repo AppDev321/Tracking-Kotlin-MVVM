@@ -1,10 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.gms:play-services-mlkit-text-recognition:18.0.2@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ce6dfa6691b89b0ab5b13308e936ec11/transformed/play-services-mlkit-text-recognition-18.0.2/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/16fccb4ed1ba9d3b2fa690d043a9fbf9/transformed/play-services-mlkit-text-recognition-18.0.2/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/16fccb4ed1ba9d3b2fa690d043a9fbf9/transformed/play-services-mlkit-text-recognition-18.0.2/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/16fccb4ed1ba9d3b2fa690d043a9fbf9/transformed/play-services-mlkit-text-recognition-18.0.2/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/edf048bef960c112d80b906d257ae5d0/transformed/play-services-mlkit-text-recognition-18.0.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/edf048bef960c112d80b906d257ae5d0/transformed/play-services-mlkit-text-recognition-18.0.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/edf048bef960c112d80b906d257ae5d0/transformed/play-services-mlkit-text-recognition-18.0.2/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.android.gms/play-services-mlkit-text-recognition/18.0.2/b67b59af84a366c065e82a012eb75f71600a8cfe/play-services-mlkit-text-recognition-18.0.2-javadoc.jar!/" />

@@ -4,20 +4,21 @@ import android.Manifest
 import android.app.ActivityManager
 import android.content.*
 import android.content.Context.ACTIVITY_SERVICE
-import android.content.pm.PackageManager
 import android.location.Location
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.provider.Settings
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
-import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
 import com.example.afjtracking.broadcast.TrackingAppBroadcast
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
@@ -25,13 +26,14 @@ import com.example.afjtracking.databinding.FragmentTrakingBinding
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.requests.LocationApiRequest
 import com.example.afjtracking.model.responses.LoginResponse
+import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.service.location.ForegroundLocationService
-import com.example.afjtracking.service.location.hasPermission
 import com.example.afjtracking.utils.*
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.example.afjtracking.websocket.VideoCallActivity
+import com.permissionx.guolindev.PermissionX
 
 
 class TrackingFragment : Fragment() {
@@ -46,8 +48,6 @@ class TrackingFragment : Fragment() {
 
     private var locationService: ForegroundLocationService? = null
     private var locationServiceBound = false
-
-    private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 
 
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
@@ -132,15 +132,26 @@ class TrackingFragment : Fragment() {
     ): View {
 
 
-        if (mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            subscribeToLocationUpdates()
-        } else {
-            requestForegroundPermissions()
-        }
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+
+                ).request { allGranted, _, _ ->
+                if (allGranted) {
+                    subscribeToLocationUpdates()
+                } else {
+                    Toast.makeText(
+                        mBaseActivity,
+                        "you should accept all permissions",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
 
 
 
-        _trackingViewModel = ViewModelProvider(this).get(TrackingViewModel::class.java)
+
+        _trackingViewModel = ViewModelProvider(this)[TrackingViewModel::class.java]
         _binding = FragmentTrakingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -157,9 +168,10 @@ class TrackingFragment : Fragment() {
                 LoginResponse::class.java
             )
 
-      val menuFragment  = MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
+        val menuFragment =
+            MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
         mBaseActivity.addChildFragment(
-            menuFragment ,
+            menuFragment,
             this,
             R.id.frame_tracking
         )
@@ -175,6 +187,15 @@ class TrackingFragment : Fragment() {
         binding.txtModel.text = vehicleDetail.model ?: Constants.NULL_DEFAULT_VALUE
         binding.txtTypeVehicle.text =
             vehicleDetail.detail?.vehicleType ?: Constants.NULL_DEFAULT_VALUE
+
+
+        val userObject = AFJUtils.getObjectPref(
+            mBaseActivity,
+            AFJUtils.KEY_USER_DETAIL,
+            QRFirebaseUser::class.java
+        )
+        binding.txtDriver.text = userObject.full_name ?: "N/A"
+
 
         //Send token to server
         trackingViewModel.postFCMTokenToServer(
@@ -203,7 +224,46 @@ class TrackingFragment : Fragment() {
         }
 
 
+        binding.btnHelpLineCall.setOnClickListener {
 
+
+            val builder: AlertDialog.Builder = AlertDialog.Builder(mBaseActivity)
+
+            builder.setTitle("Calling Data need")
+            val from = EditText(mBaseActivity)
+            from.hint = "current user ID" //optional
+
+            val to = EditText(mBaseActivity)
+            to.hint = "target user ID" //optional
+            from.inputType = InputType.TYPE_CLASS_NUMBER
+            to.inputType = InputType.TYPE_CLASS_NUMBER
+
+            val lay = LinearLayout(mBaseActivity)
+            lay.orientation = LinearLayout.VERTICAL
+            lay.addView(from)
+            lay.addView(to)
+            builder.setView(lay)
+
+            // Set up the buttons
+
+            // Set up the buttons
+            builder.setPositiveButton("Ok",
+                DialogInterface.OnClickListener { dialog, whichButton -> //get the two inputs
+                    val currentUserId = from.text.toString().toInt()
+                    val targetUserID = to.text.toString().toInt()
+                    val intent = Intent(mBaseActivity, VideoCallActivity::class.java).apply {
+                        putExtra("currentUser", "" + currentUserId)
+                        putExtra("targetUserId", "" + targetUserID)
+                    }
+                    mBaseActivity.startActivity(intent)
+                })
+
+            builder.setNegativeButton("Cancel",
+                DialogInterface.OnClickListener { dialog, whichButton -> dialog.cancel() })
+            builder.show()
+
+
+        }
 
 
         return root
@@ -215,74 +275,11 @@ class TrackingFragment : Fragment() {
 
     }
 
+
     override fun onStart() {
         super.onStart()
         val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
         mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
-    }
-
-
-    private fun requestForegroundPermissions() {
-        val provideRationale = mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-        if (provideRationale) {
-            Snackbar.make(
-                binding.root,
-                R.string.permission_rationale,
-                Snackbar.LENGTH_LONG
-            )
-                .setAction(R.string.ok) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-                    )
-                }
-                .show()
-        } else {
-
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
-            )
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
-                grantResults.isEmpty() ->
-                    AFJUtils.writeLogs("User interaction was cancelled.")
-                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-                    // Permission was granted.
-                    subscribeToLocationUpdates()
-                else -> {
-                    // Permission denied.
-                    Snackbar.make(
-                        binding.root,
-                        R.string.permission_denied_explanation,
-                        Snackbar.LENGTH_LONG
-                    )
-                        .setAction(R.string.settings) {
-                            // Build intent that displays the App settings screen.
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts(
-                                "package",
-                                BuildConfig.APPLICATION_ID,
-                                null
-                            )
-                            intent.data = uri
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                        }
-                        .show()
-                }
-            }
-        }
     }
 
 
@@ -294,12 +291,21 @@ class TrackingFragment : Fragment() {
                 NOTIFICATION_BROADCAST
             )
         )
+
+        if (binding != null) {
+            val userObject = AFJUtils.getObjectPref(
+                mBaseActivity,
+                AFJUtils.KEY_USER_DETAIL,
+                QRFirebaseUser::class.java
+            )
+            binding.txtDriver.text = userObject.full_name ?: "N/A"
+        }
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
-        AFJUtils.writeLogs("tacking destroy")
+
         mBaseActivity.unregisterReceiver(notificationBroadCast)
     }
 
@@ -316,12 +322,8 @@ class TrackingFragment : Fragment() {
     private fun setButtonsState(requestingLocationUpdates: Boolean) {
         if (requestingLocationUpdates) {
             if (locationService != null) {
-                if (mBaseActivity.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    subscribeToLocationUpdates()
-                } else {
-                    requestForegroundPermissions()
-                }
 
+                subscribeToLocationUpdates()
             }
         } else {
             CustomDialog().showTaskCompleteDialog(
@@ -351,7 +353,6 @@ class TrackingFragment : Fragment() {
     private fun subscribeToLocationUpdates() {
 
         val serviceStatus = mBaseActivity.isServiceRunning(ForegroundLocationService::class.java)
-       // AFJUtils.writeLogs("Service Status = $serviceStatus")
         if (!serviceStatus) {
             val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
             mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -366,7 +367,7 @@ class TrackingFragment : Fragment() {
 
     }
 
-    fun <T> Context.isServiceRunning(service: Class<T>): Boolean {
+    private fun <T> Context.isServiceRunning(service: Class<T>): Boolean {
         return (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
             .getRunningServices(Integer.MAX_VALUE)
             .any { it -> it.service.className == service.name }

@@ -173,7 +173,7 @@ class FormsViewModel : ViewModel() {
     fun saveReportForm(form: SaveFormRequest, context: Context?) {
         getInstance(context)
         _dialogShow.postValue(true)
-        apiInterface!!.saveReportForm(form)
+        apiInterface!!.saveForms(form)
             .enqueue(object : SuccessCallback<LocationResponse?>() {
 
                 override fun loadingDialog(show: Boolean) {

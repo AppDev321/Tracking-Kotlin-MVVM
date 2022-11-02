@@ -57,17 +57,12 @@ interface ApiInterface {
     fun saveWeeklyInspectionCheck(@Body body: SavedWeeklyInspection): Call<LocationResponse?>
 
 
-    @GET("vehicles/get-fuel-form")
-    fun getFuelForm(): Call<GetFormResponse?>
-
-    @POST("vehicles/save-fuel-form")
-    fun saveFuelForm(@Body body: SaveFormRequest): Call<LocationResponse?>
 
     @POST("vehicles/get-form")
     fun getFormData(@Body body:FormRequest): Call<GetFormResponse?>
 
-    @POST("vehicles/save-reporting-form")
-    fun saveReportForm(@Body body: SaveFormRequest): Call<LocationResponse?>
+    @POST("vehicles/save-form")
+    fun saveForms(@Body body: SaveFormRequest): Call<LocationResponse?>
 
     @POST("update-vehicle-fcm-token")
     fun sendFCMTokenToServer(@Body body: FCMRegistrationRequest): Call<LocationResponse?>

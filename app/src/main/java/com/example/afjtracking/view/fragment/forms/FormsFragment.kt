@@ -285,7 +285,9 @@ class FormsFragment : Fragment() {
                     val request = SaveFormRequest()
                     request.uploadID = uniqueUploadId
                     request.requestName = identifierForm
+                    request.identifier = identifierForm
                     request.formData = formList
+                    request.deviceDetail = AFJUtils.getDeviceDetail()
                     formsViewModel.saveReportForm(request, mBaseActivity)
 
                 }
@@ -315,7 +317,7 @@ class FormsFragment : Fragment() {
                 containerChecks.addView(view)
 
 
-                imageForm.add(Form(fieldName = "image_$uploadPhotoCount"))
+                imageForm.add(Form(fieldName = "${formData.fieldName}#$uploadPhotoCount"))
                 // createMultipleImageView()
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = GridLayoutManager(mBaseActivity, 3)

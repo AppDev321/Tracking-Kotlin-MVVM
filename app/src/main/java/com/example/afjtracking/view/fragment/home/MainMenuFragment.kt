@@ -14,6 +14,7 @@ import com.example.afjtracking.model.responses.VehicleMenu
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.MenuItemListner
 import com.example.afjtracking.view.adapter.ViewPagerAdapter
+import com.example.afjtracking.view.fragment.attendance.AttendanceFragment
 import com.example.afjtracking.view.fragment.forms.FormsFragment
 
 
@@ -110,7 +111,8 @@ class MainMenuFragment : Fragment(), MenuItemListner {
             "vehicle_change_driver" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
-                    R.id.nav_attendance_form
+                    R.id.nav_attendance_form,
+                    argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "change_driver")
                 )
             }
         }

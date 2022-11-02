@@ -70,4 +70,7 @@
     <string name="networ_error_text">Your are offline now</string>
     <string name="initiated">initiated</string>
 
+
+    <string name="pref_speakerphone_key">speakerphone_preference</string>
+    <string name="pref_speakerphone_default">auto</string>
 </resources>

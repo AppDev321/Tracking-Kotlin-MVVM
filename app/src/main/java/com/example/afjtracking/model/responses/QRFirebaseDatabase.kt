@@ -1,7 +1,9 @@
 package com.example.afjtracking.model.responses
 
 data class TrackingSettingFirebase(val vehicleID:String?="", val tracking:Boolean?=false )
-data class QRFireDatabase(val deviceId:String?="", val status:Boolean?=false, val expiresAt: String?="", val data:QRFirebaseData?=QRFirebaseData() )
+data class QRFireDatabase(val deviceId:String?="", val status:Boolean?=false, val expiresAt: String?="",
+                          val error_message:String?= "",val has_error:Boolean? = false,
+                          val data:QRFirebaseData?=QRFirebaseData() )
 data class QRFirebaseData(
     val token   : String?  = null,
     val user : QRFirebaseUser? = QRFirebaseUser()

@@ -12,25 +12,24 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.example.afjtracking.R
-import com.example.afjtracking.model.responses.QRFireDatabase
-import com.example.afjtracking.model.responses.TrackingSettingFirebase
 import com.example.afjtracking.utils.*
+import com.example.afjtracking.websocket.SignalingClient
+import com.example.afjtracking.websocket.listners.SignalingClientListener
+import com.example.afjtracking.websocket.model.MessageModel
+import com.example.afjtracking.websocket.model.MessageType
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.util.*
 
 
 open class BaseActivity : AppCompatActivity() {
-    lateinit var  isNetWorkConnected : Flow<Boolean>
+    lateinit var isNetWorkConnected: Flow<Boolean>
+    private lateinit var signallingClient: SignalingClient
     override fun onStart() {
         super.onStart()
         AFJUtils.setPeriodicWorkRequest(this)
+
+
     }
 
 /*    private fun UploadUtil.trs(){
@@ -52,9 +51,6 @@ open class BaseActivity : AppCompatActivity() {
 
 
         isNetWorkConnected = LiveNetworkState(this).isConnected
-
-
-
 
 
         customProgressDialog = CustomDialog().initializeProgressDialog(
@@ -79,6 +75,10 @@ open class BaseActivity : AppCompatActivity() {
         progressDialog.setMessage("Please Wait....")
 
 
+        signallingClient = SignalingClient(
+            Constants.WEBSOCKET_URL + "11",
+            createSignallingClientListener()
+        )
     }
 
 
@@ -119,7 +119,7 @@ open class BaseActivity : AppCompatActivity() {
 
             if (showToast) {
                 if (msg.lowercase().contains("unable to resolve host")) {
-                    InternetDialog(this).internetStatus
+                    InternetDialog(this).showNoInternetDialog()
                 } else {
                     Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
                 }
@@ -193,5 +193,51 @@ open class BaseActivity : AppCompatActivity() {
     fun writeExceptionLogs(crash: String?) {
         AFJUtils.writeLogs("$crash")
         toast("Exception Faced !!!")
+    }
+
+    private fun createSignallingClientListener() = object : SignalingClientListener {
+        override fun onConnectionEstablished() {
+            AFJUtils.writeLogs("Connection Established")
+        }
+
+        override fun onNewMessageReceived(messageModel: MessageModel) {
+            //AFJUtils.writeLogs("Got New Message= $messageModel")
+            try {
+                when (messageModel.type) {
+                    MessageType.CallResponse.value -> {
+                    }
+                    MessageType.OfferReceived.value -> {
+                       /* runOnUiThread{
+                            CustomDialog().showIncomingCallDialog(
+                                this@BaseActivity,
+                                messageModel.callerName.toString(),
+                                positiveListener = {
+
+                                },
+                                negativeListener = {
+
+                                }
+                            )
+                        }*/
+
+                    }
+                    MessageType.CallReject.value -> {
+                    }
+                    MessageType.CallClosed.value -> {
+                    }
+                    MessageType.AnswerReceived.value -> {
+                    }
+                    MessageType.ICECandidate.value -> {
+                    }
+                    else -> {
+                    }
+                }
+            } catch (e: Exception) {
+                AFJUtils.writeLogs("WebSocket: Message Parsing issue $e")
+            }
+        }
+
+        override fun onCallEnded() {
+        }
     }
 }

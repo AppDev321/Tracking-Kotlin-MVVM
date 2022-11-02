@@ -1,10 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.mlkit:common:18.5.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5a4cf5062eaaccd5f0c580efd0923b19/transformed/common-18.5.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ebb19575f84c997c8b9075a3175c4e94/transformed/common-18.5.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ebb19575f84c997c8b9075a3175c4e94/transformed/common-18.5.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ebb19575f84c997c8b9075a3175c4e94/transformed/common-18.5.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/72aa006fd247e02826edddd5eb79c358/transformed/common-18.5.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/72aa006fd247e02826edddd5eb79c358/transformed/common-18.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/72aa006fd247e02826edddd5eb79c358/transformed/common-18.5.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.mlkit/common/18.5.0/69181080b186dcbcc5746e7d7db0cac32e6959f6/common-18.5.0-javadoc.jar!/" />

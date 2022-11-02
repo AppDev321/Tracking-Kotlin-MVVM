@@ -1,10 +1,12 @@
 package com.example.afjtracking.view.activity
 
+import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -15,12 +17,14 @@ import com.example.afjtracking.model.requests.LoginRequest
 import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.ota.ForceUpdateChecker
 import com.example.afjtracking.utils.AFJUtils
+import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.view.activity.viewmodel.LoginViewModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.permissionx.guolindev.PermissionX
 import java.util.*
 
 
@@ -43,15 +47,33 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
         }*/
 
 
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-        FirebaseConfig.fetchLocationServiceTime()
+                ).request{ allGranted, _ ,_ ->
+                if (allGranted){
+                    FirebaseConfig.fetchLocationServiceTime()
 
-        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-        binding = DataBindingUtil.setContentView(this@SplashActivity, R.layout.activity_splash)
-        binding.lifecycleOwner = this
-        binding.loginViewModel = loginViewModel
+                    loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+                    binding = DataBindingUtil.setContentView(this@SplashActivity, R.layout.activity_splash)
+                    binding.lifecycleOwner = this
+                    binding.loginViewModel = loginViewModel
 
-       ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+                    ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+                } else {
+                    CustomDialog().showSimpleAlertMsg(this,"Alert",
+                        "Please allow permission for working",
+                        textNegative = "Close",
+                        negativeListener = {
+                        finish()
+                    })
+                }
+            }
+
+
 
 
 

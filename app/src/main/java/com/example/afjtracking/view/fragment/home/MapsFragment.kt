@@ -2,6 +2,7 @@ package com.example.afjtracking.view.fragment.home
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -161,27 +162,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
+    @SuppressLint("MissingPermission")
     fun startCurrentLocationUpdates() {
         val locationRequest = create()
         locationRequest.priority =PRIORITY_HIGH_ACCURACY
         locationRequest.interval = 3000
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(
-                    mBaseActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    mBaseActivity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    mBaseActivity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-                )
-                return
-            }
-        }
         fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest,
             mLocationCallback,
@@ -191,7 +176,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
-    fun isGooglePlayServicesAvailable(): Boolean {
+    private fun isGooglePlayServicesAvailable(): Boolean {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val status = googleApiAvailability.isGooglePlayServicesAvailable(mBaseActivity)
         if (ConnectionResult.SUCCESS == status)
@@ -202,21 +187,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     .show()
         }
         return false
-    }
-
-    @Override
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED)
-                Toast.makeText(mBaseActivity, "Permission denied", Toast.LENGTH_SHORT).show()
-            else if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                startCurrentLocationUpdates()
-        }
     }
 
     fun animateCamera(location: Location) {
@@ -234,6 +204,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return CameraPosition.Builder().target(latLng).zoom(17.0F).build()
     }
 
+    @SuppressLint("MissingPermission")
     fun showMarker(currentLocation: Location) {
 
         fusedLocationProviderClient!!.lastLocation

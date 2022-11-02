@@ -7,6 +7,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AFJ_Tracking.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.iml" filepath="$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.main.iml" filepath="$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/webrtc-calling-lib/AFJ_Tracking.webrtc-calling-lib.unitTest.iml" />
     </modules>
   </component>
 </project>

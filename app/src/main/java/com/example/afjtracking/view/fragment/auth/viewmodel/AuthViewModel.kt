@@ -3,6 +3,7 @@ package com.example.afjtracking.view.fragment.auth.viewmodel
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,9 @@ import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import retrofit2.Response
 
 
@@ -29,6 +33,11 @@ class AuthViewModel : ViewModel() {
 
     var _attendanceResponse = MutableLiveData<AttendanceReponse>()
     var attendanceReponse: LiveData<AttendanceReponse> = _attendanceResponse
+
+   //  lateinit var attendanceReponseFlow: Flow<AttendanceReponse>
+
+    private val _attendanceReponseFlow = MutableStateFlow<AttendanceReponse>(AttendanceReponse())
+    val attendanceReponseFlow = _attendanceReponseFlow.asStateFlow()
 
 
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -74,6 +83,9 @@ class AuthViewModel : ViewModel() {
                         response.body()!!.data!!.expireCodeSecond!!
                     )
                     _attendanceResponse.postValue(res)
+
+                    _attendanceReponseFlow.value = res
+
                 }
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)
@@ -207,7 +219,7 @@ class AuthViewModel : ViewModel() {
 
 }
 
-data class AttendanceReponse(val qrCode: String, val timeOut: Int)
+data class AttendanceReponse(val qrCode: String ="", val timeOut: Int=0)
 interface QRImageCallback {
     fun onRendered(bitmap: Bitmap)
 
