@@ -4,17 +4,17 @@ import java.util.concurrent.TimeUnit
 
 object Constants {
 
-    // const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
-    // const val FAILED_API_TAG = "vmi808920.contaboserver.net"
+     const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
+     const val FAILED_API_TAG = "vmi808920.contaboserver.net"
 
-    const val BASE_URL = "http://afjdev.hnhtechpk.com/api/"
-    const val FAILED_API_TAG = "afjdev.hnhtechpk.com"
+    //const val BASE_URL = "http://afjdev.hnhtechpk.com/api/"
+    //const val FAILED_API_TAG = "afjdev.hnhtechpk.com"
 
     //  const val BASE_URL = "http://192.168.18.69:8000/api/"
     //  const val FAILED_API_TAG = "192.168.18.69:8000"
 
 
-    val WEBSOCKET_URL = "ws://192.168.18.69:6001/mobile?token="
+    val WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/mobile?token="
 
     var isCallEnded: Boolean = false
     var isIntiatedNow: Boolean = true
