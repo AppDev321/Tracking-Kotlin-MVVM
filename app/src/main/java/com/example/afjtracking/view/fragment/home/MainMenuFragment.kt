@@ -89,7 +89,8 @@ class MainMenuFragment : Fragment(), MenuItemListner {
             "vehicle_attendance" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
-                    R.id.nav_attendance_form
+                    R.id.nav_attendance_form,
+                    argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "ATTENDANCE")
                 )
             }
             "vehicle_fuel_form",
@@ -112,7 +113,7 @@ class MainMenuFragment : Fragment(), MenuItemListner {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
                     R.id.nav_attendance_form,
-                    argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "change_driver")
+                    argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "DRIVER_CHANGE")
                 )
             }
         }

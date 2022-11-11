@@ -38,7 +38,6 @@ class NavigationDrawerActivity : BaseActivity() {
     var timer: CountDownTimer? = null
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -22,7 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
 
 class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     constructor(context: Context, attributes: AttributeSet, style: Int) : super(
@@ -72,7 +71,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     var isInitView: Boolean = true
     var isRequestInitiated = false
 
-    fun addAuthListner(authListeners: AuthListeners) {
+    fun addAuthListener(authListeners: AuthListeners) {
         this.authListeners = authListeners
     }
 
@@ -381,7 +380,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             }
             synchronized(this) {
                 INSTANCE = CustomAuthenticationView(context)
-                INSTANCE!!.addAuthListner(authListeners)
+                INSTANCE!!.addAuthListener(authListeners)
                 return INSTANCE
             }
         }

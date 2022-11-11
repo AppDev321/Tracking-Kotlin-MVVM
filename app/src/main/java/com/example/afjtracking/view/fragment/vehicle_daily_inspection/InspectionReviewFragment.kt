@@ -21,7 +21,6 @@ import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
-import kotlinx.android.synthetic.main.fragment_daily_inpsection_form.view.*
 
 
 class InspectionReviewFragment : Fragment() {
@@ -68,7 +67,7 @@ class InspectionReviewFragment : Fragment() {
             binding.baseLayout.visibility = View.GONE
             val authView = CustomAuthenticationView(requireContext())
             binding.mainLayout.addView(authView)
-            authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
                 override fun onAuthCompletionListener(boolean: Boolean) {
                     if (_binding == null)
                         return

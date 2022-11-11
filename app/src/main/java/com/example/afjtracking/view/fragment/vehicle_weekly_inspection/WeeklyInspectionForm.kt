@@ -30,7 +30,6 @@ import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
-import com.example.afjtracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
 
 
@@ -138,7 +137,7 @@ class WeeklyInspectionForm : Fragment() {
 
         val authView = CustomAuthenticationView(requireContext())
         binding.mainLayout.addView(authView)
-        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+        authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
             override fun onAuthCompletionListener(boolean: Boolean) {
                 if (_binding == null)
                     return

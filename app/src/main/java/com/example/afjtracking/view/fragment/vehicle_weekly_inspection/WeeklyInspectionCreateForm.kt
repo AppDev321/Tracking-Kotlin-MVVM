@@ -49,7 +49,7 @@ class WeeklyInspectionCreateForm : Fragment() {
         binding.baseLayout.visibility = View.GONE
         val authView = CustomAuthenticationView(requireContext())
         binding.mainLayout.addView(authView)
-        authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+        authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
             override fun onAuthCompletionListener(boolean: Boolean) {
                 if (_binding == null)
                     return

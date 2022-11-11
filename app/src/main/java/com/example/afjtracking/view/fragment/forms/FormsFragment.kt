@@ -102,7 +102,7 @@ class FormsFragment : Fragment() {
         if(menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
             binding.root.addView(authView)
-            authView.addAuthListner(object : CustomAuthenticationView.AuthListeners {
+            authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
                 override fun onAuthCompletionListener(boolean: Boolean) {
                     if (_binding == null)
                         return

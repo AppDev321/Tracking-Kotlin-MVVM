@@ -15,6 +15,7 @@ import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
+import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ class AttendanceFragment : Fragment() {
 
     private var _attendanceVM: AuthViewModel? = null
     private val attendanceVM get() = _attendanceVM!!
-
+    private var qrCodeType = ""
     companion object
     {
         const val ARG_ACTION_TYPE = "action_argument"
@@ -54,7 +55,11 @@ class AttendanceFragment : Fragment() {
         val root: View = binding.root
 
 
-        attendanceVM.getQRCode(mBaseActivity)
+        qrCodeType= arguments?.getString(AttendanceFragment.ARG_ACTION_TYPE)!!
+
+
+
+        attendanceVM.getQRCode(mBaseActivity,qrCodeType)
         attendanceVM.showDialog.observe(viewLifecycleOwner) {
          //   mBaseActivity.showProgressDialog(it)
         }
@@ -92,7 +97,7 @@ class AttendanceFragment : Fragment() {
                                     "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
                             }
                             override fun onFinish() {
-                                attendanceVM.getQRCode(mBaseActivity)
+                                attendanceVM.getQRCode(mBaseActivity,qrCodeType)
                                 timer = null
                             }
                         }
