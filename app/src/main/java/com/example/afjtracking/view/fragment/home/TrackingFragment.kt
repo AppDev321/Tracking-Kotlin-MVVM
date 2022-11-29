@@ -2,35 +2,37 @@ package com.example.afjtracking.view.fragment.home
 
 import android.Manifest
 import android.app.ActivityManager
+import android.app.Dialog
 import android.content.*
 import android.content.Context.ACTIVITY_SERVICE
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.afjtracking.R
 import com.example.afjtracking.broadcast.TrackingAppBroadcast
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
 import com.example.afjtracking.databinding.FragmentTrakingBinding
 import com.example.afjtracking.model.requests.FCMRegistrationRequest
 import com.example.afjtracking.model.requests.LocationApiRequest
-import com.example.afjtracking.model.responses.LoginResponse
-import com.example.afjtracking.model.responses.QRFirebaseUser
-import com.example.afjtracking.model.responses.VehicleDetail
+import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.service.location.ForegroundLocationService
 import com.example.afjtracking.utils.*
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.fragment.contactList.ContactListAdapter
 import com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel
 import com.example.afjtracking.websocket.VideoCallActivity
 import com.permissionx.guolindev.PermissionX
@@ -226,41 +228,49 @@ class TrackingFragment : Fragment() {
 
         binding.btnHelpLineCall.setOnClickListener {
 
+            val listUser = AFJUtils.getObjectPref(mBaseActivity, AFJUtils.KEY_CONTACT_LIST_PREF, ContactListData::class.java)
 
-            val builder: AlertDialog.Builder = AlertDialog.Builder(mBaseActivity)
+            if(listUser.contactUserList.size <=0)
+            {
+               mBaseActivity.showSnackMessage("No Support Contact found",root)
 
-            builder.setTitle("Calling Data need")
-            val from = EditText(mBaseActivity)
-            from.hint = "current user ID" //optional
+            }
+            else {
 
-            val to = EditText(mBaseActivity)
-            to.hint = "target user ID" //optional
-            from.inputType = InputType.TYPE_CLASS_NUMBER
-            to.inputType = InputType.TYPE_CLASS_NUMBER
+                val mDialogView = LayoutInflater.from(mBaseActivity)
+                    .inflate(R.layout.custom_dialog_contact_list, null)
+                val mBuilder = AlertDialog.Builder(mBaseActivity)
+                    .setView(mDialogView)
+                //show dialog
+                val mAlertDialog = mBuilder.show()
+                val btnClose = mDialogView.findViewById<ImageView>(R.id.btnCancel)
+                val listContact = mDialogView.findViewById<RecyclerView>(R.id.list_contact)
+                listContact.layoutManager = LinearLayoutManager(mBaseActivity)
+                val adapter = ContactListAdapter(listUser.contactUserList, mBaseActivity ,
+                    object: ContactListAdapter.ContactListClickListener{
+                    override fun onVideoCallClick(user: User) {
+                        mAlertDialog.dismiss()
 
-            val lay = LinearLayout(mBaseActivity)
-            lay.orientation = LinearLayout.VERTICAL
-            lay.addView(from)
-            lay.addView(to)
-            builder.setView(lay)
-
-            // Set up the buttons
-
-            // Set up the buttons
-            builder.setPositiveButton("Ok",
-                DialogInterface.OnClickListener { dialog, whichButton -> //get the two inputs
-                    val currentUserId = from.text.toString().toInt()
-                    val targetUserID = to.text.toString().toInt()
-                    val intent = Intent(mBaseActivity, VideoCallActivity::class.java).apply {
-                        putExtra("currentUser", "" + currentUserId)
-                        putExtra("targetUserId", "" + targetUserID)
+                        val currentUserId = "1"
+                        val targetUserID = user.id.toString()
+                        val intent = Intent(mBaseActivity, VideoCallActivity::class.java).apply {
+                            putExtra(VideoCallActivity.currentUserID, "" + currentUserId)
+                            putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
+                        }
+                        mBaseActivity.startActivity(intent)
                     }
-                    mBaseActivity.startActivity(intent)
                 })
+                listContact.adapter = adapter
 
-            builder.setNegativeButton("Cancel",
-                DialogInterface.OnClickListener { dialog, whichButton -> dialog.cancel() })
-            builder.show()
+
+                btnClose.setOnClickListener {
+                    mAlertDialog.dismiss()
+                }
+
+
+            }
+
+
 
 
         }

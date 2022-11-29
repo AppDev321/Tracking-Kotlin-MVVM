@@ -2,6 +2,7 @@ package com.example.afjtracking.websocket
 
 
 import android.content.Context
+import com.example.afjtracking.utils.AFJUtils
 
 
 import com.example.afjtracking.websocket.model.MessageModel
@@ -35,17 +36,25 @@ class RTCClient(
         initPeerConnectionFactory(context)
     }
 
-  /*  private val iceServer = listOf(
-        PeerConnection.IceServer.builder("stun:stun.l.google.com:19302")
-            .createIceServer()
-    )*/
+    /*  private val iceServer = listOf(
+          PeerConnection.IceServer.builder("stun:stun.l.google.com:19302")
+              .createIceServer()
+      )*/
+
+
+
+
 
     private val iceServer = listOf(
-        PeerConnection.IceServer.builder("stun:iphone-stun.strato-iphone.de:3478").createIceServer(),
+        PeerConnection.IceServer.builder ("stun:iphone-stun.strato-iphone.de:3478")
+            .createIceServer(),
         PeerConnection.IceServer("stun:openrelay.metered.ca:80"),
-        PeerConnection.IceServer("turn:openrelay.metered.ca:80","openrelayproject","openrelayproject"),
-        PeerConnection.IceServer("turn:openrelay.metered.ca:443","openrelayproject","openrelayproject"),
-        PeerConnection.IceServer("turn:openrelay.metered.ca:443?transport=tcp","openrelayproject","openrelayproject"),
+        PeerConnection.IceServer(
+            "stun:openrelay.metered.ca:443"
+        ),
+        PeerConnection.IceServer(
+            "stun:stun.l.google.com:19302"
+        ),
 
         )
 
@@ -54,7 +63,9 @@ class RTCClient(
 
     private val audioSource by lazy { peerConnectionFactory.createAudioSource(MediaConstraints()) }
     private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }
-    private val peerConnection by lazy { buildPeerConnection(observer) }
+    private val peerConnection by lazy {
+        buildPeerConnection(observer)
+    }
 
     private fun initPeerConnectionFactory(context: Context) {
         val options = PeerConnectionFactory.InitializationOptions.builder(context)
@@ -76,8 +87,10 @@ class RTCClient(
                 )
             )
             .setOptions(PeerConnectionFactory.Options().apply {
-                disableEncryption = true
+                disableEncryption = false
                 disableNetworkMonitor = true
+
+
             })
             .createPeerConnectionFactory()
     }
@@ -129,6 +142,9 @@ class RTCClient(
     ) {
         val constraints = MediaConstraints().apply {
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+            mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
+          /*  mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
+            mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
         }
 
         createOffer(object : SdpObserver by sdpObserver {
@@ -140,10 +156,15 @@ class RTCClient(
                     override fun onSetSuccess() {
                         val offer = hashMapOf(
                             "sdp" to desc?.description,
-                            "type" to desc?.type
+                            "type" to desc?.type.toString().lowercase()
                         )
                         val createOffer =
-                            MessageModel(MessageType.CreateOffer.value, currentUserId, targetId, offer)
+                            MessageModel(
+                                MessageType.CreateOffer.value,
+                                currentUserId,
+                                targetId,
+                                offer
+                            )
                         signalingClient.sendMessageToWebSocket(createOffer)
 
 
@@ -176,32 +197,49 @@ class RTCClient(
     ) {
         val constraints = MediaConstraints().apply {
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
+            mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
+           /* mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
+            mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
         }
         createAnswer(object : SdpObserver by sdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
                 setLocalDescription(object : SdpObserver {
                     override fun onSetFailure(p0: String?) {
+
+                        AFJUtils.writeLogs("set answer failure : ${p0}")
                     }
+
                     override fun onSetSuccess() {
                         val answer = hashMapOf(
                             "sdp" to desc?.description,
-                            "type" to desc?.type
+                            "type" to desc?.type.toString().lowercase()
                         )
-                        val answerCall = MessageModel(MessageType.AnswerCall.value, currentUserId, targetId, answer)
+                        val answerCall = MessageModel(
+                            MessageType.AnswerCall.value,
+                            currentUserId,
+                            targetId,
+                            answer
+                        )
 
                         //Notifiy to WebSocket to answer call
                         signalingClient.sendMessageToWebSocket(answerCall)
 
 
                     }
+
                     override fun onCreateSuccess(p0: SessionDescription?) {
+                        AFJUtils.writeLogs("create answer successss : ${p0}")
                     }
+
                     override fun onCreateFailure(p0: String?) {
+                        AFJUtils.writeLogs("create answer failure 111 : ${p0}")
                     }
                 }, desc)
                 sdpObserver.onCreateSuccess(desc)
             }
+
             override fun onCreateFailure(p0: String?) {
+                AFJUtils.writeLogs("create answer failure : ${p0}")
             }
         }, constraints)
     }
@@ -216,12 +254,19 @@ class RTCClient(
         remoteSessionDescription = sessionDescription
         peerConnection?.setRemoteDescription(object : SdpObserver {
             override fun onSetFailure(p0: String?) {
+                AFJUtils.writeLogs("create remotedescription failure 111 : ${p0}")
             }
+
             override fun onSetSuccess() {
+                AFJUtils.writeLogs("create remotedescription sucess")
             }
+
             override fun onCreateSuccess(p0: SessionDescription?) {
+                AFJUtils.writeLogs("create remotedescription created : ${p0}")
             }
+
             override fun onCreateFailure(p0: String?) {
+                AFJUtils.writeLogs("create remotedescription failure  : ${p0}")
             }
         }, sessionDescription)
     }
@@ -230,11 +275,12 @@ class RTCClient(
         peerConnection?.addIceCandidate(iceCandidate)
     }
 
-    fun endCall(currentUserId: String,targetId: String) {
-      //peerConnection?.removeIceCandidates(iceCandidateArray.toTypedArray())
+    fun endCall(currentUserId: String, targetId: String) {
+        //peerConnection?.removeIceCandidates(iceCandidateArray.toTypedArray())
         val answerCall = MessageModel(MessageType.CallEnd.value, currentUserId, targetId, 0)
         signalingClient.sendMessageToWebSocket(answerCall)
-       peerConnection?.close()
+        peerConnection?.close()
+
     }
 
     fun callClosed() {

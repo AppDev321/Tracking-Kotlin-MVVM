@@ -116,6 +116,13 @@ class MainMenuFragment : Fragment(), MenuItemListner {
                     argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "DRIVER_CHANGE")
                 )
             }
+            "vehicle_exit_driver" -> {
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_attendance_form,
+                    argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "DRIVER_EXIT")
+                )
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.afjtracking.view.activity
 
 import android.Manifest
+import android.Manifest.permission.READ_PHONE_STATE
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -51,7 +52,8 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
             .permissions(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE
 
                 ).request{ allGranted, _ ,_ ->
                 if (allGranted){
@@ -98,6 +100,9 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
 
         val deviceData = AFJUtils.getDeviceDetail()
         val loginUser = LoginRequest(deviceDetail = deviceData)
+        //Support Contact List
+        loginViewModel.getContactList(this@SplashActivity)
+
         loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
 
         loginViewModel.user.observe(this) { loginUser ->

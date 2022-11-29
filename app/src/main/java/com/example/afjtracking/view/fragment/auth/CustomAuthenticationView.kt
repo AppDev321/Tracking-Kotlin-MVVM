@@ -125,13 +125,16 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                                     )
                                 }
                             } else {
+
                                 AFJUtils.setUserToken(context, user.data!!.token)
                                 AFJUtils.saveObjectPref(
                                     context,
                                     AFJUtils.KEY_USER_DETAIL,
                                     user.data.user
                                 )
-                                isAuthSuccess = true
+                                if(!isInitView) {
+                                    isAuthSuccess = true
+                                }
                             }
                           //  cancelCountDownTimer()
                             if (isAuthSuccess) {

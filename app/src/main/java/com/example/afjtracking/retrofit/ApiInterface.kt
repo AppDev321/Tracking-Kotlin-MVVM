@@ -83,4 +83,8 @@ interface ApiInterface {
     fun deleteNotification(@Body body: LoginRequest): Call<LocationResponse?>
 
 
+    @GET("contact-list")
+    fun getContactList(): Call<GetContactListResponse?>
+
+
 }

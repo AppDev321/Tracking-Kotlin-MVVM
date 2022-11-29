@@ -4,19 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.provider.ContactsContract
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.EXTRA_LOCATION
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.firebaseEvent
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.intentData
 import com.example.afjtracking.broadcast.TrackingAppBroadcast.TrackingBroadCastObject.trackingSettingEvent
-import com.example.afjtracking.model.requests.LocationApiRequest
-import com.example.afjtracking.model.responses.VehicleDetail
-import com.example.afjtracking.service.location.ForegroundLocationService
-import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel
+import com.example.afjtracking.view.activity.IncomingCallScreen
+import com.example.afjtracking.websocket.VideoCallActivity
 
 abstract class TrackingAppBroadcast : BroadcastReceiver() {
     object TrackingBroadCastObject {
@@ -43,11 +37,14 @@ abstract class TrackingAppBroadcast : BroadcastReceiver() {
                     val location = p1.getParcelableExtra<Location>(EXTRA_LOCATION)
                     onLocationReceived(location)
             }
+
+
         }
 
     }
     open fun onLocationReceived(location:Location?){}
     open fun refreshNotificationCount() {}
     open fun trackingSetting() {}
+
 
 }

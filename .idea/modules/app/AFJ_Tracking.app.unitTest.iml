@@ -30,6 +30,7 @@
           <stringArguments>
             <stringArg name="classpath">
               <args>
+                <arg>$MODULE_DIR$/../../../app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/R.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/6f2d061826976f84604cd1f89a83e4ee/transformed/databinding-runtime-7.2.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/905fbc7642ae528833fd18f8dbef9b1e/transformed/permissionx-1.6.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/9b439c93e1035a28562e3c16901e9628/transformed/viewbinding-7.2.2-api.jar</arg>
@@ -193,7 +194,7 @@
             </stringArg>
             <stringArg name="destination" arg="$MODULE_DIR$/../../../app/build/tmp/kotlin-classes/debugUnitTest" />
             <stringArg name="jvmTarget" arg="1.8" />
-            <stringArg name="moduleName" arg="AFJ_Tracking-v1.0.0-31-Oct-2022_debug" />
+            <stringArg name="moduleName" arg="AFJ_Tracking-v1.0.0-29-Nov-2022_debug" />
             <stringArg name="apiVersion" arg="1.7" />
             <stringArg name="languageVersion" arg="1.7" />
           </stringArguments>

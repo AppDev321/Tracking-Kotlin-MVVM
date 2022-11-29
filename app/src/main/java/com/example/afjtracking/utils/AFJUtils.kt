@@ -51,13 +51,15 @@ object AFJUtils {
     const val KEY_VEHICLE_DETAIL = "vehicle_detail"
     const val KEY_USER_DETAIL = "user_detail"
     const val KEY_LOGIN_RESPONSE = "login_response"
+    const val KEY_CONTACT_LIST_PREF = "contact_list_pref"
     private const val KEY_LOCATION_RECEVIER = "location_receiver_register"
 
     enum class NOTIFICATIONTYPE{
         TEXT,
         IMAGE,
         LOCATION,
-        EVENT
+        EVENT,
+        CALLING
     }
 
 

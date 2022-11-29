@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.afjtracking.databinding.FragmentDeviceFormBinding
 import com.example.afjtracking.model.requests.LoginRequest
+import com.example.afjtracking.model.responses.GetContactListResponse
 import com.example.afjtracking.model.responses.LocationResponse
 import com.example.afjtracking.model.responses.LoginResponse
 import com.example.afjtracking.retrofit.ApiInterface
@@ -148,6 +149,9 @@ fun onRetryClick(view:View)
 
 
 
+                    getContactList(context)
+
+
                 }
                 override fun onFailure(response: Response<LoginResponse?>) {
                     super.onFailure(response)
@@ -166,5 +170,37 @@ fun onRetryClick(view:View)
             })
     }
 
+    fun getContactList( context: Context?) {
+        getInstance(context)
+        apiInterface!!.getContactList().enqueue(object : SuccessCallback<GetContactListResponse?>() {
+            override fun onSuccess(
+                response: Response<GetContactListResponse?>
+            ) {
+                super.onSuccess(response)
 
+
+                AFJUtils.saveObjectPref(
+                    context!!,
+                    AFJUtils.KEY_CONTACT_LIST_PREF,
+                    response.body()?.data
+                )
+
+
+            }
+            override fun onFailure(response: Response<GetContactListResponse?>) {
+                super.onFailure(response)
+                var errors = ""
+                for (i in response.body()!!.errors.indices) {
+                    errors = """
+                                $errors${response.body()!!.errors[i].message}
+
+                                """.trimIndent()
+                }
+                mErrorsMsg!!.postValue(errors)
+            }
+            override fun onAPIError(error: String) {
+                mErrorsMsg!!.postValue(error)
+            }
+        })
+    }
 }

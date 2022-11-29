@@ -1,25 +1,26 @@
 package com.example.afjtracking.websocket.model
 
+import java.io.Serializable
+
 enum class MessageType(val value: String) {
 
 
     //From App to Web
     StartCall("is-client-ready"),
-    CreateOffer("create_offer"),
-    AnswerCall("create_answer"),
-    SendIceCandidate("send_ice_candidate"),
+    CreateOffer("store_offer"),
+    AnswerCall("send_answer"),
+    SendIceCandidate("store_candidate"),
     RejectCall("offer_reject"),
     CallEnd("call_end"),
 
     //From Web to App
 
     CallResponse("call_response"),
-    AnswerReceived("answer_received"),
+    AnswerReceived("answer"),
     OfferReceived("offer_received"),
     CallReject("call_reject"),
     CallClosed("call_closed"),
-    ICECandidate("ice_candidate_received");
-
+    ICECandidate("ice_receive_candidate");
 
 
     override fun toString() = value
@@ -28,20 +29,19 @@ enum class MessageType(val value: String) {
 
 data class MessageModel(
     val type: String,
-    val name: String? = null,
+    val sendFrom: String? = null,
     val sendTo: String? = null,
     val data: Any = 0,
-    val callerName :String?=null,
-)
-
+    val callerName: String? = null,
+    val callType: String? = "video" //audio,video
+):Serializable
 
 
 data class IceCandidateModel(
     val sdpMid: String,
     val sdpMLineIndex: Double,
-    val sdpCandidate: String
+    val candidate: String
 )
-
 
 
 data class WebSocketMessage(
@@ -50,3 +50,5 @@ data class WebSocketMessage(
     val sendTo: String? = null,
     val data: Any? = null
 )
+
+
