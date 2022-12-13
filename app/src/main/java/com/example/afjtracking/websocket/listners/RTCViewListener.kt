@@ -5,5 +5,6 @@ interface RTCViewListener {
    fun onMicClick(isMuted:Boolean)
    fun onVideoCameraClick(isDisableView :Boolean)
    fun onSpeakerClick(isEarPhone: Boolean)
+   fun showDialogMessage(msg:String)
 
 }

@@ -10,6 +10,7 @@ import com.example.afjtracking.R
 import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.websocket.listners.RTCViewListener
 import com.example.afjtracking.websocket.model.MessageModel
 import com.permissionx.guolindev.PermissionX
@@ -151,6 +152,18 @@ class VideoCallActivity : AppCompatActivity() {
                     } else {
                         audio_output_button.setImageResource(R.drawable.ic_baseline_speaker_up_24)
                     }
+                }
+
+                override fun showDialogMessage(msg: String) {
+                    runOnUiThread{
+                    CustomDialog().showSimpleAlertMsg(
+                        context = this@VideoCallActivity,
+                        message = msg,
+                        textPositive = "Close",
+                    positiveListener = {
+                        finish()
+                    })
+                }
                 }
             }
 

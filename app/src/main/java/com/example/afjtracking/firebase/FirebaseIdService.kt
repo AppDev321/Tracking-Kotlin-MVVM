@@ -1,9 +1,9 @@
 package com.example.afjtracking.firebase
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.core.content.ContextCompat
 import com.example.afjtracking.broadcast.TrackingAppBroadcast
+import com.example.afjtracking.callscreen.CallkitIncomingPlugin
+import com.example.afjtracking.callscreen.EventListener
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.NotificationUtils
@@ -76,35 +76,13 @@ class FirebaseIdService : FirebaseMessagingService() {
                 }
                 AFJUtils.NOTIFICATIONTYPE.CALLING.name->
                 {
-                    /*Intent().also{
-                        it.action = SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
-                        it.putExtra( SocketBroadcast.SocketBroadcast.intentData,
-                            SocketBroadcast.SocketBroadcast.FCM_INCOMING_CALL)
-                        sendBroadcast(it)
-                    }*/
+                    CallkitIncomingPlugin.getInstance().showIncomingNotification("FCM User",false,applicationContext)
+                   CallkitIncomingPlugin.setEventCallListener(object: EventListener(){
+                       override fun send(event: String, body: Map<String, Any>) {
 
+                       }
+                   })
 
-
-                    val serviceIntent = Intent(
-                        applicationContext,
-                        HeadsUpNotificationService::class.java
-                    )
-                    val mBundle = Bundle()
-                    mBundle.putString("inititator", "test")
-                    mBundle.putString("call_type", "normal")
-                    serviceIntent.putExtras(mBundle)
-                    ContextCompat.startForegroundService(applicationContext, serviceIntent)
-
-                    Thread.sleep(30000)
-                    println("Notification After 30 sec")
-                    applicationContext.stopService(
-                        Intent(
-                            applicationContext,
-                            HeadsUpNotificationService::class.java
-                        )
-                    )
-                    val istop = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-                    applicationContext.sendBroadcast(istop)
                 }
             }
 

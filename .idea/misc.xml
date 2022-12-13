@@ -31,6 +31,7 @@
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable/round_two_sides_top.xml" value="0.1655" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable/round_two_sides_top_right.xml" value="0.1345" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/font/montserrat.xml" value="0.19444444444444445" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_callkit_incoming.xml" value="0.146875" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_navigation.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/activity_splash.xml" value="0.1488599348534202" />
@@ -47,6 +48,7 @@
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_auth.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_daily_inpsection_form.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_device_form.xml" value="0.264" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_first.xml" value="0.146875" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_fuel_from.xml" value="0.14814814814814814" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_fuel_login.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/fragment_maps.xml" value="0.15032894736842106" />
@@ -62,6 +64,10 @@
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/item_daily_pts_inspection_check.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/item_list_contact_call.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_button_view.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_custom_miss_notification.xml" value="0.13020833333333334" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_custom_notification.xml" value="0.13020833333333334" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_custom_small_ex_notification.xml" value="0.146875" />
+        <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_custom_small_notification.xml" value="0.146875" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_date_time_view.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_edit_text_view.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/afj-tracking/app/src/main/res/layout/layout_file_choose_box.xml" value="0.25" />

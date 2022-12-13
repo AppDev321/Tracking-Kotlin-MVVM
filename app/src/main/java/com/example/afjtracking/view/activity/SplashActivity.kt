@@ -53,7 +53,6 @@ class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_PHONE_STATE
 
                 ).request{ allGranted, _ ,_ ->
                 if (allGranted){

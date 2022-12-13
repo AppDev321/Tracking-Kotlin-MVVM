@@ -6,6 +6,7 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.websocket.listners.SignalingClientListener
 import com.example.afjtracking.websocket.listners.SocketMessageListener
 import com.example.afjtracking.websocket.model.MessageModel
+import com.example.afjtracking.websocket.model.MessageType
 import com.google.gson.Gson
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -65,8 +66,10 @@ class SignalingWebSocket: WebSocketListener() {
 
     fun sendMessageToSocket(message: MessageModel) {
         try {
-            Log.e(TAG, "sendMessageToSocket: ${Gson().toJson(message)}")
-            webSocket?.send(Gson().toJson(message))
+
+           Log.e(TAG, "sendMessageToSocket: ${Gson().toJson(message)}")
+           webSocket?.send(Gson().toJson(message))
+
         } catch (e: Exception) {
             Log.e(TAG, "sendMessageToSocketException: $e")
         }

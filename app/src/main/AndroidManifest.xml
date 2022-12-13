@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.afjtracking">
 
-    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />
+    <uses-permission
+        android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -18,8 +20,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
 
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -40,8 +40,8 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.AFJTracking">
+        android:theme="@style/Theme.AFJTracking"
+        android:usesCleartextTraffic="true">
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
@@ -83,22 +83,18 @@
 
         <activity
             android:name=".view.activity.IncomingCallScreen"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:showOnLockScreen="true"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:excludeFromRecents="true"
-
-            />
-
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true" />
 
         <service
             android:name=".service.location.ForegroundLocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -109,42 +105,54 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_file" />
         </provider>
+
         <service
             android:name=".firebase.FirebaseIdService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-
         </service>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="1" />
 
+        <activity
+            android:name=".callscreen.CallIncomingActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:theme="@style/CallkitIncomingTheme">
+            <intent-filter>
+                <action android:name="ACTION_CALL_INCOMING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".callscreen.TransparentActivity"
+            android:exported="false"
+            android:theme="@style/TranslucentTheme" />
 
-        <service android:name=".firebase.HeadsUpNotificationService"/>
         <receiver
-            android:name=".broadcast.CallNotificationActionReceiver"
+            android:name=".callscreen.CallIncomingBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
-
-            <intent-filter android:priority="999">
-                <action android:name="ConstantApp.CALL_RECEIVE_ACTION" />
-                <action android:name="ConstantApp.CALL_CANCEL_ACTION"/>
-            </intent-filter>
-        </receiver>
-
-
-      <!--  <receiver
-            android:name=".broadcast.IncomingCallBroadCast"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="ACTION_CALL_INCOMING" />
+                <action android:name="ACTION_CALL_ACCEPT" />
+                <action android:name="ACTION_CALL_DECLINE" />
+                <action android:name="ACTION_CALL_ENDED" />
+                <action android:name="ACTION_CALL_TIMEOUT" />
             </intent-filter>
         </receiver>
--->
+
+        <service
+            android:name=".callscreen.CallSoundPlayerService"
+            android:enabled="true"
+            android:exported="true" />
 
     </application>
 

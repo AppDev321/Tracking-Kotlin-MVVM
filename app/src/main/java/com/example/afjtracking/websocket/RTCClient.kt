@@ -2,13 +2,19 @@ package com.example.afjtracking.websocket
 
 
 import android.content.Context
+import android.util.Base64
 import com.example.afjtracking.utils.AFJUtils
-
-
 import com.example.afjtracking.websocket.model.MessageModel
 import com.example.afjtracking.websocket.model.MessageType
-
 import org.webrtc.*
+import java.time.Instant.now
+import java.time.LocalDate.now
+import java.time.LocalDateTime
+import java.time.LocalTime.now
+import java.util.*
+import java.util.Base64.getEncoder
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 
 class RTCClient(
@@ -42,11 +48,8 @@ class RTCClient(
       )*/
 
 
-
-
-
-    private val iceServer = listOf(
-        PeerConnection.IceServer.builder ("stun:iphone-stun.strato-iphone.de:3478")
+    /*  private val iceServer = listOf(
+        PeerConnection.IceServer.builder("stun:iphone-stun.strato-iphone.de:3478")
             .createIceServer(),
         PeerConnection.IceServer("stun:openrelay.metered.ca:80"),
         PeerConnection.IceServer(
@@ -57,6 +60,40 @@ class RTCClient(
         ),
 
         )
+*/
+    var secret = "8f60119eb0b51b511bf4b0fb7838e36c"
+    private fun hmacSha1( value:String,  key:String):ByteArray
+    {
+
+        val signingKey = SecretKeySpec(key.toByteArray(), "HmacSHA1")
+        val mac: Mac = Mac.getInstance("HmacSHA1")
+        mac.init(signingKey)
+        val rawHmac = mac.doFinal(value.toByteArray())
+        val hexBytes: ByteArray = Base64.encode(rawHmac,Base64.DEFAULT)
+           return hexBytes
+    }
+
+   // private var uuID= UUID.randomUUID().toString()
+    var uuID = ((System.currentTimeMillis() / 1000) + (12 * 3600)).toString()
+    private val iceServer = listOf(
+
+//1670963170
+        PeerConnection.IceServer.builder("stun:vmi808920.contaboserver.net:3479")
+            .createIceServer(),
+
+        PeerConnection
+            .IceServer
+            .builder("turn:vmi808920.contaboserver.net:3479")
+            .setUsername(uuID)
+            .setPassword( String(hmacSha1(uuID,secret), Charsets.UTF_8))
+            .createIceServer(),
+
+        )
+
+
+
+
+
 
     private val peerConnectionFactory by lazy { buildPeerConnectionFactory() }
     private val videoCapturer by lazy { getVideoCapture(context) }
@@ -143,8 +180,8 @@ class RTCClient(
         val constraints = MediaConstraints().apply {
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
-          /*  mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
-            mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
+            /*  mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
+              mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
         }
 
         createOffer(object : SdpObserver by sdpObserver {
@@ -193,13 +230,13 @@ class RTCClient(
 
     private fun PeerConnection.answer(
         sdpObserver: SdpObserver,
-        targetId: String, currentUserId: String
+        targetId: String, currentUserId: String, offerConnectionID: String
     ) {
         val constraints = MediaConstraints().apply {
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
-           /* mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
-            mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
+            /* mandatory.add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
+             mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))*/
         }
         createAnswer(object : SdpObserver by sdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
@@ -215,10 +252,12 @@ class RTCClient(
                             "type" to desc?.type.toString().lowercase()
                         )
                         val answerCall = MessageModel(
-                            MessageType.AnswerCall.value,
-                            currentUserId,
-                            targetId,
-                            answer
+                            type = MessageType.AnswerCall.value,
+                            sendFrom = currentUserId,
+                            sendTo = targetId,
+                            data = answer,
+                            offer_connection_id = offerConnectionID
+
                         )
 
                         //Notifiy to WebSocket to answer call
@@ -247,8 +286,8 @@ class RTCClient(
     fun call(sdpObserver: SdpObserver, targetId: String, currentUserId: String) =
         peerConnection?.call(sdpObserver, targetId, currentUserId)
 
-    fun answer(sdpObserver: SdpObserver, targetId: String, currentUserId: String) =
-        peerConnection?.answer(sdpObserver, targetId, currentUserId)
+    fun answer(sdpObserver: SdpObserver, targetId: String, currentUserId: String,offerConnectionID: String) =
+        peerConnection?.answer(sdpObserver, targetId, currentUserId,offerConnectionID)
 
     fun onRemoteSessionReceived(sessionDescription: SessionDescription) {
         remoteSessionDescription = sessionDescription

@@ -43,19 +43,14 @@ class SignalingClient : CoroutineScope {
         client.newWebSocket(request, signalingWebSocket)
         signalingWebSocket.setSignalingClientListener(object : SocketMessageListener() {
             override fun onNewMessageReceived(message: MessageModel) {
-
                 if (listener != null) {
-
                     listener?.onNewMessageReceived(message)
                 }
             }
 
             override fun onConnectionClosed() {
                 if (listener != null) {
-
                         listener?.onConnectionClosed()
-
-
                 }
             }
 

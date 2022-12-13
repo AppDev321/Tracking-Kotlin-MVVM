@@ -20,7 +20,8 @@ enum class MessageType(val value: String) {
     OfferReceived("offer_received"),
     CallReject("call_reject"),
     CallClosed("call_closed"),
-    ICECandidate("ice_receive_candidate");
+    ICECandidate("ice_receive_candidate"),
+    CallAlreadyAnswered("call_already_answered");
 
 
     override fun toString() = value
@@ -33,6 +34,7 @@ data class MessageModel(
     val sendTo: String? = null,
     val data: Any = 0,
     val callerName: String? = null,
+    val offer_connection_id:String?=null,
     val callType: String? = "video" //audio,video
 ):Serializable
 

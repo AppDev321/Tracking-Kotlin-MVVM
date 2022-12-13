@@ -16,12 +16,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.afjtracking.R
 import com.example.afjtracking.broadcast.SocketBroadcast
+import com.example.afjtracking.callscreen.CallIncomingBroadcastReceiver
+import com.example.afjtracking.callscreen.CallkitIncomingPlugin
+import com.example.afjtracking.callscreen.EventListener
 import com.example.afjtracking.databinding.ActivityNavigationBinding
 import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.InternetDialog
 import com.example.afjtracking.websocket.SignalingClient
+import com.example.afjtracking.websocket.VideoCallActivity
 import com.example.afjtracking.websocket.listners.SocketMessageListener
 import com.example.afjtracking.websocket.model.MessageModel
 import com.example.afjtracking.websocket.model.MessageType
@@ -30,7 +34,6 @@ import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.sign
 
 
 class NavigationDrawerActivity : BaseActivity() {
@@ -80,8 +83,6 @@ class NavigationDrawerActivity : BaseActivity() {
         super.onDestroy()
         unregisterReceiver(socketBroadCast)
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -221,8 +222,8 @@ class NavigationDrawerActivity : BaseActivity() {
         override fun onNewMessageReceived(messageModel: MessageModel) {
 
             if(messageModel.type.equals( MessageType.OfferReceived.value)) {
-                AFJUtils.writeLogs("Got New Message Navigation= $messageModel")
-                /*Intent().also { intent ->
+
+               /* Intent().also { intent ->
                     intent.action = SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
                     intent.putExtra(
                         SocketBroadcast.SocketBroadcast.intentData,
@@ -234,12 +235,39 @@ class NavigationDrawerActivity : BaseActivity() {
                     sendBroadcast(intent)
                 }*/
 
-                val intent = Intent(this@NavigationDrawerActivity, IncomingCallScreen::class.java).apply {
-                    putExtra(IncomingCallScreen.intentData, messageModel)
-                    flags=Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
-                }
-                startActivity(intent)
+
+                val currentUserId = messageModel.sendTo
+                val targetUserID = messageModel.sendFrom
+                CallkitIncomingPlugin.getInstance().showIncomingNotification(messageModel.callerName.toString(),
+                    false,
+                    this@NavigationDrawerActivity)
+                CallkitIncomingPlugin.setEventCallListener(object: EventListener(){
+                    override fun send(event: String, body: Map<String, Any>) {
+                        AFJUtils.writeLogs("call event = $event")
+                        if(event== CallIncomingBroadcastReceiver.ACTION_CALL_ACCEPT)
+                        {
+
+                            val intent = Intent(this@NavigationDrawerActivity, VideoCallActivity::class.java).apply {
+                                putExtra(VideoCallActivity.currentUserID, "" + currentUserId)
+                                putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
+                                putExtra(VideoCallActivity.messageIntentValue, messageModel)
+                                flags=Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+                            }
+                            startActivity(intent)
+                        }
+                        else if(event == CallIncomingBroadcastReceiver.ACTION_CALL_DECLINE)
+                        {
+                            val answerCall = MessageModel(MessageType.CallEnd.value, currentUserId, targetUserID, 0)
+                            signallingClient.sendMessageToWebSocket(answerCall)
+                        }
+                    }
+                })
+            }
+            else if(messageModel.type.equals(MessageType.CallAlreadyAnswered.value))
+            {
+                CallkitIncomingPlugin.getInstance().endAllCalls()
             }
         }
 
@@ -260,6 +288,7 @@ class NavigationDrawerActivity : BaseActivity() {
 
         override fun onWebSocketFailure(errorMessage: String) {
            AFJUtils.writeLogs("Socket Failure => $errorMessage")
+           showSnackMessage("Socket Connection Issue: $errorMessage",binding.root)
         }
 
     }
