@@ -90,8 +90,6 @@ class NavigationDrawerActivity : BaseActivity() {
 
 
 
-
-
         binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

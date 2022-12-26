@@ -180,7 +180,7 @@
             </stringArg>
             <stringArg name="destination" arg="$MODULE_DIR$/../../../app/build/tmp/kotlin-classes/debug" />
             <stringArg name="jvmTarget" arg="1.8" />
-            <stringArg name="moduleName" arg="AFJ_Tracking-v1.0.0-13-Dec-2022_debug" />
+            <stringArg name="moduleName" arg="AFJ_Tracking-v1.0.0-21-Dec-2022_debug" />
             <stringArg name="apiVersion" arg="1.7" />
             <stringArg name="languageVersion" arg="1.7" />
           </stringArguments>

@@ -113,6 +113,7 @@ class WebRtcView(
             context,
             signallingClient,
             object : PeerConnectionObserver() {
+
                 override fun onIceCandidate(p0: IceCandidate?) {
                     super.onIceCandidate(p0)
                     rtcClient.addIceCandidate(p0)

@@ -3,15 +3,23 @@ package com.example.afjtracking.utils
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import com.example.afjtracking.model.responses.SensorData
+import com.example.afjtracking.model.responses.SensorOrientationData
+import java.lang.Math.round
 
 abstract class InspectionSensor : SensorEventListener {
-    val TIME_STAMP = 5000
+    val TIME_STAMP = 1000
     private var accelerometerReading = FloatArray(3)
     private var gyroScopeReading = FloatArray(3)
     private var linearReading = FloatArray(3)
+    private var magnetometerReading = FloatArray(3)
+    private val rotationMatrix = FloatArray(9)
+    private val orientationAngles = FloatArray(3)
 
-    val data: ArrayList<FloatArray> = arrayListOf()
 
+   // val data: ArrayList<FloatArray> = arrayListOf()
+   val data: ArrayList<SensorOrientationData> = arrayListOf()
 
     override fun onSensorChanged(event: SensorEvent) {
         val sensor: Sensor = event.sensor
@@ -21,6 +29,8 @@ abstract class InspectionSensor : SensorEventListener {
         } else if (sensor.type == Sensor.TYPE_GYROSCOPE) {
 
             System.arraycopy(event.values, 0, gyroScopeReading, 0, gyroScopeReading.size)
+        } else if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, magnetometerReading, 0, magnetometerReading.size)
         } else {
 
             System.arraycopy(event.values, 0, linearReading, 0, linearReading.size)
@@ -37,21 +47,37 @@ abstract class InspectionSensor : SensorEventListener {
 
     private fun sensorValueChanges() {
 
-        data.add(accelerometerReading)
-        data.add(gyroScopeReading)
-        data.add(linearReading)
 
+        SensorManager.getRotationMatrix(
+            rotationMatrix,
+            null,
+            accelerometerReading,
+            magnetometerReading
+        )
+        val orientation = SensorManager.getOrientation(rotationMatrix, orientationAngles)
+        val degrees = (Math.toDegrees(orientation.get(0).toDouble()) + 360.0) % 360.0
+        val direction = AFJUtils.getDirection(degrees)
+        val angle = round(degrees * 100) / 100
+
+        val sensorOrientationData = SensorOrientationData(
+          orientation,
+
+            degrees,
+            direction,
+            angle,
+            System.currentTimeMillis()
+        )
+        data.add(sensorOrientationData)
 
         if (data.size > TIME_STAMP) {
             data.clear()
-            data.add(accelerometerReading)
-            data.add(gyroScopeReading)
-            data.add(linearReading)
-            sendSensorValue(data)
+
+            sendSensorValue(sensorOrientationData)
         }
 
     }
 
-    abstract fun sendSensorValue(data: ArrayList<FloatArray>)
 
+    //abstract fun sendSensorValue(data: ArrayList<FloatArray>)
+    abstract fun sendSensorValue(data: SensorOrientationData)
 }

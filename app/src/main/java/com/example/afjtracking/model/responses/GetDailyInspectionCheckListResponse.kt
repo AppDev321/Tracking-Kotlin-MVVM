@@ -38,12 +38,32 @@ data class InspectionCheckData(
     @SerializedName("upload_id") var uploadID: String? = "abc",
     @SerializedName("request_name") var requestName: String? = "PTS",
     @SerializedName("vehicle_type") var vehicleType: String? = "",
-    @SerializedName("sensor_data") var sensorData: SensorData? = SensorData(),
+   // @SerializedName("sensor_data") var sensorData: SensorData? = SensorData(),
+    @SerializedName("sensor_data") var sensorData: List<SensorOrientationData>? = arrayListOf(),
     @SerializedName("time_spent") var inspectionTimeSpent:String? = null
 
 
 
 ) : Parcelable
+
+
+
+@Parcelize
+data class SensorOrientationData(
+    @SerializedName("orientation")
+    val orientation: FloatArray,
+    @SerializedName("degrees")
+    val degrees: Double,
+    @SerializedName("direction")
+    val direction: String,
+    @SerializedName("angle")
+    val angle: Long,
+    @SerializedName("timeStamp")
+    val timeStamp: Long
+
+
+): Parcelable
+
 
 @Parcelize
 data class SensorData(
@@ -55,7 +75,16 @@ data class SensorData(
 
 
     @SerializedName("linear")
-    var linearSensorReading: List<FloatArray>? = arrayListOf()
+    var linearSensorReading: List<FloatArray>? = arrayListOf(),
+
+    @SerializedName("magnetometer")
+    var magnetoSensorReading: List<FloatArray>? = arrayListOf(),
+    @SerializedName("rotation")
+    var rotationSensorReading: List<FloatArray>? = arrayListOf(),
+
+    @SerializedName("orientation")
+    var orientationSensorReading: List<FloatArray>? = arrayListOf(),
+
 ) : Parcelable
 
 

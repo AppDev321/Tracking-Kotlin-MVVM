@@ -73,11 +73,10 @@ class RTCClient(
            return hexBytes
     }
 
-   // private var uuID= UUID.randomUUID().toString()
     var uuID = ((System.currentTimeMillis() / 1000) + (12 * 3600)).toString()
     private val iceServer = listOf(
 
-//1670963170
+
         PeerConnection.IceServer.builder("stun:vmi808920.contaboserver.net:3479")
             .createIceServer(),
 
@@ -311,6 +310,7 @@ class RTCClient(
     }
 
     fun addIceCandidate(iceCandidate: IceCandidate?) {
+
         peerConnection?.addIceCandidate(iceCandidate)
     }
 

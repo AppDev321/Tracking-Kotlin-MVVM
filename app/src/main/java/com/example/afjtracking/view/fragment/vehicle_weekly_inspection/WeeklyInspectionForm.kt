@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,6 +27,7 @@ import com.example.afjtracking.model.requests.SavedWeeklyInspection
 import com.example.afjtracking.model.requests.SingleInspectionRequest
 import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.utils.*
+import com.example.afjtracking.utils.AFJUtils.convertObjectToJson
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
@@ -38,12 +40,8 @@ class WeeklyInspectionForm : Fragment() {
     private var _binding: FragmentWeeklyInspectionFormBinding? = null
     private val binding get() = _binding!!
     private lateinit var mBaseActivity: NavigationDrawerActivity
+    private val satisfactoryCode = "satisfactory"
     var inspectionTimeSpent= ""
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mBaseActivity = context as NavigationDrawerActivity
-    }
-
 
     private var checkIndex = 0
     private var inpsecitonTitle = "Inspection Completed: "
@@ -51,27 +49,24 @@ class WeeklyInspectionForm : Fragment() {
     var listRadioOption: ArrayList<RadioCheckOption> = arrayListOf()
     var totalCountChecks = 0
     var inspectionID = ""
-    val satisfactoryCode = "satisfactory"
 
     var radioOption = ""
     lateinit var weeklyInspectionViewModel: WeeklyInspectionViewModel
-
-
     private var mSensorManager: SensorManager? = null
-    private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
-    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
-    private var mLinearSensorData: MutableList<FloatArray> = arrayListOf()
-
-    private var mInspectionTypeList: ArrayList<PSVCheck> = arrayListOf()
+    private var mSensorData: ArrayList<SensorOrientationData>  = arrayListOf()
 
     private val inspectionSensor = object : InspectionSensor() {
-
-        override fun sendSensorValue(data: ArrayList<FloatArray>) {
-            mAccelerometerData.add(data[0])
-            mGyroSensorData.add(data[1])
-            mLinearSensorData.add(data[2])
+        override fun sendSensorValue(data: SensorOrientationData) {
+          //  AFJUtils.writeLogs(data.toString())
+            mSensorData.add(data)
+         //   AFJUtils.writeLogs(convertObjectToJson(mSensorData))
+        AFJUtils.writeLogs(mSensorData.toString())
         }
 
+    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mBaseActivity = context as NavigationDrawerActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,19 +81,11 @@ class WeeklyInspectionForm : Fragment() {
                 SensorManager.SENSOR_DELAY_UI
             )
         }
-        mSensorManager!!.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.also { gyroscope ->
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also { magneticField ->
             mSensorManager!!.registerListener(
                 inspectionSensor,
-                gyroscope,
-                SensorManager.SENSOR_DELAY_FASTEST,
-                SensorManager.SENSOR_DELAY_UI
-            )
-        }
-        mSensorManager!!.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)?.also { linear ->
-            mSensorManager!!.registerListener(
-                inspectionSensor,
-                linear,
-                SensorManager.SENSOR_DELAY_FASTEST,
+                magneticField,
+                SensorManager.SENSOR_DELAY_NORMAL,
                 SensorManager.SENSOR_DELAY_UI
             )
         }
@@ -353,11 +340,12 @@ class WeeklyInspectionForm : Fragment() {
 
 
                 } else {
+
                     binding.timerView.getTimerVariable().stop()
                     val body = SavedWeeklyInspection(
                         inspectionID,
                         listChecks,
-                        SensorData(mAccelerometerData, mGyroSensorData, mLinearSensorData),
+                     mSensorData,
                         inspectionTimeSpent
                     )
                     weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body, false)
@@ -368,7 +356,7 @@ class WeeklyInspectionForm : Fragment() {
         }
     }
 
-    @SuppressLint("ResourceAsColor")
+
     private fun addRadioButtons(
         radioButtonTexts: ArrayList<RadioCheckOption>,
         rg: RadioGroup,
@@ -386,15 +374,7 @@ class WeeklyInspectionForm : Fragment() {
             newRadioButton.tag = text.id
 
 
-            if (Build.VERSION.SDK_INT < 21) {
-                CompoundButtonCompat.setButtonTintList(
-                    newRadioButton,
-                    ColorStateList.valueOf(R.color.colorPrimary)
-                )
-            } else {
-                newRadioButton.buttonTintList =
-                    ColorStateList.valueOf(R.color.colorPrimary)
-            }
+            newRadioButton.buttonTintList =   ColorStateList.valueOf(ContextCompat.getColor(mBaseActivity,R.color.colorPrimary))
 
             rg.addView(newRadioButton)
 
@@ -435,7 +415,7 @@ class WeeklyInspectionForm : Fragment() {
         val body = SavedWeeklyInspection(
             inspectionID,
             listChecks,
-            SensorData(mAccelerometerData, mGyroSensorData, mLinearSensorData),
+            mSensorData,
             inspectionTimeSpent
         )
         weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body, true)

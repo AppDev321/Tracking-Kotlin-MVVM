@@ -15,10 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.FragmentDailyInpsectionFormBinding
 import com.example.afjtracking.databinding.ItemDailyPtsInspectionCheckBinding
-import com.example.afjtracking.model.responses.Checks
-import com.example.afjtracking.model.responses.InspectionCheckData
-import com.example.afjtracking.model.responses.PTSCheck
-import com.example.afjtracking.model.responses.SensorData
+import com.example.afjtracking.model.responses.*
 import com.example.afjtracking.utils.*
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
@@ -40,10 +37,16 @@ class PTSInspectionForm : Fragment() {
 
 
     private var mSensorManager: SensorManager? = null
-    private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
-    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
     private var mLinearSensorData: MutableList<FloatArray> = arrayListOf()
 
+    private var mSensorData: MutableList<SensorOrientationData> = arrayListOf()
+
+  /*  private var mAccelerometerData: MutableList<FloatArray> = arrayListOf()
+    private var mGyroSensorData: MutableList<FloatArray> = arrayListOf()
+
+    private var mMagnetometerSensorData: MutableList<FloatArray> = arrayListOf()
+    private val mRotationMatrix :MutableList<FloatArray> =arrayListOf()
+    private val orientationAngles  :MutableList<FloatArray> =arrayListOf()*/
 
     private lateinit var apiRequestParams: InspectionCheckData
 
@@ -62,14 +65,23 @@ class PTSInspectionForm : Fragment() {
     }
 
 
+
     private val inspectionSensor = object : InspectionSensor() {
 
-        override fun sendSensorValue(data: ArrayList<FloatArray>) {
+      /*  override fun sendSensorValue(data: ArrayList<FloatArray>) {
             mAccelerometerData.add(data[0])
             mGyroSensorData.add(data[1])
             mLinearSensorData.add(data[2])
-        }
 
+            mMagnetometerSensorData.add(data[3])
+            mRotationMatrix.add(data[4])
+            orientationAngles.add(data[5])
+        }
+*/
+
+        override fun sendSensorValue(data: SensorOrientationData) {
+            mSensorData.add(data)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,6 +109,14 @@ class PTSInspectionForm : Fragment() {
                 inspectionSensor,
                 linear,
                 SensorManager.SENSOR_DELAY_FASTEST,
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
+        mSensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also { magneticField ->
+            mSensorManager!!.registerListener(
+                inspectionSensor,
+                magneticField,
+                SensorManager.SENSOR_DELAY_NORMAL,
                 SensorManager.SENSOR_DELAY_UI
             )
         }
@@ -326,7 +346,9 @@ class PTSInspectionForm : Fragment() {
                     } else {
                         mBaseActivity.showProgressDialog(true)
                         apiRequestParams.ptsChecks = mInspectionTypeList
-                        apiRequestParams.sensorData = SensorData(mAccelerometerData,mGyroSensorData,mLinearSensorData)
+                       // apiRequestParams.sensorData =  SensorData(mAccelerometerData, mGyroSensorData, mLinearSensorData,mMagnetometerSensorData,mRotationMatrix,orientationAngles)
+                        apiRequestParams.sensorData =  mSensorData
+
                         inspectionViewModel.postInspectionVDI(mBaseActivity, apiRequestParams)
 
                     }

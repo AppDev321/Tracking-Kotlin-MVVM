@@ -66,21 +66,16 @@ class WeeklyInspectionList : Fragment() {
         adapter.setPageSize(10)
         adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
         adapter.setListnerClick(object :WeeklyInspectionAdapter.ClickWeeklyInspectionListener{
-
-
             override fun <T> handleContinueButtonClick(data: T) {
                 val dataInspection = data as WeeklyInspectionData
                 val bundle =   bundleOf(InspectionReviewFragment.argumentParams to dataInspection.id)
                 mBaseActivity.moveFragmentToNextFragment( binding.root,   R.id.nav_weekly_inspection_form, bundle  )
             }
-
         })
 
         adapter.setOnPaginationListener(object : OnPaginationListener {
             override fun onCurrentPage(page: Int) {
-
             }
-
             override fun onNextPage(page: Int) {
                 loadMoreApi = true
                 adapter.addLoadingFooter(WeeklyInspectionData())
@@ -148,7 +143,7 @@ class WeeklyInspectionList : Fragment() {
         binding.btnAddInspection.setOnClickListener {
             mBaseActivity.moveFragmentToNextFragment(
                 binding.root,
-                com.example.afjtracking.R.id.nav_create_weekly_inspection
+         R.id.nav_create_weekly_inspection
             )
         }
         return root
