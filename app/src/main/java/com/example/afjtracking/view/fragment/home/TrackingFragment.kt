@@ -230,6 +230,12 @@ class TrackingFragment : Fragment() {
 
             val listUser = AFJUtils.getObjectPref(mBaseActivity, AFJUtils.KEY_CONTACT_LIST_PREF, ContactListData::class.java)
 
+            if(listUser == null)
+            {
+                mBaseActivity.showSnackMessage("No Support Contact found",root)
+                return@setOnClickListener
+            }
+
             if(listUser.contactUserList.size <=0)
             {
                mBaseActivity.showSnackMessage("No Support Contact found",root)

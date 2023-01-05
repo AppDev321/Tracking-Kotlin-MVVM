@@ -7,12 +7,8 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.websocket.model.MessageModel
 import com.example.afjtracking.websocket.model.MessageType
 import org.webrtc.*
-import java.time.Instant.now
-import java.time.LocalDate.now
-import java.time.LocalDateTime
-import java.time.LocalTime.now
+import org.webrtc.PeerConnection.IceServer
 import java.util.*
-import java.util.Base64.getEncoder
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -75,17 +71,33 @@ class RTCClient(
 
     var uuID = ((System.currentTimeMillis() / 1000) + (12 * 3600)).toString()
     private val iceServer = listOf(
+     /*   IceServer("stun:relay.metered.ca:80"),
+        IceServer("turn:relay.metered.ca:80","b4d93dc44330adba2c73192a","9IdESWTGHDtWHGkg"),
+        IceServer("turn:relay.metered.ca:443","b4d93dc44330adba2c73192a","9IdESWTGHDtWHGkg"),
+        IceServer("turn:relay.metered.ca:443?transport=tcp","b4d93dc44330adba2c73192a","9IdESWTGHDtWHGkg"),*/
+            PeerConnection.IceServer.builder("stun:relay.metered.ca:80")
+               .createIceServer(),
+          PeerConnection
+               .IceServer
+               .builder("turn:relay.metered.ca:80")
+               .setUsername("b4d93dc44330adba2c73192a")
+               .setPassword( "9IdESWTGHDtWHGkg")
+               .createIceServer(),
 
-
-        PeerConnection.IceServer.builder("stun:vmi808920.contaboserver.net:3479")
+        PeerConnection
+            .IceServer
+            .builder("turn:relay.metered.ca:443")
+            .setUsername("b4d93dc44330adba2c73192a")
+            .setPassword( "9IdESWTGHDtWHGkg")
             .createIceServer(),
 
         PeerConnection
             .IceServer
-            .builder("turn:vmi808920.contaboserver.net:3479")
-            .setUsername(uuID)
-            .setPassword( String(hmacSha1(uuID,secret), Charsets.UTF_8))
+            .builder("turn:relay.metered.ca:443?transport=tcp")
+            .setUsername("b4d93dc44330adba2c73192a")
+            .setPassword( "9IdESWTGHDtWHGkg")
             .createIceServer(),
+
 
         )
 
@@ -100,6 +112,7 @@ class RTCClient(
     private val audioSource by lazy { peerConnectionFactory.createAudioSource(MediaConstraints()) }
     private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }
     private val peerConnection by lazy {
+        AFJUtils.writeLogs("Peer Connection started........--->>>>")
         buildPeerConnection(observer)
     }
 
@@ -131,9 +144,13 @@ class RTCClient(
             .createPeerConnectionFactory()
     }
 
-    private fun buildPeerConnection(observer: PeerConnection.Observer) =
+     fun buildPeerConnection(observer: PeerConnection.Observer) =
         peerConnectionFactory.createPeerConnection(
-            iceServer,
+            PeerConnection.RTCConfiguration(iceServer).apply {
+
+             continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+            },
+           // iceServer,
             observer
         )
 

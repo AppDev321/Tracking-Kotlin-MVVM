@@ -43,6 +43,7 @@ class SignalingWebSocket: WebSocketListener() {
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
+        Log.d(TAG, "Receiving Msg from Server: ${text}")
         signalingClientListener?.onNewMessageReceived(gson.fromJson(text, MessageModel::class.java))
     }
 

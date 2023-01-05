@@ -7,21 +7,24 @@ enum class MessageType(val value: String) {
 
     //From App to Web
     StartCall("is-client-ready"),
-    CreateOffer("store_offer"),
-    AnswerCall("send_answer"),
-    SendIceCandidate("store_candidate"),
-    RejectCall("offer_reject"),
-    CallEnd("call_end"),
+    JoinCall("join-call"),
+    CreateOffer("store-offer"),
+    AnswerCall("send-answer"),
+    SendIceCandidate("store-candidate"),
+    SendCandidate("send-candidate"),
+    RejectCall("offer-reject"),
+    CallEnd("end-call"),
 
     //From Web to App
 
-    CallResponse("call_response"),
-    AnswerReceived("answer"),
-    OfferReceived("offer_received"),
-    CallReject("call_reject"),
-    CallClosed("call_closed"),
-    ICECandidate("ice_receive_candidate"),
-    CallAlreadyAnswered("call_already_answered");
+    CallResponse("client-status"),
+    IncomingCall("incoming-call"),
+    AnswerReceived("answer-received"),
+    OfferReceived("offer-received"),
+    CallReject("call-reject"),
+    CallClosed("end-call"),
+    ICECandidate("candidate"),
+    CallAlreadyAnswered("call-already-answered");
 
 
     override fun toString() = value

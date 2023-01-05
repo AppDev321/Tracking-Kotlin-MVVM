@@ -52,29 +52,36 @@ class NavigationDrawerActivity : BaseActivity() {
         registerReceiver(
             socketBroadCast,
             IntentFilter(
-               SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
+                SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
             )
         )
 
-        if(::signallingClient.isInitialized)
-        {
+      /*  if (::signallingClient.isInitialized) {
             //Connection restart on every resume
             Handler().postDelayed({
                 signallingClient.destroy()
             }, 1000)
 
-        }
 
-        val userObject = AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
-        if(userObject.id != null) {
-            signallingClient = SignalingClient.
-            getInstance(listener = createSignallingClientListener(),
-                serverUrl = Constants.WEBSOCKET_URL +  userObject.id +"&device=Tracking")
+
+
+        }*/
+
+        val userObject =
+            AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
+        if (userObject.id != null) {
+            val socketURL = Constants.WEBSOCKET_URL + userObject.id + "&device=Tracking"
+            signallingClient = SignalingClient.getInstance(
+                listener = createSignallingClientListener(socketURL),
+                serverUrl = socketURL
+            )
         } else {
-            signallingClient = SignalingClient.getInstance(listener = createSignallingClientListener(),
-                serverUrl = Constants.WEBSOCKET_URL + "1" +"&device=Tracking")
+            val socketURL = Constants.WEBSOCKET_URL + "1" + "&device=Tracking"
+            signallingClient = SignalingClient.getInstance(
+                listener = createSignallingClientListener(socketURL),
+                serverUrl = socketURL
+            )
         }
-
 
 
     }
@@ -125,13 +132,13 @@ class NavigationDrawerActivity : BaseActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-               /* R.id.tracking,
-                R.id.nav_vdi_inspection_list,
-                R.id.nav_weekly_inspection,
-                R.id.nav_attendance_form,
-                R.id.nav_fuel_form,
-                R.id.nav_report_form,
-                R.id.nav_device_info*/
+                /* R.id.tracking,
+                 R.id.nav_vdi_inspection_list,
+                 R.id.nav_weekly_inspection,
+                 R.id.nav_attendance_form,
+                 R.id.nav_fuel_form,
+                 R.id.nav_report_form,
+                 R.id.nav_device_info*/
             ), drawerLayout
         )
 
@@ -153,13 +160,12 @@ class NavigationDrawerActivity : BaseActivity() {
         }
 
 
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             isNetWorkConnected.collectLatest {
-                if(!it) {
+                if (!it) {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
                     InternetDialog(this@NavigationDrawerActivity).showNoInternetDialog()
-                }
-                else {
+                } else {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.GONE
                 }
             }
@@ -172,8 +178,7 @@ class NavigationDrawerActivity : BaseActivity() {
         if (supportActionBar != null) {
             if (isShow) {
                 supportActionBar?.show()
-            }
-            else {
+            } else {
                 supportActionBar?.hide()
             }
         }
@@ -213,81 +218,94 @@ class NavigationDrawerActivity : BaseActivity() {
     }
 
 
-    private fun createSignallingClientListener() = object : SocketMessageListener() {
-        override fun onConnectionEstablished() {
-            AFJUtils.writeLogs("Connection Established")
-        }
-        override fun onNewMessageReceived(messageModel: MessageModel) {
+    private fun createSignallingClientListener(socketURL: String) =
+        object : SocketMessageListener() {
+            override fun onConnectionEstablished() {
+                AFJUtils.writeLogs("Connection Established")
+            }
 
-            if(messageModel.type.equals( MessageType.OfferReceived.value)) {
+            override fun onNewMessageReceived(messageModel: MessageModel) {
 
-               /* Intent().also { intent ->
-                    intent.action = SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
-                    intent.putExtra(
-                        SocketBroadcast.SocketBroadcast.intentData,
-                        SocketBroadcast.SocketBroadcast.SOCKET_MESSAGE_RECEIVED
+                if (messageModel.type.equals(MessageType.IncomingCall.value)) {
+
+                    /* Intent().also { intent ->
+                         intent.action = SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
+                         intent.putExtra(
+                             SocketBroadcast.SocketBroadcast.intentData,
+                             SocketBroadcast.SocketBroadcast.SOCKET_MESSAGE_RECEIVED
+                         )
+                         val bundle = Bundle()
+                         bundle.putSerializable(  SocketBroadcast.SocketBroadcast.intentValues, messageModel  )
+                         intent.putExtras(bundle)
+                         sendBroadcast(intent)
+                     }*/
+
+
+                    val currentUserId = messageModel.sendTo
+                    val targetUserID = messageModel.sendFrom
+                    CallkitIncomingPlugin.getInstance().showIncomingNotification(
+                        messageModel.callerName.toString(),
+                        false,
+                        this@NavigationDrawerActivity
                     )
-                    val bundle = Bundle()
-                    bundle.putSerializable(  SocketBroadcast.SocketBroadcast.intentValues, messageModel  )
-                    intent.putExtras(bundle)
-                    sendBroadcast(intent)
-                }*/
+                    CallkitIncomingPlugin.setEventCallListener(object : EventListener() {
+                        override fun send(event: String, body: Map<String, Any>) {
+                            AFJUtils.writeLogs("call event = $event")
+                            if (event == CallIncomingBroadcastReceiver.ACTION_CALL_ACCEPT) {
 
+                                val intent = Intent(
+                                    this@NavigationDrawerActivity,
+                                    VideoCallActivity::class.java
+                                ).apply {
+                                    putExtra(VideoCallActivity.currentUserID, "" + currentUserId)
+                                    putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
+                                    putExtra(VideoCallActivity.messageIntentValue, messageModel)
+                                    flags =
+                                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
-
-                val currentUserId = messageModel.sendTo
-                val targetUserID = messageModel.sendFrom
-                CallkitIncomingPlugin.getInstance().showIncomingNotification(messageModel.callerName.toString(),
-                    false,
-                    this@NavigationDrawerActivity)
-                CallkitIncomingPlugin.setEventCallListener(object: EventListener(){
-                    override fun send(event: String, body: Map<String, Any>) {
-                        AFJUtils.writeLogs("call event = $event")
-                        if(event== CallIncomingBroadcastReceiver.ACTION_CALL_ACCEPT)
-                        {
-
-                            val intent = Intent(this@NavigationDrawerActivity, VideoCallActivity::class.java).apply {
-                                putExtra(VideoCallActivity.currentUserID, "" + currentUserId)
-                                putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
-                                putExtra(VideoCallActivity.messageIntentValue, messageModel)
-                                flags=Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-
+                                }
+                                startActivity(intent)
+                            } else if (event == CallIncomingBroadcastReceiver.ACTION_CALL_DECLINE) {
+                                val answerCall = MessageModel(
+                                    MessageType.CallEnd.value,
+                                    currentUserId,
+                                    targetUserID,
+                                    0
+                                )
+                                signallingClient.sendMessageToWebSocket(answerCall)
                             }
-                            startActivity(intent)
                         }
-                        else if(event == CallIncomingBroadcastReceiver.ACTION_CALL_DECLINE)
-                        {
-                            val answerCall = MessageModel(MessageType.CallEnd.value, currentUserId, targetUserID, 0)
-                            signallingClient.sendMessageToWebSocket(answerCall)
-                        }
-                    }
-                })
-            }
-            else if(messageModel.type.equals(MessageType.CallAlreadyAnswered.value))
-            {
-                CallkitIncomingPlugin.getInstance().endAllCalls()
-            }
-        }
-
-        override fun onConnectionClosed() {
-            AFJUtils.writeLogs("Socket closed function")
-            val userObject = AFJUtils.getObjectPref(this@NavigationDrawerActivity, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
-            if(userObject.id != null) {
-                signallingClient = SignalingClient.
-                getInstance(listener = this,
-                    serverUrl =
-                    Constants.WEBSOCKET_URL +  userObject.id +  "&device=Tracking")
-            } else {
-                signallingClient = SignalingClient.getInstance(listener =this,
-                    serverUrl = Constants.WEBSOCKET_URL + "1" +"&device=Tracking")
+                    })
+                } else if (messageModel.type.equals(MessageType.CallAlreadyAnswered.value)) {
+                    CallkitIncomingPlugin.getInstance().endAllCalls()
+                }
             }
 
-        }
+            override fun onConnectionClosed() {
+                AFJUtils.writeLogs("Socket closed function")
+                val userObject = AFJUtils.getObjectPref(
+                    this@NavigationDrawerActivity,
+                    AFJUtils.KEY_USER_DETAIL,
+                    QRFirebaseUser::class.java
+                )
+                /* if(userObject.id != null) {
+                     signallingClient = SignalingClient.
+                     getInstance(listener = this,
+                         serverUrl =
+                         socketURL)
+                 } else {
+                     signallingClient = SignalingClient.getInstance(listener =this,
+                         serverUrl = socketURL)
+                 }*/
 
-        override fun onWebSocketFailure(errorMessage: String) {
-           AFJUtils.writeLogs("Socket Failure => $errorMessage")
-           showSnackMessage("Socket Connection Issue: $errorMessage",binding.root)
-        }
+            }
 
-    }
+            override fun onWebSocketFailure(errorMessage: String) {
+                AFJUtils.writeLogs("Socket Failure => $errorMessage")
+                showSnackMessage("Socket Connection Issue: $errorMessage", binding.root)
+
+
+            }
+
+        }
 }

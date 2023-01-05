@@ -19,10 +19,7 @@ import com.example.afjtracking.websocket.model.MessageType
 import com.example.afjtracking.websocket.utils.RTCAudioManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import org.webrtc.IceCandidate
-import org.webrtc.MediaStream
-import org.webrtc.SessionDescription
-import org.webrtc.SurfaceViewRenderer
+import org.webrtc.*
 
 
 class WebRtcView(
@@ -57,6 +54,8 @@ class WebRtcView(
     private val local_view: SurfaceViewRenderer = localView as SurfaceViewRenderer
     private val remote_view: SurfaceViewRenderer = remoteView as SurfaceViewRenderer
     private var toneGenerator: ToneGenerator? = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 60)
+
+
 
     private val sdpObserver = object : AppSdpObserver() {
 
@@ -116,6 +115,8 @@ class WebRtcView(
 
                 override fun onIceCandidate(p0: IceCandidate?) {
                     super.onIceCandidate(p0)
+
+
                     rtcClient.addIceCandidate(p0)
 
                     val candidate = hashMapOf(
@@ -132,7 +133,18 @@ class WebRtcView(
                     )
                     signallingClient.sendMessageToWebSocket(iceCandidate)
 
+                    //Sending candidate again for next update its handle at backend
+                    val sendCandidateAgain = MessageModel(
+                        MessageType.SendCandidate.value,
+                        currentUserId,
+                        targetUserId,
+                        candidate
+                    )
+                    signallingClient.sendMessageToWebSocket(sendCandidateAgain)
+                   //*************************************************************
+
                 }
+
 
                 override fun onAddStream(p0: MediaStream?) {
                     super.onAddStream(p0)
@@ -152,16 +164,40 @@ class WebRtcView(
         rtcClient.initSurfaceView(local_view)
         rtcClient.startLocalVideoCapture(local_view)
 
+        handleIncomingCallIntent()
 
+
+    }
+
+    private fun handleIncomingCallIntent()
+    {
         //*******************************Incoming Calling Object Checking *********************************////////////////////////////
 
         if (incomingCallMessageModel != null) {
-            if (incomingCallMessageModel.type.contains(MessageType.OfferReceived.value)) {
+            if (incomingCallMessageModel.type.contains(MessageType.IncomingCall.value)) {
+
+
+                val message = MessageModel(
+                    type = MessageType.JoinCall.value,
+                    sendFrom = currentUserId,
+                    sendTo = targetUserId,
+                    data = true
+                )
+                signallingClient.sendMessageToWebSocket(message)
+
+                context.runOnUiThread {
+                    txtCallingStatus.text = "Connecting..."
+                    containerProgressBar.visibility = View.VISIBLE
+                }
+
+
+              /*
                 val customSessionClass = Gson().fromJson(
                     Gson().toJson(incomingCallMessageModel.data).toString(),
                     CustomSessionClass::class.java
                 )
-                val session = SessionDescription(
+
+               val session = SessionDescription(
                     SessionDescription.Type.OFFER,
                     customSessionClass.sdp
                 )
@@ -177,8 +213,7 @@ class WebRtcView(
                 context.runOnUiThread {
                     containerTopRemoteView.visibility = View.VISIBLE
                     containerProgressBar.visibility = View.VISIBLE
-                }
-
+                }*/
             }
         } else {
             end_call_button.isClickable = true
@@ -193,13 +228,12 @@ class WebRtcView(
                 sendTo = targetUserId,
             )
             signallingClient.sendMessageToWebSocket(message)
-
-
         }
 //****************************************************************////////////////////////////
 
-
     }
+
+
 
     private fun createSignallingClientListener() = object : SocketMessageListener() {
         override fun onWebSocketFailure(errorMessage: String) {
@@ -214,9 +248,7 @@ class WebRtcView(
 
         override fun onNewMessageReceived(messageModel: MessageModel) {
 
-            AFJUtils.writeLogs("Got New Message WebRTCView = $messageModel")
-
-
+          //  AFJUtils.writeLogs("Got Message From Other Device WebrtcView = $messageModel")
 
             try {
                 when (messageModel.type) {
@@ -258,48 +290,78 @@ class WebRtcView(
                     }
                     MessageType.OfferReceived.value -> {
 
+                        val customSessionClass = Gson().fromJson(
+                            Gson().toJson(messageModel.data).toString(),
+                            CustomSessionClass::class.java
+                        )
+
+                        val session = SessionDescription(
+                            SessionDescription.Type.OFFER,
+                            customSessionClass.sdp
+                        )
+
+                        rtcClient.onRemoteSessionReceived(session)
+                        Constants.isIntiatedNow = false
+                        rtcClient.answer(
+                            sdpObserver,
+                            targetUserId,
+                            currentUserId,
+                            messageModel.offer_connection_id.toString()
+                        )
                         context.runOnUiThread {
+                            containerTopRemoteView.visibility = View.GONE
+                            containerProgressBar.visibility = View.GONE
+                        }
+
+
+
+                            /*
+
+                             context.runOnUiThread {
                             val customSessionClass = Gson().fromJson(
                                 Gson().toJson(messageModel.data).toString(),
                                 CustomSessionClass::class.java
                             )
-                            CustomDialog().showIncomingCallDialog(
-                                context,
-                                messageModel.callerName.toString(),
-                                positiveListener = {
-                                    val session = SessionDescription(
-                                        SessionDescription.Type.OFFER,
-                                        customSessionClass.sdp
+                             CustomDialog().showIncomingCallDialog(
+                                 context,
+                                 messageModel.callerName.toString(),
+                                 positiveListener = {
+                                     val session = SessionDescription(
+                                         SessionDescription.Type.OFFER,
+                                         customSessionClass.sdp
 
-                                    )
-                                    rtcClient.onRemoteSessionReceived(session)
-                                    Constants.isIntiatedNow = false
-                                    rtcClient.answer(
-                                        sdpObserver,
-                                        targetUserId,
-                                        currentUserId,
-                                        messageModel.offer_connection_id.toString()
-                                    )
+                                     )
+                                     rtcClient.onRemoteSessionReceived(session)
+                                     Constants.isIntiatedNow = false
+                                     rtcClient.answer(
+                                         sdpObserver,
+                                         targetUserId,
+                                         currentUserId,
+                                         messageModel.offer_connection_id.toString()
+                                     )
 
 
-                                    context.runOnUiThread {
-                                        containerProgressBar.visibility = View.GONE
-                                    }
+                                     context.runOnUiThread {
+                                         containerProgressBar.visibility = View.GONE
+                                     }
 
-                                },
-                                negativeListener = {
-                                    val rejectOffer =
-                                        MessageModel(
-                                            MessageType.RejectCall.value,
-                                            currentUserId,
-                                            targetUserId,
-                                            0
-                                        )
-                                    signallingClient.sendMessageToWebSocket(rejectOffer)
-                                    //listener.onEndCall()
-                                }
-                            )
-                        }
+                                 },
+                                 negativeListener = {
+                                     val rejectOffer =
+                                         MessageModel(
+                                             MessageType.RejectCall.value,
+                                             currentUserId,
+                                             targetUserId,
+                                             0
+                                         )
+                                     signallingClient.sendMessageToWebSocket(rejectOffer)
+                                     //listener.onEndCall()
+                                 }
+                             )
+
+                               }
+                             */
+
 
 
                     }
@@ -331,8 +393,11 @@ class WebRtcView(
                             containerProgressBar.visibility = View.GONE
                         }
 
+
+
                     }
                     MessageType.ICECandidate.value -> {
+
                         try {
                             val gson = Gson()
                             val receivingCandidate = gson.fromJson(
@@ -397,6 +462,8 @@ class WebRtcView(
 
 
     }
+
+
 
 
 }

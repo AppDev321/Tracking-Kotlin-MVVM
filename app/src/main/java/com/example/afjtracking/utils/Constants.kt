@@ -14,8 +14,9 @@ object Constants {
  // const val FAILED_API_TAG = "192.168.18.69:8000"
 
 
-  val WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/video-call?token="
+  val WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/video-call?token=1"
  // val WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
+
 
     var isCallEnded: Boolean = false
     var isIntiatedNow: Boolean = true
