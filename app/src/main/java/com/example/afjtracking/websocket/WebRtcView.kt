@@ -239,7 +239,7 @@ class WebRtcView(
         override fun onWebSocketFailure(errorMessage: String) {
             super.onWebSocketFailure(errorMessage)
             context.runOnUiThread{
-                Toast.makeText(context,"Socket Connection Issue: $errorMessage",Toast.LENGTH_LONG).show()
+                Toast.makeText(context,"Socket Issue: $errorMessage",Toast.LENGTH_LONG).show()
             }
 
         }

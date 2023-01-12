@@ -16,9 +16,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.afjtracking.R
 import com.example.afjtracking.broadcast.SocketBroadcast
-import com.example.afjtracking.callscreen.CallIncomingBroadcastReceiver
-import com.example.afjtracking.callscreen.CallkitIncomingPlugin
-import com.example.afjtracking.callscreen.EventListener
+import com.example.afjtracking.callscreen.*
 import com.example.afjtracking.databinding.ActivityNavigationBinding
 import com.example.afjtracking.model.responses.QRFirebaseUser
 import com.example.afjtracking.utils.AFJUtils
@@ -31,6 +29,7 @@ import com.example.afjtracking.websocket.model.MessageModel
 import com.example.afjtracking.websocket.model.MessageType
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -276,8 +275,9 @@ class NavigationDrawerActivity : BaseActivity() {
                             }
                         }
                     })
-                } else if (messageModel.type.equals(MessageType.CallAlreadyAnswered.value)) {
-                    CallkitIncomingPlugin.getInstance().endAllCalls()
+                }
+                else if (messageModel.type.equals(MessageType.CallAlreadyAnswered.value)) {
+                   CallkitIncomingPlugin.getInstance().onMethodCall("endCall")
                 }
             }
 
@@ -301,7 +301,7 @@ class NavigationDrawerActivity : BaseActivity() {
             }
 
             override fun onWebSocketFailure(errorMessage: String) {
-                AFJUtils.writeLogs("Socket Failure => $errorMessage")
+                AFJUtils.writeLogs("Socket Failure Dashboard => $errorMessage")
                 showSnackMessage("Socket Connection Issue: $errorMessage", binding.root)
 
 

@@ -65,6 +65,7 @@ class CallkitIncomingPlugin {
                  "backgroundColor" to "#0955fa",
                  "backgroundUrl" to "https://i.pravatar.cc/500",
                  "actionColor" to "#4CAF50"
+
              ),
          )
          val data = Data(param)
@@ -103,13 +104,17 @@ class CallkitIncomingPlugin {
 
      fun endAllCalls() {
         val calls = getDataActiveCalls(context)
+         AFJUtils.writeLogs("call status == ${calls}")
+
         calls.forEach {
             context?.sendBroadcast(
                 CallIncomingBroadcastReceiver.getIntentEnded(
                     requireNotNull(context),
                     it.toBundle()
                 )
+
             )
+
         }
         removeAllCalls(context)
     }

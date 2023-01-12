@@ -2,6 +2,7 @@ package com.example.afjtracking.callscreen
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.afjtracking.utils.AFJUtils
 import com.google.gson.reflect.TypeToken
 
 
@@ -50,8 +51,8 @@ fun getActiveCalls(context: Context?): String {
 
 fun getDataActiveCalls(context: Context?): ArrayList<Data> {
     val json = getString(context, "ACTIVE_CALLS", "[]")
-    return Utils.getGsonInstance()
-        .fromJson(json, object : TypeToken<ArrayList<Data>>() {}.type)
+    AFJUtils.writeLogs("calls -= "+json)
+    return Utils.getGsonInstance() .fromJson(json, object : TypeToken<ArrayList<Data>>() {}.type)
 }
 
 fun getDataActiveCallsForFlutter(context: Context?): ArrayList<Map<String, Any?>> {

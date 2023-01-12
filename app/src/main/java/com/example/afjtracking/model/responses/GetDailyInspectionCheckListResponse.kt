@@ -215,12 +215,13 @@ data class Form(
     @SerializedName("comment") var comment: String? = null,
     @SerializedName("created_at") var createdAt: String? = null,
     @SerializedName("updated_at") var updatedAt: String? = null,
-    @SerializedName("value") var value: String? = null,
+    @SerializedName("value") var value: String? = "",
     @SerializedName("options") var options: ArrayList<Options> = arrayListOf(),
+    @SerializedName("upload_limit") var uploadLimit:Int?= 0,
+    var attachmentList: ArrayList<Form>? = arrayListOf(),
 
 
     ) : Parcelable
-
 
 @Parcelize
 data class Options(

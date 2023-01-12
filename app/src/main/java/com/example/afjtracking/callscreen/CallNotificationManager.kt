@@ -92,7 +92,7 @@ class CallNotificationManager(private val context: Context) {
         notificationBuilder = NotificationCompat.Builder(context, "callkit_incoming_channel_id")
         notificationBuilder.setAutoCancel(false)
         notificationBuilder.setChannelId("callkit_incoming_channel_id")
-        notificationBuilder.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+      //  notificationBuilder.setDefaults(NotificationCompat.DEFAULT_SOUND)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL)
             notificationBuilder.priority = NotificationCompat.PRIORITY_MAX

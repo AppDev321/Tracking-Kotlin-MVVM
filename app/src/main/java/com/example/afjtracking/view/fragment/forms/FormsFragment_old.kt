@@ -1,6 +1,5 @@
 package com.example.afjtracking.view.fragment.forms
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -25,16 +24,16 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.CustomWidget
 import com.example.afjtracking.utils.StoreCustomFormData
-
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.FileFormAdapter
 import com.example.afjtracking.view.adapter.ImageFormAdapter
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.forms.viewmodel.FormsViewModel
 
 import com.google.android.material.snackbar.Snackbar
 
 
-class FormsFragment : Fragment() {
+class FormsFragment_old : Fragment() {
 
     private var _binding: FragmentFormsBinding? = null
     private val binding get() = _binding!!
@@ -42,17 +41,24 @@ class FormsFragment : Fragment() {
     var storedData: ArrayList<StoreCustomFormData> = arrayListOf()
 
 
+
     lateinit var formsViewModel: FormsViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
     val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
     var requestType = ""
 
-    var formAttachments: ArrayList<Form> = arrayListOf()
+    var imageForm: ArrayList<Form> = arrayListOf()
     var lastOdoReading = 0
     var odoReadingError = ""
     lateinit var txtErrorMsg: TextView
 
     var vehicle: Vehicle = Vehicle()
+    var uploadPhotoCount = 1
+    var uploadFileCount = 1
+
+
+    var imageUploadLimit = 0
+    var uploadFileLimit = 1
 
 
     var fileForm: ArrayList<Form> = arrayListOf()
@@ -63,9 +69,9 @@ class FormsFragment : Fragment() {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
     }
-
-    companion object {
-        const val FORM_IDENTIFIER_ARGUMENT = "form_identifier"
+    companion object
+    {
+        const val FORM_IDENTIFIER_ARGUMENT ="form_identifier"
     }
 
 
@@ -79,7 +85,7 @@ class FormsFragment : Fragment() {
         _binding = FragmentFormsBinding.inflate(inflater, container, false)
 
 
-        val menuObject = requireArguments().getSerializable(FORM_IDENTIFIER_ARGUMENT) as VehicleMenu
+     val menuObject=  requireArguments().getSerializable(FORM_IDENTIFIER_ARGUMENT) as VehicleMenu
         identifierForm = menuObject.identifier.toString()
 
         val root: View = binding.root
@@ -92,7 +98,6 @@ class FormsFragment : Fragment() {
 
         binding.baseLayout.visibility = View.GONE
 
-/*
 
         if(menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
@@ -123,26 +128,29 @@ class FormsFragment : Fragment() {
             binding.root.addView(binding.baseLayout)
             formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
         }
-*/
 
 
-        binding.root.removeAllViews()
-        binding.root.addView(binding.baseLayout)
-        formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
+
 
 
         formsViewModel.getFormData.observe(viewLifecycleOwner)
         {
+
+            uploadFileLimit = it.fileUploadLimit!!
             requestType = it.requestName!!
-            //  binding.txtInspectionTitle.text = it.formName
+            imageUploadLimit = it.imageUploadLimit!!
+          //  binding.txtInspectionTitle.text = it.formName
             mBaseActivity.supportActionBar?.title = it.formName
         }
 
 
         formsViewModel.getReportForm.observe(viewLifecycleOwner) {
             if (it != null) {
+
                 try {
+
                     showReportFormField(it)
+
                 } catch (e: Exception) {
                     mBaseActivity.writeExceptionLogs(e.toString())
                 }
@@ -192,11 +200,11 @@ class FormsFragment : Fragment() {
         binding.txtErrorMsg.visibility = View.GONE
 
 
-        if (vehicle.odometerReading != null) {
-            val odoReading = vehicle.odometerReading
-            lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
-            odoReadingError = getString(R.string.odo_meter_error, lastOdoReading)
-        }
+
+        val odoReading = vehicle.odometerReading
+        lastOdoReading = if (odoReading!!.isEmpty()) 0 else odoReading.toInt()
+        odoReadingError = getString(R.string.odo_meter_error, lastOdoReading)
+
         for (i in formList.indices) {
             val formData = formList[i]
             try {
@@ -205,7 +213,8 @@ class FormsFragment : Fragment() {
                         .contains("FILE")
                 ) {
                     createViewChecks(formData.type!!.uppercase(), formData, i)
-                } else {
+                }
+                else {
                     val customFormData = CustomWidget().createDynamicFormViews(
                         mBaseActivity,
                         formData,
@@ -234,29 +243,33 @@ class FormsFragment : Fragment() {
 
             var isAllImageUploaded = true
 
-            if (formAttachments.size > 0) {
-                for (image in formAttachments) {
-                    if (image.required == true) {
-                        if (image.value!!.isEmpty()) {
+            if (imageForm.size > 0) {
+                for (i in imageForm.indices) {
+                    if (imageForm[i].required == true) {
+                        if (imageForm[i].value!!.isEmpty()) {
                             Snackbar.make(
                                 binding.root,
-                                "Please enter ${image.title}",
+                                "Please enter ${imageForm[i].title}",
                                 Snackbar.LENGTH_SHORT
                             ).show()
                             isAllImageUploaded = false
                             break
+
                         }
                     }
+
                 }
             }
 
 
-            if (isAllImageUploaded) {
+            if (isAllImageUploaded ) {
                 var isAllRequired = true
                 for (i in storedData.indices) {
                     formList[i].value = storedData[i].formData!!.value
+
                     if (storedData[i].formData?.required == true) {
                         if (formList[i].value!!.isEmpty()) {
+
                             mBaseActivity.showSnackMessage(
                                 "Please enter ${storedData[i].formData!!.title}",
                                 binding.root
@@ -292,7 +305,6 @@ class FormsFragment : Fragment() {
     }
 
 
-    @SuppressLint("MissingInflatedId")
     fun createViewChecks(uiType: String, formData: Form, position: Int) {
         val containerChecks = binding.layoutVdiForm
         when (uiType) {
@@ -303,58 +315,41 @@ class FormsFragment : Fragment() {
                 titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 titleLabel.setTextColor(Color.BLACK)
                 containerChecks.addView(view)
-                formData.attachmentList?.add(
-                    Form(
-                        fieldName = "${formData.fieldName}#${formData.attachmentList?.size}"
-                    )
-                )
 
+
+                imageForm.add(Form(fieldName = "${formData.fieldName}#$uploadPhotoCount"))
+                // createMultipleImageView()
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = GridLayoutManager(mBaseActivity, 3)
                 val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
                 recImageContainer.layoutManager = layoutManager
                 val imageFormAdapter =
-                    ImageFormAdapter(
-                        requestType,
-                        uniqueUploadId,
-                        mBaseActivity,
-                        formData.attachmentList!!,
-                        true
-                    )
+                    ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm, true)
                 imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
                     override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
-                        formData.attachmentList?.set(positon, uploadForm)
-                        formData.value= uploadForm.value
+                        imageForm[positon] = uploadForm
+
                     }
                 })
 
                 recImageContainer.adapter = imageFormAdapter
+
+
                 val textTitleLable = view.findViewById<Button>(R.id.button)
                 textTitleLable.text = "Add Photo"
-
-                val uploadLimit = formData.uploadLimit as Int
-                if (uploadLimit > 1) {
-
-                    textTitleLable.visibility = View.VISIBLE
-                    textTitleLable.setOnClickListener {
-                        val listSize = formData.attachmentList?.size as Int
-                        if (listSize < uploadLimit) {
-                            formData.attachmentList?.add(
-                                Form(
-                                    fieldName = "${formData.fieldName}#${formData.attachmentList?.size}"
-                                )
-                            )
-                            imageFormAdapter.notifyItemInserted(formAttachments.size)
-                            recImageContainer.smoothScrollToPosition(formAttachments.size)
-                        } else {
-                            textTitleLable.visibility = View.GONE
-                        }
-
+                textTitleLable.setTextColor(Color.BLACK)
+                textTitleLable.visibility = View.VISIBLE
+                textTitleLable.setOnClickListener {
+                    if (uploadPhotoCount < imageUploadLimit) {
+                        imageForm.add(Form(fieldName = "image"))
+                        imageFormAdapter.notifyItemInserted(imageForm.size)
+                        recImageContainer.smoothScrollToPosition(imageForm.size)
+                        uploadPhotoCount++
+                    } else {
+                        textTitleLable.visibility = View.GONE
                     }
-                } else {
-                    textTitleLable.visibility = View.GONE
-                }
 
+                }
                 containerChecks.addView(view)
                 containerChecks.addView(addSpaceView())
 
@@ -365,15 +360,8 @@ class FormsFragment : Fragment() {
                 titleLabel.text = formData.title + "${if (formData.required!!) "*" else ""}"
                 titleLabel.setTextColor(Color.BLACK)
                 containerChecks.addView(view)
-
-                formData.attachmentList?.add(
-                    Form(
-                        fieldName = "${formData.fieldName}#${formData.attachmentList?.size}",
-                        title = "Filename"
-                    )
-                )
-
-
+                fileForm.add(Form(fieldName = "file", title = "Filename"))
+                // createMultipleImageView()
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = LinearLayoutManager(mBaseActivity)
                 val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
@@ -383,39 +371,30 @@ class FormsFragment : Fragment() {
                         requestType,
                         uniqueUploadId,
                         mBaseActivity,
-                        formData.attachmentList!!,
+                        fileForm,
                         true
                     )
                 fileFormAdapter.setImageFormListner(object : FileFormAdapter.ImageFormListner {
                     override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
-                        formData.attachmentList!![position] = uploadForm
-                        formData.value= uploadForm.value
+                        fileForm[positon] = uploadForm
+
+
                     }
                 })
 
                 recImageContainer.adapter = fileFormAdapter
 
+
                 val textTitleLable = view.findViewById<Button>(R.id.button)
                 textTitleLable.text = "Add More Files"
-                textTitleLable.setTextColor(Color.WHITE)
-                val uploadLimit = formData.uploadLimit as Int
-                if (uploadLimit > 1) {
-                    textTitleLable.visibility = View.VISIBLE
-                } else {
-                    textTitleLable.visibility = View.GONE
-                }
+                textTitleLable.setTextColor(Color.BLACK)
+                textTitleLable.visibility = View.VISIBLE
                 textTitleLable.setOnClickListener {
-                    val listSize = formData.attachmentList?.size as Int
-                    if (listSize < uploadLimit) {
-                        formData.attachmentList?.add(
-                            Form(
-                                fieldName = "${formData.fieldName}#${formData.attachmentList?.size}",
-                                title = "Filename"
-                            )
-                        )
-
+                    if (uploadFileCount < uploadFileLimit) {
+                        fileForm.add(Form(fieldName = "file", title = "File"))
                         fileFormAdapter.notifyItemInserted(fileForm.size)
                         recImageContainer.smoothScrollToPosition(fileForm.size)
+                        uploadFileCount++
                     } else {
                         textTitleLable.visibility = View.GONE
                     }
@@ -447,6 +426,7 @@ class FormsFragment : Fragment() {
         return tv
 
     }
+
 
 
 }
