@@ -209,7 +209,7 @@ class DailyInspectionForm : Fragment() {
             val imageFormAdapter =
                 ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
             imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
+                override fun onPreviewGenerated(uploadForm: Form, positon: Int,filePath:String) {
 
                     val index = formIndex[positon]
                     imageForm[positon] = uploadForm

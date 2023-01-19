@@ -27,8 +27,33 @@
 
                 android:layout_margin="20dp"
                 android:orientation="horizontal">
-
                 <LinearLayout
+                    android:layout_margin="@dimen/_10sdp"
+                    android:id="@+id/btnReceiptScan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/ic_menu_camera">
+
+                    </ImageView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="Receipt Scan"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_body_normal_size" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_margin="@dimen/_10sdp"
                     android:id="@+id/btnAddCamera"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,7 +82,7 @@
                     android:id="@+id/btnAddReport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_margin="@dimen/_10sdp"
                     android:gravity="center"
                     android:orientation="vertical">
 

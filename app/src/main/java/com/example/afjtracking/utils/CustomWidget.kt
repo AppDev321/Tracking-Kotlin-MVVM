@@ -49,7 +49,6 @@ class CustomWidget {
         context as NavigationDrawerActivity
         val odoReadingError   = context.getString(R.string.odo_meter_error,lastOdoReading)
 
-
         when (formData.type?.uppercase()) {
             AFJUtils.UI_TYPE.TEXT.name -> {
                 var view = context.layoutInflater.inflate(R.layout.layout_text_view, null)
@@ -74,8 +73,8 @@ class CustomWidget {
                 val dataStore = StoreCustomFormData(inputText, formData)
 
 
-                dataStore.editText?.onFocusChangeListener = object : View.OnFocusChangeListener {
-                    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+                dataStore.editText?.onFocusChangeListener =
+                    View.OnFocusChangeListener { _, hasFocus ->
                         if (!hasFocus) {
                             val s = dataStore.formData?.value
 
@@ -100,17 +99,12 @@ class CustomWidget {
                                     }
                                 }
 
-                            }
-                            catch (e:Exception)
-                            {
+                            } catch (e:Exception) {
                                 context.showSnackMessage("Too Large Value",containerChecks)
-
                             }
                             //*****************************
                         }
                     }
-
-                }
 
                 dataStore.editText?.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable) {

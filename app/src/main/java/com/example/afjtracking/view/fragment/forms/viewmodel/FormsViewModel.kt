@@ -1,6 +1,11 @@
 package com.example.afjtracking.view.fragment.forms.viewmodel
 
 import android.content.Context
+import android.graphics.*
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +20,22 @@ import com.example.afjtracking.room.model.TableAPIData
 import com.example.afjtracking.room.repository.ApiDataRepo
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.Constants
+import com.example.afjtracking.utils.TextAnalyser
+import com.google.mlkit.nl.entityextraction.*
+import com.google.mlkit.vision.text.Text
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.File
+import java.io.FileInputStream
+import java.io.OutputStream
+import java.text.DecimalFormat
+import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 
 class FormsViewModel : ViewModel() {
 
@@ -212,5 +232,203 @@ class FormsViewModel : ViewModel() {
 
     }
 
+
+    fun getBitmap(f:File): Bitmap{
+        var bitmap:Bitmap?=null
+        try{
+
+            var options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            bitmap = BitmapFactory.decodeStream(FileInputStream(f),null,options)
+        }catch (e:Exception){
+
+        }
+
+        val grey =  toGrayscale(bitmap as Bitmap)
+        return grey//createContrast(grey ,0.5)
+    }
+
+
+    suspend fun performAction(f:File): Bitmap =
+        withContext(Dispatchers.Default){
+            //do long work
+            val sum:Bitmap = getBitmap(f)
+            return@withContext sum
+        }
+
+
+
+
+    fun getTextFromFuelSlip(file : File,context: Context,callback:(Any)->Unit)
+    {
+
+        GlobalScope.launch(Dispatchers.IO){
+         val myresult = performAction(file)
+          saveBitmap(myresult,file.toUri(),context) //in to same path
+            TextAnalyser({ result ->
+                if (result.text.isEmpty()) {
+                    Toast.makeText(
+                        context,
+                        "No Text Detected",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    //result
+                   // parseFuelStringData(result,context)
+                    processTextBlock(result,callback)
+                }
+
+            }, context, Uri.fromFile(file)).analyseImage()
+
+        }
+
+
+    }
+    fun saveBitmap(target: Bitmap, uri: Uri?,context:Context):Bitmap {
+        try {
+            val output: OutputStream? = context.contentResolver.openOutputStream(uri!!)
+            target.compress(Bitmap.CompressFormat.JPEG, 100, output)
+
+        } catch (e: Exception) {
+            Log.d("onBtnSavePng", e.toString()) // java.io.IOException: Operation not permitted
+        }
+        return target
+    }
+    fun createContrast(src: Bitmap, value: Double): Bitmap {
+        // image size
+        val width = src.width
+        val height = src.height
+        // create output bitmap
+        val bmOut = Bitmap.createBitmap(width, height, src.config)
+        // color information
+        var A: Int
+        var R: Int
+        var G: Int
+        var B: Int
+        var pixel: Int
+        // get contrast value
+        val contrast = Math.pow((100 + value) / 100, 2.0)
+
+        // scan through all pixels
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                // get pixel color
+                pixel = src.getPixel(x, y)
+                A = Color.alpha(pixel)
+                // apply filter contrast for every channel R, G, B
+                R = Color.red(pixel)
+                R = (((R / 255.0 - 0.5) * contrast + 0.5) * 255.0).toInt()
+                if (R < 0) {
+                    R = 0
+                } else if (R > 255) {
+                    R = 255
+                }
+                G = Color.red(pixel)
+                G = (((G / 255.0 - 0.5) * contrast + 0.5) * 255.0).toInt()
+                if (G < 0) {
+                    G = 0
+                } else if (G > 255) {
+                    G = 255
+                }
+                B = Color.red(pixel)
+                B = (((B / 255.0 - 0.5) * contrast + 0.5) * 255.0).toInt()
+                if (B < 0) {
+                    B = 0
+                } else if (B > 255) {
+                    B = 255
+                }
+
+                // set new pixel color to output bitmap
+                bmOut.setPixel(x, y, Color.argb(A, R, G, B))
+            }
+        }
+        return bmOut
+    }
+
+    private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
+        val width: Int
+        val height: Int
+        height = bmpOriginal.height
+        width = bmpOriginal.width
+        val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bmpGrayscale)
+        val paint = Paint()
+        val cm = ColorMatrix()
+        cm.setSaturation(0f)
+        val f = ColorMatrixColorFilter(cm)
+        paint.colorFilter = f
+        c.drawBitmap(bmpOriginal, 0f, 0f, paint)
+        return bmpGrayscale
+    }
+
+
+
+    private fun processTextBlock(result: Text,callback:(Any)->Unit) {
+
+        val callBackData = mutableMapOf<String,String>()
+        val resultText = result.text
+        for (block in result.textBlocks.indices) {
+            var blockText = result.textBlocks[block].text
+
+
+            if(blockText.lowercase().contains("pum") || blockText.lowercase().contains("pun") )
+            {
+                try {
+                    AFJUtils.writeLogs(blockText)
+                if(blockText.contains(":"))
+                {
+                    blockText= blockText.split(":")[1]
+                }
+
+                val data = blockText.split(" ")
+                val re = Regex("[^.0-9 ]")
+                val qty =  re.replace(data[1], "")
+                val liter =  re.replace(data[2], "")
+                val totalPrice =qty.toDouble() * liter.toDouble()
+                val df = DecimalFormat("###########.##")
+                val price = df.format(totalPrice)
+
+                    callBackData["total_liter"] = qty
+                    callBackData["per_liter"] = liter
+                    callBackData["total_price"] = price
+
+
+               if(liter.toDouble() < 9)
+               {
+                   callback(callBackData)
+               }
+
+
+                }
+                catch (e:Exception)
+                {
+                    callback("Please rescan picture there is an issue in reading data")
+                }
+            }
+
+            if(blockText.lowercase().contains("700676") )
+            {
+                AFJUtils.writeLogs("total = $blockText")
+                val ccPattern = "(^\\s*(?:\\S\\s*){18}\$)"
+                val pattern: Pattern = Pattern.compile(ccPattern)
+                val matcher: Matcher =
+                    pattern.matcher(blockText)
+                if (matcher.find()) {
+                    println("Pattern matches")
+
+                    AFJUtils.writeLogs("PATTERN = ${matcher.group(0)}")
+                } else {
+                    println("Does not matches")
+                }
+                val extractCardNumber = blockText.substringAfter("bp")
+                //AFJUtils.writeLogs("subtract = $extractCardNumber")
+                callBackData["card_number"] = blockText
+                callback(callBackData)
+            }
+
+        }
+
+        callback("Please match value after scan receipt")
+    }
 
 }

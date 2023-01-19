@@ -34,7 +34,6 @@
     <application
         android:name=".AFJApplication"
         android:allowBackup="true"
-        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -55,24 +54,23 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AFJTracking.NoActionBar">
-
-            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
         </activity>
+
+
         <activity
-            android:name=".view.activity.SplashActivity"
+            android:name=".view.activity.ScannerActivity"
             android:exported="true"
             android:screenOrientation="portrait">
-            <intent-filter>
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".websocket.VideoCallActivity"

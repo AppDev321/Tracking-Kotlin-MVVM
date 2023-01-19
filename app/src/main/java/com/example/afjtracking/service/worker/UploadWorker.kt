@@ -46,7 +46,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
                         AFJUtils.writeLogs("Upload Service has data size = ${listFilesUpload.size}")
                         for (i in listFilesUpload.indices) {
                             try {
-                                uploadFileDataToServer(listFilesUpload[i])
+                            uploadFileDataToServer(listFilesUpload[i])
                             }
                             catch (e :Exception)
                             {

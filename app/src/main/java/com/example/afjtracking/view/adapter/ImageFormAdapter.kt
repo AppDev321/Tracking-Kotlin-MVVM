@@ -3,6 +3,7 @@ package com.example.afjtracking.view.adapter
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
@@ -23,6 +25,7 @@ import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.model.responses.UploadFileAPiResponse
 import com.example.afjtracking.view.fragment.fileupload.FileUploadDialog
 import com.example.afjtracking.view.fragment.fileupload.UploadDialogListener
+import com.example.afjtracking.view.fragment.forms.viewmodel.FormsViewModel
 import java.io.File
 
 
@@ -74,6 +77,7 @@ class ImageFormAdapter(
                     inpsectionType = requestType, //This will be change after
                     uniqueFileId = uploadId,
                     fieldName = data.fieldName!!,
+                    isRecipetBtnShow =  true ,
                     fileUploadListner = (object : UploadDialogListener {
                         override fun onUploadCompleted(completedData: UploadFileAPiResponse) {
 
@@ -82,7 +86,7 @@ class ImageFormAdapter(
                         override fun onFilePathReceived(path: String) {
 
                             data.value = uploadId
-                            listners.onPreviewGenerated(data, holder.adapterPosition)
+                            listners.onPreviewGenerated(data, holder.adapterPosition,path)
 
                             Glide.with(mContext)
                                 .load(path)
@@ -128,7 +132,7 @@ class ImageFormAdapter(
 
         holder.itemImageView.imgDel.setOnClickListener {
             data.value = ""
-            listners.onPreviewGenerated(data, holder.adapterPosition)
+            listners.onPreviewGenerated(data, holder.adapterPosition,"")
 
             holder.itemImageView.imgAdd.visibility = View.VISIBLE
             holder.itemImageView.imgDel.visibility = View.GONE
@@ -153,7 +157,7 @@ class ImageFormAdapter(
 
 
     interface ImageFormListner {
-        fun onPreviewGenerated(uploadForm: Form, position: Int)
+        fun onPreviewGenerated(uploadForm: Form, position: Int,filePath:String)
 
     }
 

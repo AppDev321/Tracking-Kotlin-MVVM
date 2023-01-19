@@ -7,7 +7,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -15,27 +14,21 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.afjtracking.BuildConfig
 import com.example.afjtracking.R
 import com.example.afjtracking.databinding.LayoutFileUploadBoxBinding
-import com.example.afjtracking.firebase.FirebaseConfig
-import com.example.afjtracking.ota.ForceUpdateChecker
 import com.example.afjtracking.room.model.TableUploadFile
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.BitmapUtils
 import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
-import com.example.afjtracking.view.activity.viewmodel.LoginViewModel
+import com.example.afjtracking.view.activity.ScannerActivity
 import com.example.afjtracking.view.fragment.fileupload.viewmodel.FileUploadModel
 import com.permissionx.guolindev.PermissionX
 import org.apache.commons.io.IOUtils
@@ -46,9 +39,11 @@ import java.io.InputStream
 
 
 class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
+    private var isRecipetBtnShow: Boolean = false
     private lateinit var mBaseActivity: NavigationDrawerActivity
     private var _fileUploadViewModel: FileUploadModel? = null
     private val fileUploadVM get() = _fileUploadViewModel!!
+
     lateinit var progressBar: ProgressBar
     lateinit var containerUpload: LinearLayout
     lateinit var btnCancleReport: ImageView
@@ -63,7 +58,8 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     private val MULTIPLE_PERMISSIONS = 10
     lateinit var btnFileChoose: LinearLayout
     lateinit var btnCameraChoose: LinearLayout
-     var  isImageDialogPick = true
+    lateinit var btnReciept: LinearLayout
+    var isImageDialogPick = true
 
 
     var permissions =
@@ -83,7 +79,8 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             inpsectionType: String,
             fieldName: String,
             isDocumentPickShow: Boolean,
-            isImageDialog :Boolean = true
+            isRecipetBtnShow: Boolean = false,
+            isImageDialog: Boolean = true
 
         ) =
             FileUploadDialog().apply {
@@ -93,6 +90,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 this.fieldName = fieldName
                 this.isDocumentPickShow = isDocumentPickShow
                 this.isImageDialogPick = isImageDialogPick
+                this.isRecipetBtnShow = isRecipetBtnShow
             }
     }
 
@@ -131,7 +129,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             }
         }
 
-
+        btnReciept.setOnClickListener {
+            if (checkPermissions()) {
+                documentScannerActivity()
+            }
+        }
         btnCancleReport.setOnClickListener {
 
             if (fileUploadVM.uploadJob.isExecuted) {
@@ -191,6 +193,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             containerUpload = mView.findViewById(R.id.container_upload)
             txtFileName = mView.findViewById(R.id.txtFilename)
             progressBar = mView.findViewById(R.id.progressBar)
+
+            btnReciept = mView.findViewById(R.id.btnReceiptScan)
+
+
+
             progressBar.max = 100
             progressBar.progress = 0
 
@@ -208,33 +215,62 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 btnFileChoose.visibility = View.GONE
             }
 
+
+            if (isRecipetBtnShow) {
+                btnReciept.visibility = View.VISIBLE
+                btnCameraChoose.visibility = View.GONE
+            } else {
+                btnReciept.visibility = View.GONE
+                btnCameraChoose.visibility = View.VISIBLE
+            }
+
+
         } catch (ex: Exception) {
             mBaseActivity.toast(ex.toString())
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun checkPermissions(): Boolean {
-      var  isAllowed  = true
+        var isAllowed = true
         PermissionX.init(this)
             .permissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-                ).request{ allGranted, _ ,_ ->
-                if (allGranted){
-                    isAllowed=  true
+            ).request { allGranted, _, _ ->
+                if (allGranted) {
+                    isAllowed = true
                 } else {
                     isAllowed = false
-                    CustomDialog().showSimpleAlertMsg(mBaseActivity,"Alert",
+                    CustomDialog().showSimpleAlertMsg(mBaseActivity, "Alert",
                         "Please allow permission for working",
                         textNegative = "Close",
                         negativeListener = {
-                          mBaseActivity.onBackPressed()
+                            mBaseActivity.onBackPressed()
 
                         })
                 }
             }
         return isAllowed
+    }
+
+    private fun documentScannerActivity() {
+        val i = Intent(mBaseActivity, ScannerActivity::class.java)
+        resultLauncher.launch(i)
+    }
+
+    private var resultLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+        if (result.resultCode == ScannerActivity.RESULT_CODE) {
+            try {
+                val data: Intent? = result.data
+                val path = data?.getStringExtra(ScannerActivity.FILE_PATH_EXTRA) as String
+                currentPhotoPath = path
+                sendFileToServer(currentPhotoPath)
+            } catch (ex: Exception) {
+                mBaseActivity.toast(ex.toString())
+            }
+        }
     }
 
     private fun showFileChooser() {
@@ -247,13 +283,12 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
     fun openDocumentPicker() {
         val intent =
-            if(isImageDialogPick)
-            {
+            if (isImageDialogPick) {
                 AFJUtils.getCustomFileChooserIntent(
-                AFJUtils.IMAGE  )
+                    AFJUtils.IMAGE
+                )
 
-            }else
-            {
+            } else {
                 AFJUtils.getCustomFileChooserIntent(
                     AFJUtils.IMAGE,
                     AFJUtils.DOC,
@@ -263,8 +298,6 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                     AFJUtils.TEXT
                 )
             }
-
-
 
 
         val i = Intent.createChooser(intent, "File")
@@ -332,7 +365,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         fileName: String,
         inputStream: InputStream,
         isImageUpload: Boolean,
-        originalFile :File?
+        originalFile: File?
     ) {
         try {
             val file = File(requireContext().cacheDir, fileName)
@@ -347,11 +380,9 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
             if (!isImageUpload) {
                 filetype = "application"
                 listnerUploadDialog.onFilePathReceived(file.path)
-            }
-            else
-            {
+            } else {
                 listnerUploadDialog.onFilePathReceived(file.path)
-              //  listnerUploadDialog.onFilePathReceived(originalFile!!.path)
+                //  listnerUploadDialog.onFilePathReceived(originalFile!!.path)
             }
 
 
@@ -372,12 +403,13 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
             )
             uploadTableData.apiRequestTime = AFJUtils.getCurrentDateTime()
-            fileUploadVM.insertDataToTable(mBaseActivity, uploadTableData)
+
+           // fileUploadVM.insertDataToTable(mBaseActivity, uploadTableData)
 
 
             fileUploadVM.fileUploadedSuccessfull.postValue(true)
             //Now call Background
-           // AFJUtils.setPeriodicWorkRequest(mBaseActivity)
+            // AFJUtils.setPeriodicWorkRequest(mBaseActivity)
 
 
         } catch (ex: java.lang.Exception) {
@@ -386,7 +418,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         }
     }
 
-//For android oreo device
+    //For android oreo device
     private var openCameraActivityResultLauncher =
         registerForActivityResult(StartActivityForResult())
         { result ->
@@ -399,18 +431,19 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 }
             }
         }
-//For below oreio devices
+
+    //For below oreio devices
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         try {
             when (val result = tryHandleOpenDocumentResult(requestCode, resultCode, data)) {
                 OpenFileResult.DifferentResult, OpenFileResult.OpenFileWasCancelled -> {
-                   // mBaseActivity.toast("Different type file / File was cancelled")
+                    // mBaseActivity.toast("Different type file / File was cancelled")
                 }
                 OpenFileResult.ErrorOpeningFile -> mBaseActivity.toast("error opening file")
                 is OpenFileResult.FileWasOpened -> {
-                    fileIsOpened(result.fileName, result.content, false,null)
+                    fileIsOpened(result.fileName, result.content, false, null)
                 }
             }
             if (requestCode == 101) {
@@ -421,11 +454,10 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         }
     }
 
-    fun sendFileToServer(currentPhotoPath: String)
-    {
+    fun sendFileToServer(currentPhotoPath: String) {
         var uri = Uri.parse(currentPhotoPath)
-         val fileName =  getFileName(uri) //mBaseActivity.contentResolver.queryFileName(contentUri)
-        val file =  BitmapUtils.getCompressedImageFile(File(uri.path),mBaseActivity)
+        val fileName = getFileName(uri) //mBaseActivity.contentResolver.queryFileName(contentUri)
+        val file = BitmapUtils.getCompressedImageFile(File(uri.path), mBaseActivity)
         uri = Uri.fromFile(file)
         //val   fileName = getFileName(uri)
         val photoUri = Uri.parse(currentPhotoPath)
@@ -476,13 +508,13 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         val imageFileName = "JPEG"
         val storageDir: File =
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            requireActivity().filesDir
-        } else {
-            File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                "Camera"
-            )
-        }
+                requireActivity().filesDir
+            } else {
+                File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                    "Camera"
+                )
+            }
 
         val file = File.createTempFile(imageFileName, ".jpg", storageDir)
 

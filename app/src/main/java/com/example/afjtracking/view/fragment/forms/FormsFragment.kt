@@ -22,16 +22,17 @@ import com.example.afjtracking.model.responses.Form
 import com.example.afjtracking.model.responses.Vehicle
 import com.example.afjtracking.model.responses.VehicleMenu
 import com.example.afjtracking.utils.AFJUtils
-import com.example.afjtracking.utils.Constants
 import com.example.afjtracking.utils.CustomWidget
 import com.example.afjtracking.utils.StoreCustomFormData
 
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.adapter.FileFormAdapter
 import com.example.afjtracking.view.adapter.ImageFormAdapter
+import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
 import com.example.afjtracking.view.fragment.forms.viewmodel.FormsViewModel
 
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
 
 
 class FormsFragment : Fragment() {
@@ -44,7 +45,8 @@ class FormsFragment : Fragment() {
 
     lateinit var formsViewModel: FormsViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
-    val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
+   // val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
+   val uniqueUploadId =  "" + System.currentTimeMillis()
     var requestType = ""
 
     var formAttachments: ArrayList<Form> = arrayListOf()
@@ -53,7 +55,7 @@ class FormsFragment : Fragment() {
     lateinit var txtErrorMsg: TextView
 
     var vehicle: Vehicle = Vehicle()
-
+var formName = ""
 
     var fileForm: ArrayList<Form> = arrayListOf()
 
@@ -92,7 +94,6 @@ class FormsFragment : Fragment() {
 
         binding.baseLayout.visibility = View.GONE
 
-/*
 
         if(menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
@@ -123,12 +124,11 @@ class FormsFragment : Fragment() {
             binding.root.addView(binding.baseLayout)
             formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
         }
-*/
 
 
         binding.root.removeAllViews()
         binding.root.addView(binding.baseLayout)
-        formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
+   //     formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
 
 
         formsViewModel.getFormData.observe(viewLifecycleOwner)
@@ -136,6 +136,7 @@ class FormsFragment : Fragment() {
             requestType = it.requestName!!
             //  binding.txtInspectionTitle.text = it.formName
             mBaseActivity.supportActionBar?.title = it.formName
+            formName= it.formName!!
         }
 
 
@@ -198,6 +199,7 @@ class FormsFragment : Fragment() {
             odoReadingError = getString(R.string.odo_meter_error, lastOdoReading)
         }
         for (i in formList.indices) {
+
             val formData = formList[i]
             try {
                 //
@@ -231,9 +233,7 @@ class FormsFragment : Fragment() {
             mBaseActivity.onBackPressed()
         }
         binding.btnSubmit.setOnClickListener {
-
             var isAllImageUploaded = true
-
             if (formAttachments.size > 0) {
                 for (image in formAttachments) {
                     if (image.required == true) {
@@ -249,8 +249,6 @@ class FormsFragment : Fragment() {
                     }
                 }
             }
-
-
             if (isAllImageUploaded) {
                 var isAllRequired = true
                 for (i in storedData.indices) {
@@ -265,10 +263,8 @@ class FormsFragment : Fragment() {
                             break
                         }
                     }
-
                 }
                 if (isAllRequired) {
-
                     val request = SaveFormRequest()
                     request.uploadID = uniqueUploadId
                     request.requestName = identifierForm
@@ -276,12 +272,9 @@ class FormsFragment : Fragment() {
                     request.formData = formList
                     request.deviceDetail = AFJUtils.getDeviceDetail()
                     formsViewModel.saveReportForm(request, mBaseActivity)
-
                 }
             }
-
         }
-
     }
 
     override fun onDestroyView() {
@@ -312,7 +305,7 @@ class FormsFragment : Fragment() {
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = GridLayoutManager(mBaseActivity, 3)
                 val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
-                recImageContainer.layoutManager = layoutManager
+                  recImageContainer.layoutManager = layoutManager
                 val imageFormAdapter =
                     ImageFormAdapter(
                         requestType,
@@ -322,9 +315,19 @@ class FormsFragment : Fragment() {
                         true
                     )
                 imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                    override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
+                    override fun onPreviewGenerated(uploadForm: Form, positon: Int,filePath:String) {
                         formData.attachmentList?.set(positon, uploadForm)
                         formData.value= uploadForm.value
+
+                        if(formName.equals("Fuel Form")) {
+                            if (filePath.isNotEmpty() && formData.fieldName.toString().lowercase()
+                                    .contains("receipt")
+                            ) {
+                                //****************Than make data auto filled
+                                checkIfItsFuelFormReciept(filePath)
+                                //********************************************
+                            }
+                        }
                     }
                 })
 
@@ -388,7 +391,7 @@ class FormsFragment : Fragment() {
                     )
                 fileFormAdapter.setImageFormListner(object : FileFormAdapter.ImageFormListner {
                     override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
-                        formData.attachmentList!![position] = uploadForm
+                        formData.attachmentList?.set(positon, uploadForm)
                         formData.value= uploadForm.value
                     }
                 })
@@ -432,6 +435,46 @@ class FormsFragment : Fragment() {
         }
 
 
+    }
+
+    private fun checkIfItsFuelFormReciept(filePath: String) {
+        formsViewModel.getTextFromFuelSlip(File(filePath),mBaseActivity, callback = {
+            if(it is String)
+            {
+              mBaseActivity.showSnackMessage(it, binding.root)
+            }
+            else {
+
+                val dataMap = it as Map<String, String>
+                AFJUtils.writeLogs(dataMap.toString())
+
+                val liter = dataMap["per_liter"] ?:""
+                val qty = dataMap["total_liter"] ?:""
+                val totalPrice =dataMap["total_price"] ?:""
+                val cardNumber = dataMap["card_number"] ?:""
+
+                if (liter.isNotEmpty() && qty.isNotEmpty() && totalPrice.isNotEmpty()) {
+                    for (data in storedData) {
+                        val fieldName = data.formData!!.title!!.lowercase()
+                        if (fieldName.contains("price per litre")) {
+                            data.formData!!.value = liter
+                            data.editText?.setText(data.formData!!.value.toString())
+                        } else if (fieldName.contains("fuel quan")) {
+                            data.formData!!.value = qty
+                            data.editText?.setText(data.formData!!.value.toString())
+                        } else if (fieldName.contains("total fuel")) {
+                            data.formData!!.value = totalPrice
+                            data.editText?.setText(data.formData!!.value.toString())
+                        }
+                        else if (fieldName.contains("card")) {
+                            data.formData!!.value = cardNumber
+                            data.editText?.setText(data.formData!!.value.toString())
+                        }
+                        else{}
+                    }
+                }
+            }
+        })
     }
 
 

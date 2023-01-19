@@ -87,6 +87,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.1.0'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
+/*    implementation 'androidx.camera:camera-view:1.2.0'
+    implementation 'androidx.camera:camera-lifecycle:1.2.0'*/
+
+    def camerax_version = "1.0.1"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:1.0.0-alpha27"
 
 
     testImplementation 'junit:junit:4.13.2'
@@ -133,4 +140,12 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+
+
+    //ML OCR
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
+    implementation 'com.google.mlkit:entity-extraction:16.0.0-beta4'
+
+
 }
