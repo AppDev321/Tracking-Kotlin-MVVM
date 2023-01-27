@@ -155,14 +155,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_loc"
 
-                android:visibility="@{(routSheet.visibility==false &amp; routSheet.drop==false &amp; routSheet.visibility==false) ?  View.VISIBLE  : View.GONE}">
+                android:visibility="@{(routSheet.visibility==false &amp; routSheet.drop==false &amp; routSheet.visibility==false &amp; routSheet.label != ``) ?  View.VISIBLE  : View.GONE}">
 
                 <TextView
-                    android:padding="@dimen/_5sdp"
-                    android:background="@color/green"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/light_green"
+                    android:textColor="@color/green"
                     android:text="@{routSheet.label}"
                     />
 

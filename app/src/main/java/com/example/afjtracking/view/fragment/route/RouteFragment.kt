@@ -116,6 +116,7 @@ class RouteFragment : Fragment() {
                 try {
                     showRouteList(it)
                 } catch (e: Exception) {
+                  AFJUtils.writeLogs("route sheet exception")
                     mBaseActivity.writeExceptionLogs(e.toString())
                 }
                 routeViewModel._routeList.value = null
@@ -126,13 +127,14 @@ class RouteFragment : Fragment() {
         // Add observer for score
         routeViewModel.errorsMsg.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
                 binding.recWeeklyInspectionList.visibility = View.GONE
                 txtErrorMsg.visibility = View.VISIBLE
                 txtErrorMsg.text = it.toString()
                 routeViewModel.errorsMsg.value = null
+
+                AFJUtils.writeLogs("route error  $it")
             }
         })
 
