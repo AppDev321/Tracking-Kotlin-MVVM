@@ -16,6 +16,7 @@ import com.example.afjtracking.view.adapter.MenuItemListner
 import com.example.afjtracking.view.adapter.ViewPagerAdapter
 import com.example.afjtracking.view.fragment.attendance.AttendanceFragment
 import com.example.afjtracking.view.fragment.forms.FormsFragment
+import com.example.afjtracking.view.fragment.route.RouteFragment
 
 
 class MainMenuFragment : Fragment(), MenuItemListner {
@@ -68,6 +69,13 @@ class MainMenuFragment : Fragment(), MenuItemListner {
         mBaseActivity.toolbarVisibility(true)
 
         when (item.identifier) {
+            "vehicle_device_info" -> {
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_device_info
+                )
+            }
+
             "vehicle_navigation" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
@@ -93,22 +101,6 @@ class MainMenuFragment : Fragment(), MenuItemListner {
                     argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "ATTENDANCE")
                 )
             }
-            "vehicle_fuel_form",
-            "vehicle_shift_job_form",
-            "vehicle_report_form" -> {
-                mBaseActivity.moveFragmentToNextFragment(
-                    binding.root,
-                    R.id.nav_report_form,
-                    argument = bundleOf(FormsFragment.FORM_IDENTIFIER_ARGUMENT to item)
-                )
-            }
-            "vehicle_device_info" -> {
-                mBaseActivity.moveFragmentToNextFragment(
-                    binding.root,
-                    R.id.nav_device_info
-                )
-            }
-
             "vehicle_change_driver" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
@@ -121,6 +113,28 @@ class MainMenuFragment : Fragment(), MenuItemListner {
                     binding.root,
                     R.id.nav_attendance_form,
                     argument = bundleOf(AttendanceFragment.ARG_ACTION_TYPE to "DRIVER_EXIT")
+                )
+            }
+
+
+            "vehicle_fuel_form",
+            "vehicle_shift_job_form",
+            "vehicle_report_form" -> {
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_report_form,
+                    argument = bundleOf(FormsFragment.FORM_IDENTIFIER_ARGUMENT to item)
+                )
+            }
+
+
+
+            "vehicle_route_list" ->
+            {
+                mBaseActivity.moveFragmentToNextFragment(
+                    binding.root,
+                    R.id.nav_route_list,
+                    argument = bundleOf(RouteFragment.FORM_IDENTIFIER_ARGUMENT to item)
                 )
             }
         }

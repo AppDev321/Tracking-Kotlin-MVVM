@@ -182,7 +182,7 @@ class TrackingFragment : Fragment() {
 
 
         //Save vehicle object
-        val vehicleDetail = vehicleLoginResponse.data!!.vehicle!!
+        val vehicleDetail = vehicleLoginResponse.data?.vehicle as VehicleDetail
         binding.txtVRN.text = vehicleDetail.vrn ?: Constants.NULL_DEFAULT_VALUE
         binding.txtOdoMeter.text = vehicleDetail.odometerReading ?: Constants.NULL_DEFAULT_VALUE
         binding.txtType.text = vehicleDetail.type ?: Constants.NULL_DEFAULT_VALUE
@@ -208,6 +208,7 @@ class TrackingFragment : Fragment() {
             ),
             context
         )
+
 
         binding.txtNotificationCount.visibility = View.GONE
         trackingViewModel.getNotificationCount(mBaseActivity)

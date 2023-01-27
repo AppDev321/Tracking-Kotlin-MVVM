@@ -1,7 +1,6 @@
 package com.example.afjtracking.view.fragment.attendance
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import com.example.afjtracking.databinding.FragmentAttandenceScanBinding
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
 import com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel
-import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +53,7 @@ class AttendanceFragment : Fragment() {
         val root: View = binding.root
 
 
-        qrCodeType= arguments?.getString(AttendanceFragment.ARG_ACTION_TYPE)!!
+        qrCodeType= arguments?.getString(ARG_ACTION_TYPE)!!
 
 
 

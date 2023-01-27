@@ -117,4 +117,11 @@
         tools:layout="@layout/fragment_device_form" />
 
 
+    <fragment
+        android:id="@+id/nav_route_list"
+        android:name="com.example.afjtracking.view.fragment.route.RouteFragment"
+        android:label="@string/menu_weekly_inspection_form"
+        tools:layout="@layout/fragment_weekly_inspection_list" />
+
+
 </navigation>

@@ -26,7 +26,7 @@
     <color name="light_grey">#C8C8C8</color>
     <color name="amber">#FFC107</color>
     <color name="green">#4CAF50</color>
-
+    <color name="light_green">#6F9570</color>
     <color name="bgBackSideColor">#B7ACD5</color>
     <color name="bgTitleLeft">#594691</color>
     <color name="bgTitleRight">#ffffff</color>

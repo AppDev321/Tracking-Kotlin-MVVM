@@ -25,7 +25,6 @@ class AFJApplication : MultiDexApplication() {
 
 
 
-
     /*    CrashHandler.instance?.init(
             this,
             BuildConfig.DEBUG,

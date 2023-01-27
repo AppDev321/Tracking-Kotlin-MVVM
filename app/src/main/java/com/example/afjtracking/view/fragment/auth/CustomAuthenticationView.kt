@@ -202,36 +202,32 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             binding.layoutScan.txtTimeExpire.text = ""
             binding.containerLoginView.visibility = View.GONE
             binding.containerQrScan.visibility = View.VISIBLE
-            authViewModel.getQRCode(mBaseActivity, qrType)
+            authViewModel.getQRCode(mBaseActivity, qrType, codeFetched ={
+
+                if (it != null) {
+                    if (mBaseActivity.timer == null) {
+                        if (isRequestInitiated) {
+                            fetchAndGenerateQRCode(it.qrCode, it.timeOut)
+                            isRequestInitiated = false
+                        }
+                    }
+
+                }
+            })
         }
 
 
-        authViewModel.errorsMsg.observe(this) { it ->
+        authViewModel.errorsMsg.observe(this,Observer { it ->
             if (it != null) {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
                 authViewModel.errorsMsg.value = null
             }
 
-        }
+        })
 
 
-            authViewModel.attendanceReponse.observe(this, Observer {
-                    if (it != null) {
-                        if (mBaseActivity.timer == null) {
 
-                            if(isRequestInitiated) {
-
-                                fetchAndGenerateQRCode(it.qrCode, it.timeOut)
-                                isRequestInitiated = false
-                            }
-
-                        }
-                        authViewModel._attendanceResponse.value = null
-
-                    }
-
-            })
 
     }
 
@@ -241,7 +237,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                     "Please wait QR Code is generating"
                 binding.layoutScan.idIVQrcode.setImageBitmap(null)
             }, background = {
-                AFJUtils.writeLogs("QR code bakcground")
+                AFJUtils.writeLogs("QR code background")
                 authViewModel.getQrCodeBitmap(
                     qrCode,
                     mBaseActivity,
@@ -314,7 +310,11 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             }
         })*/
         //   alert.show()
-        val userObject =
+
+
+
+        //Comment the code when need of
+      /*  val userObject =
             AFJUtils.getObjectPref(context, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
         if (userObject.full_name != null) {
             try {
@@ -329,7 +329,11 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             binding.containerLoginView.visibility = View.GONE
             binding.containerQrScan.visibility = View.VISIBLE
             attendanceViewModel()
-        }
+        }*/
+
+        binding.containerLoginView.visibility = View.GONE
+        binding.containerQrScan.visibility = View.VISIBLE
+        attendanceViewModel()
     }
 
 
@@ -375,7 +379,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
         fun instance(
             context: Context,
-            authListeners: CustomAuthenticationView.AuthListeners
+            authListeners: AuthListeners
         ): CustomAuthenticationView? {
             if (INSTANCE != null) {
                 //                return INSTANCE

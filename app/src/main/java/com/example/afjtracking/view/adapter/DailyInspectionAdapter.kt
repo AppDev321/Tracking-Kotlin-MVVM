@@ -21,10 +21,10 @@ class DailyInspectionAdapter(
 ) : PaginatedAdapter<Inspections, DailyInspectionAdapter.WeeklyInspectionItem>() {
 
 
-    lateinit var listners: WeeklyInspectionAdapter.ClickWeeklyInspectionListener
+    lateinit var listners: ClickListenerInterface
 
 
-    fun setListenerClick(listener: WeeklyInspectionAdapter.ClickWeeklyInspectionListener) {
+    fun setListenerClick(listener: ClickListenerInterface) {
         this.listners = listener
     }
 
@@ -32,7 +32,7 @@ class DailyInspectionAdapter(
     override fun createCustomViewHolder(parent: ViewGroup, viewType: Int): WeeklyInspectionItem {
         val itemView = DataBindingUtil.inflate(
             LayoutInflater.from(mContext),
-            com.example.afjtracking.R.layout.layout_weekly_inspection_item,
+            R.layout.layout_weekly_inspection_item,
             parent,
             false
         ) as LayoutWeeklyInspectionItemBinding

@@ -1,6 +1,7 @@
 package com.example.afjtracking.model.requests
 
 import android.util.Patterns
+import com.example.afjtracking.model.responses.Sheets
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -10,7 +11,8 @@ class LoginRequest(
     @field:Expose @field:SerializedName("registration_number") var vrnNumber: String?=null,
     @field:Expose @field:SerializedName("device_detail") var deviceDetail:DeviceDetail?= DeviceDetail(),
     @field:Expose @field:SerializedName("device_id") var deviceID:String?= null,
-    @field:Expose @field:SerializedName("notification_id") var notificatonID:Int?= null
+    @field:Expose @field:SerializedName("notification_id") var notificatonID:Int?= null,
+    @field:Expose @field:SerializedName("sheet") var routeSheet:Sheets?=null
 ) {
 
     val isEmailValid: Boolean

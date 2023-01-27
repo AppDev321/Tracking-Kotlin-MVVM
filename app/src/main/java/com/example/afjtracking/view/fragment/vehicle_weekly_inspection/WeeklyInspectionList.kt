@@ -17,6 +17,7 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.utils.PaginatedAdapter.OnPaginationListener
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.adapter.ClickListenerInterface
 import com.example.afjtracking.view.adapter.WeeklyInspectionAdapter
 import com.example.afjtracking.view.fragment.vehicle_daily_inspection.InspectionReviewFragment
 import com.example.afjtracking.view.fragment.vehicle_weekly_inspection.viewmodel.WeeklyInspectionViewModel
@@ -65,7 +66,7 @@ class WeeklyInspectionList : Fragment() {
         val adapter = WeeklyInspectionAdapter(mBaseActivity)
         adapter.setPageSize(10)
         adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
-        adapter.setListnerClick(object :WeeklyInspectionAdapter.ClickWeeklyInspectionListener{
+        adapter.setListnerClick(object : ClickListenerInterface {
             override fun <T> handleContinueButtonClick(data: T) {
                 val dataInspection = data as WeeklyInspectionData
                 val bundle =   bundleOf(InspectionReviewFragment.argumentParams to dataInspection.id)
@@ -139,6 +140,9 @@ class WeeklyInspectionList : Fragment() {
         weeklyInspectionViewModel.errorsMsg.observe(mBaseActivity)
         {
             mBaseActivity.toast(it)
+            binding.txtNoData.visibility = View.VISIBLE
+            binding.recWeeklyInspectionList.visibility = View.GONE
+
         }
         binding.btnAddInspection.setOnClickListener {
             mBaseActivity.moveFragmentToNextFragment(

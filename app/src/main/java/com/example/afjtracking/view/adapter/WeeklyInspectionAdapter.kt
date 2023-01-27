@@ -19,17 +19,17 @@ class WeeklyInspectionAdapter(
 ) : PaginatedAdapter<WeeklyInspectionData, WeeklyInspectionAdapter.WeeklyInspectionItem>()  {
 
 
-    lateinit var listners: ClickWeeklyInspectionListener
+    lateinit var listners: ClickListenerInterface
 
 
 
-    fun setListnerClick(listener: ClickWeeklyInspectionListener) {
+    fun setListnerClick(listener: ClickListenerInterface) {
         this.listners = listener
     }
 
     override fun createCustomViewHolder(parent: ViewGroup, viewType: Int): WeeklyInspectionItem {
         val itemView = DataBindingUtil.inflate(
-            LayoutInflater.from(mContext), com.example.afjtracking.R.layout.layout_weekly_inspection_item,
+            LayoutInflater.from(mContext), R.layout.layout_weekly_inspection_item,
             parent, false
         ) as LayoutWeeklyInspectionItemBinding
         return WeeklyInspectionItem(itemView)
@@ -57,7 +57,7 @@ class WeeklyInspectionAdapter(
         {
             holder.itemWeeklyInspection.btnContinueInspection.text = "Completed"
             holder.itemWeeklyInspection.btnContinueInspection.backgroundTintList =
-                AppCompatResources.getColorStateList(mContext, com.example.afjtracking.R.color.green)
+                AppCompatResources.getColorStateList(mContext, R.color.green)
         }
 
 
@@ -69,9 +69,7 @@ class WeeklyInspectionAdapter(
         RecyclerView.ViewHolder(itemWeeklyInspection.root)
 
 
-    interface ClickWeeklyInspectionListener {
-        fun<T> handleContinueButtonClick(data: T)
-    }
+
 
 
 

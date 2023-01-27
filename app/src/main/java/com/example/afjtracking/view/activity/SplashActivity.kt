@@ -1,13 +1,11 @@
 package com.example.afjtracking.view.activity
 
 import android.Manifest
-import android.Manifest.permission.READ_PHONE_STATE
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -15,18 +13,11 @@ import com.example.afjtracking.R
 import com.example.afjtracking.databinding.ActivitySplashBinding
 import com.example.afjtracking.firebase.FirebaseConfig
 import com.example.afjtracking.model.requests.LoginRequest
-import com.example.afjtracking.model.responses.VehicleDetail
 import com.example.afjtracking.ota.ForceUpdateChecker
 import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.CustomDialog
 import com.example.afjtracking.view.activity.viewmodel.LoginViewModel
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.TextRecognizer
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.permissionx.guolindev.PermissionX
-import java.util.*
 
 
 class SplashActivity : BaseActivity(), ForceUpdateChecker.OnUpdateNeededListener {

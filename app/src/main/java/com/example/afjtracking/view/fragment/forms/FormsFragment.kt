@@ -126,9 +126,7 @@ var formName = ""
         }
 
 
-        binding.root.removeAllViews()
-        binding.root.addView(binding.baseLayout)
-   //     formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
+
 
 
         formsViewModel.getFormData.observe(viewLifecycleOwner)
@@ -164,9 +162,9 @@ var formName = ""
 
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
-                // binding.txtErrorMsg.visibility = View.VISIBLE
+                binding.layoutVdiForm.visibility = View.GONE
+                binding.txtErrorMsg.visibility = View.VISIBLE
                 binding.txtErrorMsg.text = it.toString()
-                // binding.layoutCreateInspection.visibility = View.GONE
                 formsViewModel.errorsMsg.value = null
             }
         })

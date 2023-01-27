@@ -87,4 +87,8 @@ interface ApiInterface {
     fun getContactList(): Call<GetContactListResponse?>
 
 
+    @POST("vehicles/routes/list")
+    fun fetchRouteList(@Body body: LoginRequest): Call<GetRouteListResponse?>
+    @POST("vehicles/routes/update-status")
+    fun updateRouteStatus(@Body body: LoginRequest): Call<GetRouteListResponse?>
 }

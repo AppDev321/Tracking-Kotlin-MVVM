@@ -86,8 +86,7 @@
                         android:src="@drawable/ic_customer_support"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/btnNotification"
-                        app:layout_constraintTop_toTopOf="@+id/btnNotification"
-                />
+                        app:layout_constraintTop_toTopOf="@+id/btnNotification" />
 
 
                     <FrameLayout

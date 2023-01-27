@@ -20,6 +20,7 @@ import com.example.afjtracking.utils.AFJUtils
 import com.example.afjtracking.utils.AFJUtils.hideKeyboard
 import com.example.afjtracking.utils.PaginatedAdapter
 import com.example.afjtracking.view.activity.NavigationDrawerActivity
+import com.example.afjtracking.view.adapter.ClickListenerInterface
 import com.example.afjtracking.view.adapter.DailyInspectionAdapter
 import com.example.afjtracking.view.adapter.WeeklyInspectionAdapter
 import com.example.afjtracking.view.fragment.auth.CustomAuthenticationView
@@ -64,7 +65,7 @@ class DailyInspectionList : Fragment() {
         val adapter = DailyInspectionAdapter(mBaseActivity)
         adapter.setPageSize(10)
         adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
-        adapter.setListenerClick(object : WeeklyInspectionAdapter.ClickWeeklyInspectionListener{
+        adapter.setListenerClick(object : ClickListenerInterface {
 
 
             override fun <T> handleContinueButtonClick(data: T) {
@@ -151,6 +152,8 @@ class DailyInspectionList : Fragment() {
         dailyInspectionViewModel.errorsMsg.observe(mBaseActivity) {
             if (it != null) {
                 mBaseActivity.toast(it)
+                binding.txtNoData.visibility = View.VISIBLE
+                binding.recWeeklyInspectionList.visibility = View.GONE
                 dailyInspectionViewModel.errorsMsg.value = null
             }
         }
