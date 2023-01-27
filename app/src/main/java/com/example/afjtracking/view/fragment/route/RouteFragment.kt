@@ -33,7 +33,7 @@ class RouteFragment : Fragment() {
 
     lateinit var routeViewModel: RouteViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
-    lateinit var txtErrorMsg: TextView
+
 
 
     var identifierForm = "no_argument"
@@ -62,7 +62,7 @@ class RouteFragment : Fragment() {
         identifierForm = menuObject.identifier.toString()
 
         val root: View = binding.root
-        txtErrorMsg = binding.txtNoData
+
 
 
         routeViewModel.showDialog.observe(mBaseActivity) {
@@ -130,8 +130,8 @@ class RouteFragment : Fragment() {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
                 binding.recWeeklyInspectionList.visibility = View.GONE
-                txtErrorMsg.visibility = View.VISIBLE
-                txtErrorMsg.text = it.toString()
+                binding.txtNoData.visibility=View.VISIBLE
+                binding.txtNoData.text =  it.toString()
                 routeViewModel.errorsMsg.value = null
 
                 AFJUtils.writeLogs("route error  $it")
@@ -149,7 +149,7 @@ class RouteFragment : Fragment() {
     private fun showRouteList(listRoutes: List<Sheets>) {
 
         binding.baseLayout.visibility = View.VISIBLE
-        txtErrorMsg.visibility = View.GONE
+        binding.txtNoData.visibility=View.GONE
 
 
 
