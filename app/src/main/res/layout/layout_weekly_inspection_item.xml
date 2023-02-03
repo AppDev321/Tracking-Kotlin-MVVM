@@ -37,7 +37,7 @@
                 android:layout_marginStart="1dp"
                 android:layout_weight="0.7"
                 android:background="@color/all_app_bg"
-                android:text="Created At"
+                android:text="Created Date"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_body_normal_size"
                 android:textStyle="bold" />
@@ -230,7 +230,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
                 android:layout_weight="0.7"
-                android:background="@color/white"
+                android:background="@color/all_app_bg"
                 android:text="Errors"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_body_normal_size"

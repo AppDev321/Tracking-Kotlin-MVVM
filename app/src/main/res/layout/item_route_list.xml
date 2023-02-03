@@ -2,10 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 <data>
     <import type="android.view.View" />
-
+    <import type="android.graphics.Color"/>
     <variable
         name="routSheet"
-        type="com.example.afjtracking.model.responses.Sheets" />
+        type="com.afjltd.tracking.model.responses.Sheets" />
 
 </data>
 
@@ -133,8 +133,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_loc"
                 android:visibility="@{routSheet.visibility ?  View.VISIBLE  : View.GONE}">
-
                 <Button
+                    android:id="@+id/btn_absent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Child Absent"
+                    android:backgroundTint="@color/red"
+                    android:textColor="@color/white"
+                    android:visibility="@{routSheet.pick ?  View.VISIBLE  : View.GONE}"
+                    />
+                <Button
+                    android:layout_marginLeft="@dimen/_5sdp"
                     android:id="@+id/btn_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -160,7 +169,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/green"
+                    android:textColor="@{Color.parseColor(routSheet.labelColor)}"
                     android:text="@{routSheet.label}"
                     />
 

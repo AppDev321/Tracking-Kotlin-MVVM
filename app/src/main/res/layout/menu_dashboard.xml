@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.example.afjtracking.utils.DotsIndicator
+    <com.afjltd.tracking.utils.DotsIndicator
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:id="@+id/dots"

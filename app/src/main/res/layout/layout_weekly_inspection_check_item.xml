@@ -7,7 +7,7 @@
 
         <variable
             name="checkList"
-            type="com.example.afjtracking.model.responses.WeeklyInspectionCheck" />
+            type="com.afjltd.tracking.model.responses.WeeklyInspectionCheck" />
 
     </data>
 

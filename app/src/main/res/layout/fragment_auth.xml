@@ -6,7 +6,7 @@
 
         <variable
             name="authmodel"
-            type="com.example.afjtracking.view.fragment.auth.viewmodel.AuthViewModel" />
+            type="com.afjltd.tracking.view.fragment.auth.viewmodel.AuthViewModel" />
 
     </data>
 

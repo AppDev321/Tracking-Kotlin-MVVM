@@ -43,13 +43,13 @@
             android:layout_gravity="right" />
 
         <TextView
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/txtNoData"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/no_data_found"
-            android:textSize="@dimen/text_heading_body_size"></TextView>
+            android:textSize="@dimen/text_heading_body_size" />
 
     </RelativeLayout>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.afjtracking">
+    package="com.afjltd.tracking">
 
     <uses-permission
         android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
@@ -32,7 +32,7 @@
 
 
     <application
-        android:name=".AFJApplication"
+        android:name="com.afjltd.tracking.AFJApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -50,16 +50,16 @@
             android:value="@string/map_key" />
 
         <activity
-            android:name=".view.activity.NavigationDrawerActivity"
+            android:name="com.afjltd.tracking.view.activity.NavigationDrawerActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AFJTracking.NoActionBar">
 
         </activity>
 
-        <activity android:name=".view.activity.LoginActivity"/>
+        <activity android:name="com.afjltd.tracking.view.activity.LoginActivity"/>
         <activity
-            android:name=".view.activity.SplashActivity"
+            android:name="com.afjltd.tracking.view.activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
              <intent-filter>
@@ -68,20 +68,20 @@
              </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.ScannerActivity"
+            android:name="com.afjltd.tracking.view.activity.ScannerActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
         </activity>
         <activity
-            android:name=".websocket.VideoCallActivity"
+            android:name="com.afjltd.tracking.websocket.VideoCallActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
         </activity>
 
         <activity
-            android:name=".view.activity.IncomingCallScreen"
+            android:name="com.afjltd.tracking.view.activity.IncomingCallScreen"
             android:configChanges="orientation|screenSize"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -90,7 +90,7 @@
             android:showOnLockScreen="true" />
 
         <service
-            android:name=".service.location.ForegroundLocationService"
+            android:name="com.afjltd.tracking.service.location.ForegroundLocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />

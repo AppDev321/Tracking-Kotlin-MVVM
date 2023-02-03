@@ -7,7 +7,7 @@
 
         <variable
             name="LoginViewModel"
-            type="com.example.afjtracking.view.activity.viewmodel.LoginViewModel" />
+            type="com.afjltd.tracking.view.activity.viewmodel.LoginViewModel" />
 
 
     </data>

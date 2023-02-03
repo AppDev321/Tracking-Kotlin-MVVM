@@ -6,7 +6,7 @@
 
         <variable
             name="TrackingViewModel"
-            type="com.example.afjtracking.view.fragment.home.viewmodel.TrackingViewModel" />
+            type="com.afjltd.tracking.view.fragment.home.viewmodel.TrackingViewModel" />
 
 
     </data>

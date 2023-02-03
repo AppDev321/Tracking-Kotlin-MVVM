@@ -6,7 +6,7 @@
 
         <variable
             name="inspectionModel"
-            type="com.example.afjtracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel" />
+            type="com.afjltd.tracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel" />
 
         <import type="android.view.View"></import>
 
@@ -48,7 +48,7 @@
                         android:textSize="@dimen/text_heading_body_size"
                         android:textStyle="bold" />
 
-                    <com.example.afjtracking.utils.TimerView
+                    <com.afjltd.tracking.utils.TimerView
                         android:id="@+id/timerView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

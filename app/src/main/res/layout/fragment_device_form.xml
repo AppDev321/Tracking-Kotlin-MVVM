@@ -6,7 +6,7 @@
 
         <variable
             name="deviceInfo"
-            type="com.example.afjtracking.model.requests.DeviceDetail" />
+            type="com.afjltd.tracking.model.requests.DeviceDetail" />
 
 
     </data>

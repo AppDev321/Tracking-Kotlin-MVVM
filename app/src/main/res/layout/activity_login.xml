@@ -7,7 +7,7 @@
 
         <variable
             name="LoginViewModel"
-            type="com.example.afjtracking.view.activity.viewmodel.LoginViewModel" />
+            type="com.afjltd.tracking.view.activity.viewmodel.LoginViewModel" />
 
 
     </data>
@@ -86,7 +86,6 @@
                         android:hint="E-Mail Address"
                         android:inputType="textEmailAddress"
                         android:padding="17dp"
-
                         android:text="@={LoginViewModel.EmailAddress}"
                         android:textCursorDrawable="@drawable/cursor_color"
                         android:textSize="@dimen/text_body_normal_size" />

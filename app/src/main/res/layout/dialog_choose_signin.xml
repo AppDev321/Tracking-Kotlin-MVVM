@@ -5,7 +5,7 @@
 
         <variable
             name="user"
-            type="com.example.afjtracking.model.responses.QRFirebaseUser" />
+            type="com.afjltd.tracking.model.responses.QRFirebaseUser" />
 
 
     </data>

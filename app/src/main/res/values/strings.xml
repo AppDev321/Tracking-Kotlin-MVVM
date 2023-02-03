@@ -61,8 +61,8 @@
     <string name="navigation">Map Navigation</string>
     <string name="search">Search</string>
 
-
-    <string name="map_key">AIzaSyCMKV0Yz1tY-tliMVuyd-rstHlvjt6WkGA</string><!--AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw-->
+   <!-- <string name="map_key2">AIzaSyCMKV0Yz1tY-tliMVuyd-rstHlvjt6WkGA</string>-->
+    <string name="map_key">AIzaSyDs-G6o1BgGQezIWkWHMjlQvniZLBsn6dw</string>
     <string name="request_msg">Your %s request has been submitted successfully</string>
     <string name="request_submited">Request Completed</string>
     <string name="request_inspection_completed">Inspection Completed</string>

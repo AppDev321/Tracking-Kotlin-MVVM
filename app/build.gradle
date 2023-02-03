@@ -4,6 +4,7 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
@@ -14,7 +15,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.afjtracking"
+        applicationId "com.afjltd.hnhtech.tracking"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -44,6 +45,11 @@ android {
         enabled = true
     }
 
+    lintOptions{
+        abortOnError false
+        absolutePaths false
+        checkReleaseBuilds false
+    }
 
     packagingOptions {
         resources {
@@ -147,5 +153,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
     implementation 'com.google.mlkit:entity-extraction:16.0.0-beta4'
 
+
+    //Crashlytics
+
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
 }
