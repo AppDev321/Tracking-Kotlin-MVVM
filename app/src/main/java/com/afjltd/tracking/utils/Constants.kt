@@ -4,8 +4,9 @@ import java.util.concurrent.TimeUnit
 
 object Constants {
 
-  const val BASE_URL ="http://vmi808920.contaboserver.net/api/"
-const val FAILED_API_TAG = "vmi808920.contrabass.net"
+   var BASE_URL ="https://vmi808920.contaboserver.net/api/"
+   var FAILED_API_TAG = BASE_URL.replace("https://","").replace("/api/","")
+
 
     //const val BASE_URL = "http://afjdev.hnhtechpk.com/api/"
     //const val FAILED_API_TAG = "afjdev.hnhtechpk.com"

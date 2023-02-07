@@ -55,8 +55,15 @@ internal abstract class SuccessCallback<T> : BaseRetrofitCallBack<T>(), Callback
 
     override fun onFailure(call: Call<T>, t: Throwable) {
         loadingDialog(false)
-        onAPIError("There is some issue please try again")
-      // onAPIError(t.toString())
+        if(t.toString().contains("java.net.UnknownHostException"))
+        {
+            onAPIError(t.toString())
+        }
+        else
+        {
+            onAPIError("There is some issue please try again")
+        }
+
     }
 
     override fun onSuccess(response: Response<T>) {}

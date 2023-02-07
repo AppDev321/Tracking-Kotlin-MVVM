@@ -85,13 +85,17 @@ class MainMenuFragment : Fragment(), MenuItemListner {
             "vehicle_daily_inspection" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
-                    R.id.nav_vdi_inspection_list
+                    R.id.nav_vdi_inspection_list,
+                    argument = bundleOf(FormsFragment.FORM_IDENTIFIER_ARGUMENT to item)
+
                 )
             }
             "vehicle_inspection" -> {
                 mBaseActivity.moveFragmentToNextFragment(
                     binding.root,
-                    R.id.nav_weekly_inspection
+                    R.id.nav_weekly_inspection,
+                    argument = bundleOf(FormsFragment.FORM_IDENTIFIER_ARGUMENT to item)
+
                 )
             }
             "vehicle_attendance" -> {

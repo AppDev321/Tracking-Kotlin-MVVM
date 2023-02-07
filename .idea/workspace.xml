@@ -3,15 +3,17 @@
   <component name="AndroidLayouts">
     <shared>
       <config>
-        <device id="_device_class_phone" />
         <device id="Nexus 5X" />
+        <device id="pixel_5" />
+        <device id="Nexus 7 2013" />
+        <device id="Nexus 9" />
+        <device id="pixel_4_xl" />
+        <device id="_device_class_phone" />
         <device id="wearos_rect" />
         <device id="_device_class_foldable" />
         <device id="_device_class_tablet" />
-        <device id="pixel_4_xl" />
         <device id="pixel_2" />
-        <device id="pixel_5" />
-        <device id="wearos_small_round" />
+        <option name="nonWearDeviceLastStateName" value="Portrait" />
       </config>
     </shared>
   </component>
@@ -33,12 +35,8 @@
     </loaded-modules>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4660dcb4-a467-434c-a7b1-3c97776a647e" name="Changes" comment="Route menu implemented">
-      <change afterPath="$PROJECT_DIR$/app/lint-baseline.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/release/AFJ_Tracking-v1.0.0-03-Feb-2023-release.apk" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/release/output-metadata.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetRouteListResponse.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/LoginQRFragment.kt" afterDir="false" />
+    <list default="true" id="4660dcb4-a467-434c-a7b1-3c97776a647e" name="Changes" comment="Version play store">
+      <change afterPath="$PROJECT_DIR$/app/release/AFJ_Tracking-v1.0.0-06-Feb-2023-release.aab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" afterDir="false" />
@@ -50,218 +48,30 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/afj-tracking.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/navEditor.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/google-services.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/afjtracking/ExampleInstrumentedTest.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/AFJApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/AFJApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/broadcast/SocketBroadcast.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/broadcast/SocketBroadcast.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/broadcast/TrackingAppBroadcast.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/broadcast/TrackingAppBroadcast.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallEventListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallEventListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallIncomingActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallIncomingActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallIncomingBroadcastReceiver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallIncomingBroadcastReceiver.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallIncomingPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallIncomingPlugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallNotificationManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallNotificationManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/CallSoundPlayerService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/CallSoundPlayerService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/Data.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/Data.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/SharedPreferencesUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/SharedPreferencesUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/TransparentActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/TransparentActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/callscreen/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/callscreen/Utils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/crashhandler/CrashHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/crashhandler/CrashHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/crashhandler/MyActivityLifecycleCallbacks.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/crashhandler/MyActivityLifecycleCallbacks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/firebase/FirebaseConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/firebase/FirebaseIdService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseIdService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/DailyInspectionListRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/DailyInspectionListRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/ErrorRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/ErrorRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/FCMRegistrationRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/FCMRegistrationRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/FormRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/FormRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/InspectionCreateRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/InspectionCreateRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/LocationApiRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/LocationApiRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/LoginRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/LoginRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/MultipartRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/MultipartRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/SaveFormRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/SaveFormRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/SavedInspection.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/SavedInspection.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/SavedWeeklyInspection.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/SavedWeeklyInspection.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/SingleInspectionRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/SingleInspectionRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/requests/WeeklyVehicleInspectionRequest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/requests/WeeklyVehicleInspectionRequest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetContactListResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetContactListResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetDailyInspectionCheckListResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetDailyInspectionCheckListResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetDailyInspectionList.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetDailyInspectionList.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetDailyInspectionReview.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetDailyInspectionReview.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetFormResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetFormResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetRouteListResponse.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/GetWeeklyInspectionChecksListResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/GetWeeklyInspectionChecksListResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/LocationResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/LocationResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/LoginResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/LoginResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/NotificationDataResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/NotificationDataResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/QRFirebaseDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/QRFirebaseDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/UploadFileAPiResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/UploadFileAPiResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/WeeklyCheckResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/WeeklyCheckResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/model/responses/WeeklyInspectionListResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/WeeklyInspectionListResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/ota/ForceUpdateChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/ota/ForceUpdateChecker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/retrofit/ApiInterface.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/ApiInterface.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/retrofit/BaseRetrofitCallBack.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/BaseRetrofitCallBack.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/retrofit/RetrofitUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/RetrofitUtil.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/AFJDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/AFJDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/DAOAccess.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/DAOAccess.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/model/TableAPIData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/model/TableAPIData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/model/TableLocation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/model/TableLocation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/model/TableUploadFile.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/model/TableUploadFile.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/repository/ApiDataRepo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/repository/ApiDataRepo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/repository/FileUploadRepo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/repository/FileUploadRepo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/room/repository/LocationTableRepo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/room/repository/LocationTableRepo.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/location/ForegroundLocationService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/ForegroundLocationService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/location/LocationManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/LocationManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/location/LocationRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/LocationRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/location/LocationUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/LocationUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/worker/APIWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/worker/APIWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/worker/LocationWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/worker/LocationWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/worker/UploadWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/worker/UploadWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/worker/viewmodel/ApiServiceViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/worker/viewmodel/ApiServiceViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/service/worker/viewmodel/LocationServiceVM.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/worker/viewmodel/LocationServiceVM.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/AFJUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/AFJUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/AnimationMap.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/AnimationMap.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/BitmapUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/BitmapUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/CustomDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/CustomDialog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/CustomWidget.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/CustomWidget.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/DotsIndicator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/DotsIndicator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/InputFilterMinMax.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/InputFilterMinMax.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/InspectionSensor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/InspectionSensor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/InternetDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/InternetDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/LatLngInterpolator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/LatLngInterpolator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/LiveNetworkState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/LiveNetworkState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/LottieDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/LottieDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/MapUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/MapUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/MarkerAnimation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/MarkerAnimation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/NotificationUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/NotificationUtils.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/PaginatedAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/PaginatedAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/StringExtension.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/StringExtension.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/SwipeToDelete.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/SwipeToDelete.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/TextAnalyser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/TextAnalyser.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/TimerView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/TimerView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/UploadUtil.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/UploadUtil.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/foldingcell/FoldingCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/foldingcell/FoldingCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/foldingcell/animations/AnimationEndListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/foldingcell/animations/AnimationEndListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/foldingcell/animations/FoldAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/foldingcell/animations/FoldAnimation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/foldingcell/animations/HeightAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/foldingcell/animations/HeightAnimation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/utils/foldingcell/views/FoldingCellView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/foldingcell/views/FoldingCellView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/BaseActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/BaseActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/IncomingCallScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/IncomingCallScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/LoginActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/LoginActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/NavigationDrawerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/ScannerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/ScannerActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/activity/viewmodel/LoginViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/viewmodel/LoginViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/ClickListenerInterface.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ClickListenerInterface.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/CustomDropDownAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/CustomDropDownAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/DailyInspectionAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/DailyInspectionAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/FileFormAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/FileFormAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/ImageFormAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ImageFormAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/MenuModelAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/MenuModelAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/NotificationAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/NotificationAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/RouteListAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/RouteListAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/ViewPagerAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ViewPagerAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/adapter/WeeklyInspectionAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/WeeklyInspectionAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/attendance/AttendanceFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/attendance/AttendanceFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/auth/CustomAuthenticationView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/auth/viewmodel/AuthViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/viewmodel/AuthViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/contactList/ContactListAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/contactList/ContactListAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/device/DeviceInfoFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/device/DeviceInfoFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/fileupload/FileUploadDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadDialog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/fileupload/FileUploadProgressListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadProgressListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/fileupload/viewmodel/FileUploadModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/viewmodel/FileUploadModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/forms/FormsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/forms/viewmodel/FormsViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/viewmodel/FormsViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/home/MainMenuFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MainMenuFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/home/MapsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MapsFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/home/TrackingFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/home/viewmodel/TrackingViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/viewmodel/TrackingViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/notification/NotificationFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/notification/NotificationFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/notification/viewmodel/NotificationViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/notification/viewmodel/NotificationViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/route/RouteFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/RouteFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/route/viewmodel/RouteViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/viewmodel/RouteViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/DailyInspectionList.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionList.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/InspectionReviewFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/InspectionReviewFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/PSVInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PSVInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_daily_inspection/viewmodel/DailyInspectionViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/viewmodel/DailyInspectionViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionCreateForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionCreateForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionList.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionList.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/view/fragment/vehicle_weekly_inspection/viewmodel/WeeklyInspectionViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/viewmodel/WeeklyInspectionViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/RTCClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/RTCClient.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/SignalingClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingClient.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/SignalingWebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingWebSocket.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/VideoCallActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/VideoCallActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/WebRtcView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/WebRtcView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/listners/AppSdpObserver.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/listners/PeerConnectionObserver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/PeerConnectionObserver.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/listners/RTCViewListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/RTCViewListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/listners/SignalingClientListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/SignalingClientListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/model/ClientMessage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/model/ClientMessage.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/websocket/utils/RTCAudioManager.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/widgets/CircleTransform.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/widgets/CircleTransform.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/afjtracking/widgets/RippleRelativeLayout.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/widgets/RippleRelativeLayout.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_callkit_incoming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_callkit_incoming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dialog_choose_signin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_choose_signin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/AFJApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/AFJApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/BaseRetrofitCallBack.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/BaseRetrofitCallBack.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/ScannerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/ScannerActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ImageFormAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ImageFormAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/viewmodel/AuthViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/viewmodel/AuthViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadDialog.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MainMenuFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MainMenuFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/reactange_inside_empty.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/reactange_inside_empty.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_scan_activity_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_scan_activity_layout.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_auth.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_auth.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_daily_inpsection_form.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_daily_inpsection_form.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_device_form.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_device_form.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_traking.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_traking.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_weekly_inspection_form.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_weekly_inspection_form.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_weekly_inspection_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_weekly_inspection_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_daily_psv_inspection_check.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_daily_psv_inspection_check.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_daily_pts_inspection_check.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_daily_pts_inspection_check.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_route_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_route_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/layout_weekly_inspection_check_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/layout_weekly_inspection_check_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/layout_weekly_inspection_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/layout_weekly_inspection_item.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/menu_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/menu_dashboard.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/navigation/mobile_navigation.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/navigation/mobile_navigation.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/afjtracking/ExampleUnitTest.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/consumer-rules.pro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/proguard-rules.pro" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/androidTest/java/com/hnh/webrtc_calling_lib/ExampleInstrumentedTest.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/RTCClient.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/Signaler.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/SignalingClient.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/WebRtcView.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/listners/AppSdpObserver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/AppSdpObserver.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/listners/PeerConnectionObserver.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/listners/RTCViewListener.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/listners/SignalingClientListener.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/model/ClientMessage.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/utils/Constants.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/java/com/hnh/webrtc_calling_lib/utils/RTCAudioManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/utils/RTCAudioManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable-v24/ic_launcher_foreground.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/circle_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/curve_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_call_end_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_cameraswitch_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_hearing_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_mic_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_mic_off_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_speaker_up_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_videocam_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_baseline_videocam_off_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/main/res/values/strings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/webrtc-calling-lib/src/test/java/com/hnh/webrtc_calling_lib/ExampleUnitTest.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -358,7 +168,7 @@
     "ApkExportedModule": "AFJ_Tracking.app",
     "BundleExportedModule": "AFJ_Tracking.app",
     "DEBUGGABLE_DEVICE": "lenovo_tb_8703x-c4dfc47c",
-    "DEBUGGABLE_PROCESS": "com.example.afjtracking",
+    "DEBUGGABLE_PROCESS": "com.afjltd.hnhtech.tracking",
     "DEBUGGER_ID": "Auto",
     "ExportApk.ApkPathForAFJ_Tracking.app": "D:\\AndroidStudioProjects\\afj-tracking\\app",
     "ExportBundle.BundlePathForAFJ_Tracking.app": "D:\\AndroidStudioProjects\\afj-tracking\\app",
@@ -375,11 +185,12 @@
     "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/foldingcell/views/FoldingCellView.java_SELECTED": "FoldingCellView",
     "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
     "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/widgets/RippleRelativeLayout.kt_SELECTED": "RippleRelativeLayout",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
     "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/example/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "C:/Users/Ahsan/Desktop/AFJ Tracking.zip",
+    "last_opened_file_path": "D:/AndroidStudioProjects/AFJ Tracking.zip",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "show.migrate.to.gradle.popup": "false"
   },
@@ -698,7 +509,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674823093231</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Version play store">
+      <created>1675427103859</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1675427103859</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="UnloadedModulesList">
@@ -765,6 +583,23 @@
     <MESSAGE value="Code pushed 05-01-23" />
     <MESSAGE value="Fuel Receipt Scanner implemented" />
     <MESSAGE value="Route menu implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="Route menu implemented" />
+    <MESSAGE value="Version play store" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version play store" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt</url>
+          <line>101</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt</url>
+          <line>183</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

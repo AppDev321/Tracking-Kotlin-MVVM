@@ -111,8 +111,6 @@
                             android:hint="E-Mail Address"
                             android:inputType="textEmailAddress"
                             android:padding="17dp"
-
-
                             android:textCursorDrawable="@drawable/cursor_color"
                             android:textSize="@dimen/text_body_normal_size" />
 

@@ -24,7 +24,9 @@
 
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"
-            android:layout_width="@dimen/_250sdp"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/ll_bottom"
             app:layout_constraintEnd_toEndOf="@+id/grayView"

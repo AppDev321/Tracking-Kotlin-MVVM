@@ -30,6 +30,7 @@ import com.afjltd.tracking.view.fragment.vehicle_weekly_inspection.viewmodel.Wee
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentWeeklyInspectionFormBinding
 import com.afjltd.tracking.databinding.LayoutWeeklyInspectionCheckItemBinding
+import com.afjltd.tracking.view.fragment.forms.FormsFragment
 
 
 class WeeklyInspectionForm : Fragment() {
@@ -37,7 +38,7 @@ class WeeklyInspectionForm : Fragment() {
     private val binding get() = _binding!!
     private lateinit var mBaseActivity: NavigationDrawerActivity
     private val satisfactoryCode = "satisfactory"
-    var inspectionTimeSpent= ""
+    var inspectionTimeSpent = ""
 
     private var checkIndex = 0
     private var inpsecitonTitle = "Inspection Completed: "
@@ -49,17 +50,18 @@ class WeeklyInspectionForm : Fragment() {
     var radioOption = ""
     lateinit var weeklyInspectionViewModel: WeeklyInspectionViewModel
     private var mSensorManager: SensorManager? = null
-    private var mSensorData: ArrayList<SensorOrientationData>  = arrayListOf()
+    private var mSensorData: ArrayList<SensorOrientationData> = arrayListOf()
 
     private val inspectionSensor = object : InspectionSensor() {
         override fun sendSensorValue(data: SensorOrientationData) {
-          //  AFJUtils.writeLogs(data.toString())
+            //  AFJUtils.writeLogs(data.toString())
             mSensorData.add(data)
-         //   AFJUtils.writeLogs(convertObjectToJson(mSensorData))
-        AFJUtils.writeLogs(mSensorData.toString())
+            //   AFJUtils.writeLogs(convertObjectToJson(mSensorData))
+            AFJUtils.writeLogs(mSensorData.toString())
         }
 
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
@@ -88,8 +90,6 @@ class WeeklyInspectionForm : Fragment() {
     }
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -103,7 +103,7 @@ class WeeklyInspectionForm : Fragment() {
         val root: View = binding.root
 
 
-        binding.timerView.setListener(object:TimerListener{
+        binding.timerView.setListener(object : TimerListener {
             override fun getStringTime(time: String) {
                 inspectionTimeSpent = time
             }
@@ -118,28 +118,31 @@ class WeeklyInspectionForm : Fragment() {
         binding.baseLayout.visibility = View.GONE
 
 
-        val authView = CustomAuthenticationView(requireContext())
-        binding.mainLayout.addView(authView)
-        authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
-            override fun onAuthCompletionListener(boolean: Boolean) {
-                if (_binding == null)
-                    return
-                if (boolean) {
-                    binding.mainLayout.removeAllViews()
-                    binding.mainLayout.addView(binding.baseLayout)
-                    binding.baseLayout.visibility = View.VISIBLE
-                    weeklyInspectionViewModel.getWeeklyInspectionCheckRequest(mBaseActivity, body)
-                } else {
-                    binding.mainLayout.removeAllViews()
-                    binding.mainLayout.addView(authView)
+            val authView = CustomAuthenticationView(requireContext())
+            binding.mainLayout.addView(authView)
+            authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
+                override fun onAuthCompletionListener(boolean: Boolean) {
+                    if (_binding == null)
+                        return
+                    if (boolean) {
+                        binding.mainLayout.removeAllViews()
+                        binding.mainLayout.addView(binding.baseLayout)
+                        binding.baseLayout.visibility = View.VISIBLE
+                        weeklyInspectionViewModel.getWeeklyInspectionCheckRequest(
+                            mBaseActivity,
+                            body
+                        )
+                    } else {
+                        binding.mainLayout.removeAllViews()
+                        binding.mainLayout.addView(authView)
+                    }
                 }
-            }
 
-            override fun onAuthForceClose(boolean: Boolean) {
-                mBaseActivity.pressBackButton()
+                override fun onAuthForceClose(boolean: Boolean) {
+                    mBaseActivity.pressBackButton()
 
-            }
-        })
+                }
+            })
 
 
         weeklyInspectionViewModel.showDialog.observe(viewLifecycleOwner) {
@@ -344,7 +347,7 @@ class WeeklyInspectionForm : Fragment() {
                     val body = SavedWeeklyInspection(
                         inspectionID,
                         listChecks,
-                     mSensorData,
+                        mSensorData,
                         inspectionTimeSpent
                     )
                     weeklyInspectionViewModel.saveWeeklyInspectionChecks(mBaseActivity, body, false)
@@ -373,7 +376,8 @@ class WeeklyInspectionForm : Fragment() {
             newRadioButton.tag = text.id
 
 
-            newRadioButton.buttonTintList =   ColorStateList.valueOf(ContextCompat.getColor(mBaseActivity,R.color.colorPrimary))
+            newRadioButton.buttonTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(mBaseActivity, R.color.colorPrimary))
 
             rg.addView(newRadioButton)
 

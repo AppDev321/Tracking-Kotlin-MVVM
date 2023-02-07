@@ -22,6 +22,8 @@ object FirebaseConfig {
 
     val location_service_param = "LOCATION_SERVICE_TIME"
     val   data_query_limit = "FILE_QUERY_LIMIT"
+    val api_base_url = "API_BASE_URL"
+    val websocket_base_url = "WEB_SOCKET_CALL_URL"
 
     fun setTokenFirebase(context:Context) {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -74,8 +76,10 @@ object FirebaseConfig {
 
 
     fun getLocationServiceTimeValue(): Long = mFirebaseRemoteConfig.getLong(location_service_param)
+    fun getAPIBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
+    fun getWebSocketBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
     fun getDataQueryLimit(): Long = mFirebaseRemoteConfig.getLong(data_query_limit)
-    fun fetchLocationServiceTime() {
+    fun fetchLocationServiceTime(isValueFetched : (Boolean) ->Unit) {
 
 
         mFirebaseRemoteConfig.fetchAndActivate()
@@ -87,8 +91,14 @@ object FirebaseConfig {
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
+                    Constants.BASE_URL = getAPIBaseUrl()
+                    isValueFetched(true)
 
 
+                }
+                else
+                {
+                    isValueFetched(false)
                 }
             })
     }

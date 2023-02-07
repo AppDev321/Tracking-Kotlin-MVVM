@@ -225,7 +225,7 @@ var formName = ""
 
 
         binding.btnPreviousCehck.setOnClickListener {
-            mBaseActivity . pressBackButton()
+            mBaseActivity.pressBackButton()
         }
         binding.btnSubmit.setOnClickListener {
             var isAllImageUploaded = true

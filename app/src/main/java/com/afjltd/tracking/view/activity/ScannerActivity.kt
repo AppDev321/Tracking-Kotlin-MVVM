@@ -51,6 +51,9 @@ class ScannerActivity : AppCompatActivity(), ImageAnalysis.Analyzer {
         super.onCreate(savedInstanceState)
         binding = AppScanActivityLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        try{
+            supportActionBar?.hide()
+        }catch (e: Exception){}
 
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -168,7 +171,7 @@ val camera=  cameraProvider.bindToLifecycle(this,
 
     private fun takePhoto() {
         imageCapture?.let {
-            val fileName = "JPEG_${System.currentTimeMillis()}"
+            val fileName = "JPEG_${System.currentTimeMillis()}.jpg"
             val file = File(externalMediaDirs[0], fileName)
             val outputFileOptions = ImageCapture.OutputFileOptions.Builder(file).build()
             it.takePicture(

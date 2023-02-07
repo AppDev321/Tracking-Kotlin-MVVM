@@ -32,7 +32,7 @@ class ImageFormAdapter(
     private val mContext: AppCompatActivity,
 
     private var imageList: ArrayList<Form>,
-    private val mShowGallaryPicker: Boolean =false,
+    private val mShowGallaryPicker: Boolean = false,
 ) : RecyclerView.Adapter<ImageFormAdapter.ImageItemViewHolder>() {
 
 
@@ -66,6 +66,15 @@ class ImageFormAdapter(
         holder.itemImageView.imgDel.visibility = View.GONE
 
 
+        var isReceiptButton = false
+
+        if (data.fieldName.toString().lowercase()
+                .contains("receipt")
+        ) {
+            isReceiptButton = true
+        }
+
+
         holder.itemImageView.imgAdd
             .setOnClickListener {
 
@@ -74,7 +83,7 @@ class ImageFormAdapter(
                     inpsectionType = requestType, //This will be change after
                     uniqueFileId = uploadId,
                     fieldName = data.fieldName!!,
-                    isRecipetBtnShow =  true ,
+                    isRecipetBtnShow = isReceiptButton,
                     fileUploadListner = (object : UploadDialogListener {
                         override fun onUploadCompleted(completedData: UploadFileAPiResponse) {
 
@@ -83,7 +92,7 @@ class ImageFormAdapter(
                         override fun onFilePathReceived(path: String) {
 
                             data.value = uploadId
-                            listners.onPreviewGenerated(data, holder.adapterPosition,path)
+                            listners.onPreviewGenerated(data, holder.adapterPosition, path)
 
                             Glide.with(mContext)
                                 .load(path)
@@ -111,7 +120,7 @@ class ImageFormAdapter(
                                         "image/*"
                                     )
 
-                            //  mContext.startActivity(intent)
+                                //  mContext.startActivity(intent)
 
                                 //previewImage(path)
                             }
@@ -129,7 +138,7 @@ class ImageFormAdapter(
 
         holder.itemImageView.imgDel.setOnClickListener {
             data.value = ""
-            listners.onPreviewGenerated(data, holder.adapterPosition,"")
+            listners.onPreviewGenerated(data, holder.adapterPosition, "")
 
             holder.itemImageView.imgAdd.visibility = View.VISIBLE
             holder.itemImageView.imgDel.visibility = View.GONE
@@ -141,11 +150,6 @@ class ImageFormAdapter(
 
     }
 
-     fun addRows(data:Form)
-    {
-        imageList.add(data)
-        notifyDataSetChanged()
-    }
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -154,33 +158,33 @@ class ImageFormAdapter(
 
 
     interface ImageFormListner {
-        fun onPreviewGenerated(uploadForm: Form, position: Int,filePath:String)
+        fun onPreviewGenerated(uploadForm: Form, position: Int, filePath: String)
 
     }
 
     fun previewImage(path: String) {
-  /*      val dialog = Dialog(mContext)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.image_preview_dialog)
-        val image: ImageView = dialog.findViewById(R.id.fullimage) as ImageView
-        Glide.with(mContext)
-            .load(path)
-            .placeholder(
-                AppCompatResources.getDrawable(
-                    mContext,
-                    R.drawable.ic_launch
-                )
-            )
-            .into(image)
-        dialog.show()
-*/
+        /*      val dialog = Dialog(mContext)
+              dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+              dialog.setContentView(R.layout.image_preview_dialog)
+              val image: ImageView = dialog.findViewById(R.id.fullimage) as ImageView
+              Glide.with(mContext)
+                  .load(path)
+                  .placeholder(
+                      AppCompatResources.getDrawable(
+                          mContext,
+                          R.drawable.ic_launch
+                      )
+                  )
+                  .into(image)
+              dialog.show()
+      */
 
         val nagDialog = Dialog(
             mContext
         )
         nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         nagDialog.setContentView(R.layout.image_preview_dialog)
-      //  val btnClose: Button = nagDialog.findViewById<View>(R.id.btnIvClose) as Button
+        //  val btnClose: Button = nagDialog.findViewById<View>(R.id.btnIvClose) as Button
         val ivPreview = nagDialog.findViewById<View>(R.id.fullimage) as ImageView
 
         Glide.with(mContext)
@@ -193,11 +197,11 @@ class ImageFormAdapter(
                 )
             )
             .into(ivPreview)
-       /* btnClose.setOnClickListener(object : OnClickListener() {
-            fun onClick(arg0: View?) {
-                nagDialog.dismiss()
-            }
-        })*/
+        /* btnClose.setOnClickListener(object : OnClickListener() {
+             fun onClick(arg0: View?) {
+                 nagDialog.dismiss()
+             }
+         })*/
         nagDialog.show()
     }
 }

@@ -17,6 +17,9 @@ import com.afjltd.tracking.retrofit.SuccessCallback
 import com.afjltd.tracking.utils.AFJUtils
 import com.afjltd.tracking.view.activity.NavigationDrawerActivity
 import com.afjltd.tracking.R
+import com.afjltd.tracking.model.requests.LoginRequest
+import com.afjltd.tracking.model.responses.LoginResponse
+import com.afjltd.tracking.view.activity.viewmodel.LoginViewModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -33,7 +36,7 @@ class AuthViewModel : ViewModel() {
     var attendanceReponse: LiveData<AttendanceReponse> = _attendanceResponse
 
 
-
+    private var mUserToken: MutableLiveData<String>? = MutableLiveData()
 
 
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
@@ -59,7 +62,42 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun loginApiRequest(request: LoginRequest?, context: Context?,response : (Any)->Unit) {
+        getInstance(context)
+        apiInterface!!.getLoginUser(request).enqueue(object : SuccessCallback<LoginResponse?>() {
+            override fun onSuccess(
+                response: Response<LoginResponse?>
+            ) {
+                super.onSuccess(response)
 
+                AFJUtils.setUserToken(context, response.body()!!.data!!.token)
+
+                //Save User object
+                AFJUtils.saveObjectPref(
+                    context!!,
+                    AFJUtils.KEY_USER_DETAIL,
+                    response.body()!!.data!!.user
+                )
+                response(true)
+            }
+            override fun onFailure(response: Response<LoginResponse?>) {
+                super.onFailure(response)
+                var errors = ""
+                for (i in response.body()!!.errors.indices) {
+                    errors = """
+                                $errors${response.body()!!.errors[i].message}
+
+                                """.trimIndent()
+                }
+                mErrorsMsg!!.postValue(errors)
+                response(errors)
+            }
+            override fun onAPIError(error: String) {
+                mErrorsMsg!!.postValue(error)
+                response(error)
+            }
+        })
+    }
     fun getQRCode(
         context: Context?, qrType: String = "ATTENDANCE",
         codeFetched: ((AttendanceReponse) -> Unit)? =null) {

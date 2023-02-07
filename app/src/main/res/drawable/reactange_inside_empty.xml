@@ -7,7 +7,7 @@
     <solid android:color="@android:color/transparent" />
 
     <stroke
-        android:width="140dp"
+        android:width="@dimen/_80sdp"
         android:color="#040404" />
 
 

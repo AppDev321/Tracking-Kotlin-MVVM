@@ -137,16 +137,16 @@ class PTSInspectionForm : Fragment() {
         root.hideKeyboard()
         try {
 
-            val inpsecitonData: InspectionCheckData = arguments?.getParcelable(argumentParams)!!
+            val inspectionCheckData: InspectionCheckData = arguments?.getParcelable(argumentParams)!!
 
 
             binding.containerInspection.visibility = View.VISIBLE
             binding.containerCheck.visibility = View.VISIBLE
-            inspectionViewModel._inspectionData.value = inpsecitonData
-            inspectionViewModel._vehicleInfo.value = inpsecitonData.vehicle
-            inspectionViewModel._vehicleClassChecks.value = inpsecitonData.ptsChecks
+            inspectionViewModel._inspectionData.value = inspectionCheckData
+            inspectionViewModel._vehicleInfo.value = inspectionCheckData.vehicle
+            inspectionViewModel._vehicleClassChecks.value = inspectionCheckData.ptsChecks
             binding.inspectionModel = inspectionViewModel
-            apiRequestParams = inpsecitonData
+            apiRequestParams = inspectionCheckData
 
             binding.timerView.setListener(object:TimerListener{
 

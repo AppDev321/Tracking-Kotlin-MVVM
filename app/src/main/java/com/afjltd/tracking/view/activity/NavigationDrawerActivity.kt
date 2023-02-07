@@ -181,13 +181,13 @@ class NavigationDrawerActivity : BaseActivity() {
     }
 
     fun pressBackButton() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             onBackPressedDispatcher.addCallback(this) {
                 if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
                     drawerLayout.closeDrawer(Gravity.LEFT)
                 }
             }
-        else onBackPressed()
+        else */onBackPressed()
     }
 
     fun toolbarVisibility(isShow: Boolean) {

@@ -31,7 +31,6 @@ import com.afjltd.tracking.view.fragment.fileupload.viewmodel.FileUploadModel
 import com.afjltd.tracking.R
 
 import com.afjltd.tracking.databinding.LayoutFileUploadBoxBinding
-import com.permissionx.guolindev.PermissionX
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileNotFoundException
@@ -56,15 +55,12 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
     lateinit var inpsectionType: String
     lateinit var fieldName: String
     var isDocumentPickShow: Boolean = true
-    private val MULTIPLE_PERMISSIONS = 10
     lateinit var btnFileChoose: LinearLayout
     lateinit var btnCameraChoose: LinearLayout
     lateinit var btnReciept: LinearLayout
     var isImageDialogPick = true
 
 
-    var permissions =
-        arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 
     override fun onAttach(context: Context) {
@@ -119,20 +115,20 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
     private fun setMyListeners() {
         btnFileChoose.setOnClickListener {
-            if (checkPermissions()) {
+
                 showFileChooser()
-            }
+
         }
         btnCameraChoose.setOnClickListener {
-            if (checkPermissions()) {
+
                 openCamera()
-            }
+
         }
 
         btnReciept.setOnClickListener {
-            if (checkPermissions()) {
+
                 documentScannerActivity()
-            }
+
         }
         btnCancleReport.setOnClickListener {
 
@@ -230,30 +226,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         }
     }
 
-    @SuppressLint("SuspiciousIndentation")
-    private fun checkPermissions(): Boolean {
-        var isAllowed = true
-        PermissionX.init(this)
-            .permissions(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-            ).request { allGranted, _, _ ->
-                if (allGranted) {
-                    isAllowed = true
-                } else {
-                    isAllowed = false
-                    CustomDialog().showSimpleAlertMsg(mBaseActivity, "Alert",
-                        "Please allow permission for working",
-                        textNegative = "Close",
-                        negativeListener = {
-                            mBaseActivity.pressBackButton()
-
-                        })
-                }
-            }
-        return isAllowed
-    }
 
     private fun documentScannerActivity() {
         val i = Intent(mBaseActivity, ScannerActivity::class.java)
@@ -508,7 +481,7 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
         val imageFileName = "JPEG"
         val storageDir: File =
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                requireActivity().filesDir
+                requireActivity().cacheDir
             } else {
                 File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
@@ -516,11 +489,11 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
                 )
             }
 
+
         val file = File.createTempFile(imageFileName, ".jpg", storageDir)
-
         currentPhotoPath = "file:" + file.absolutePath
-
         return file
+
     }
 
     sealed class OpenFileResult {

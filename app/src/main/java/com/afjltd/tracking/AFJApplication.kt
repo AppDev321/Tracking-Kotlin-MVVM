@@ -17,10 +17,6 @@ class AFJApplication : MultiDexApplication() {
 
         Constants.DEVICE_ID =  Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-        FirebaseConfig.init()
-        FirebaseConfig.setTokenFirebase(this)
-
-
 
 
 

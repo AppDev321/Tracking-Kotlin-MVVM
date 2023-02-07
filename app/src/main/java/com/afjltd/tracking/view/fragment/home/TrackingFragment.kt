@@ -306,11 +306,9 @@ class TrackingFragment : Fragment() {
         super.onStart()
         val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
         mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
-    }
 
 
-    override fun onResume() {
-        super.onResume()
+
         mBaseActivity.registerReceiver(
             notificationBroadCast,
             IntentFilter(
@@ -328,21 +326,43 @@ class TrackingFragment : Fragment() {
         }
     }
 
+/*
+    override fun onResume() {
+        super.onResume()
+
+
+
+        mBaseActivity.registerReceiver(
+            notificationBroadCast,
+            IntentFilter(
+                NOTIFICATION_BROADCAST
+            )
+        )
+
+        if (binding != null) {
+            val userObject = AFJUtils.getObjectPref(
+                mBaseActivity,
+                AFJUtils.KEY_USER_DETAIL,
+                QRFirebaseUser::class.java
+            )
+            binding.txtDriver.text = userObject.full_name ?: "N/A"
+
+
+    }
+     }*/
 
     override fun onDestroy() {
         super.onDestroy()
 
         mBaseActivity.unregisterReceiver(notificationBroadCast)
-    }
-
-    override fun onStop() {
         if (locationServiceBound) {
 
             mBaseActivity.unbindService(mServiceConnection)
             locationServiceBound = false
         }
-        super.onStop()
     }
+
+
 
 
     private fun setButtonsState(requestingLocationUpdates: Boolean) {

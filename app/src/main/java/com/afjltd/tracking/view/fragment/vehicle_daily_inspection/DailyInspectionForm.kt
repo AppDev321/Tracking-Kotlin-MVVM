@@ -22,6 +22,8 @@ import com.afjltd.tracking.view.fragment.auth.CustomAuthenticationView
 import com.afjltd.tracking.view.fragment.vehicle_daily_inspection.viewmodel.DailyInspectionViewModel
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentVdiCreateInspectionBinding
+import com.afjltd.tracking.model.responses.VehicleMenu
+import com.afjltd.tracking.view.fragment.forms.FormsFragment
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -83,34 +85,46 @@ class DailyInspectionForm : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // AFJUtils.setPeriodicWorkRequest(mBaseActivity)
-        inspectionViewModel = ViewModelProvider(this).get(DailyInspectionViewModel::class.java)
+        inspectionViewModel = ViewModelProvider(this)[DailyInspectionViewModel::class.java]
         _binding = FragmentVdiCreateInspectionBinding.inflate(inflater, container, false)
 
         val root: View = binding.root
         txtErrorMsg = binding.txtErrorMsg
         binding.baseLayout.visibility = View.GONE
 
-        val authView = CustomAuthenticationView(requireContext())
-        binding.root.addView(authView)
-        authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
-            override fun onAuthCompletionListener(boolean: Boolean) {
-                if (_binding == null)
-                    return
-                if (boolean) {
-                    binding.root.removeAllViews()
-                    binding.root.addView(binding.baseLayout)
-                    binding.root.addView(binding.txtErrorMsg)
-                    inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
-                } else {
-                    binding.root.removeAllViews()
-                    binding.root.addView(authView)
-                }
-            }
+        val menuObject = arguments?.let {
+            it.getSerializable(FormsFragment.FORM_IDENTIFIER_ARGUMENT) as VehicleMenu
 
-            override fun onAuthForceClose(boolean: Boolean) {
-                mBaseActivity.pressBackButton()
-            }
-        })
+        }
+
+        if (menuObject?.qrStatus == true) {
+            val authView = CustomAuthenticationView(requireContext())
+            binding.root.addView(authView)
+            authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
+                override fun onAuthCompletionListener(boolean: Boolean) {
+                    if (_binding == null)
+                        return
+                    if (boolean) {
+                        binding.root.removeAllViews()
+                        binding.root.addView(binding.baseLayout)
+                        binding.root.addView(binding.txtErrorMsg)
+                        inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
+                    } else {
+                        binding.root.removeAllViews()
+                        binding.root.addView(authView)
+                    }
+                }
+
+                override fun onAuthForceClose(boolean: Boolean) {
+                    mBaseActivity.pressBackButton()
+                }
+            })
+        } else {
+            binding.root.removeAllViews()
+            binding.root.addView(binding.baseLayout)
+            binding.root.addView(binding.txtErrorMsg)
+            inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
+        }
 
         inspectionViewModel.showDialog.observe(mBaseActivity) {
             mBaseActivity.showProgressDialog(it)
@@ -210,7 +224,7 @@ class DailyInspectionForm : Fragment() {
             val imageFormAdapter =
                 ImageFormAdapter(requestType, uniqueUploadId, mBaseActivity, imageForm)
             imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                override fun onPreviewGenerated(uploadForm: Form, positon: Int,filePath:String) {
+                override fun onPreviewGenerated(uploadForm: Form, positon: Int, filePath: String) {
 
                     val index = formIndex[positon]
                     imageForm[positon] = uploadForm
@@ -286,8 +300,7 @@ class DailyInspectionForm : Fragment() {
 
         }
 
-        if(errorFoundInEmptyFields)
-        {
+        if (errorFoundInEmptyFields) {
             return
         }
 
