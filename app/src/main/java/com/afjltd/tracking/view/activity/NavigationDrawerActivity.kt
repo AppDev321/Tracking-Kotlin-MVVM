@@ -67,21 +67,13 @@ class NavigationDrawerActivity : BaseActivity() {
   
           }*/
 
-        val userObject =
-            AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
-        if (userObject.id != null) {
-            val socketURL = Constants.WEBSOCKET_URL + userObject.id + "&device=Tracking"
+
+            val socketURL = Constants.WEBSOCKET_URL + AFJUtils.getDeviceDetail().deviceID + "&device=Tracking"
             signallingClient = SignalingClient.getInstance(
                 listener = createSignallingClientListener(socketURL),
                 serverUrl = socketURL
             )
-        } else {
-            val socketURL = Constants.WEBSOCKET_URL + "1" + "&device=Tracking"
-            signallingClient = SignalingClient.getInstance(
-                listener = createSignallingClientListener(socketURL),
-                serverUrl = socketURL
-            )
-        }
+
 
 
     }

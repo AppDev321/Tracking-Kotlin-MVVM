@@ -35,50 +35,28 @@
     </loaded-modules>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4660dcb4-a467-434c-a7b1-3c97776a647e" name="Changes" comment="Version play store">
-      <change afterPath="$PROJECT_DIR$/app/release/AFJ_Tracking-v1.0.0-06-Feb-2023-release.aab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" afterDir="false" />
+    <list default="true" id="4660dcb4-a467-434c-a7b1-3c97776a647e" name="Changes" comment="deploy to open testing in play store console">
+      <change afterPath="$PROJECT_DIR$/app/release/AFJ_Tracking-v1.0.0-07-Feb-2023-release.aab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/AFJApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/AFJApplication.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/BaseRetrofitCallBack.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/retrofit/BaseRetrofitCallBack.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/ScannerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/ScannerActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ImageFormAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/ImageFormAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/viewmodel/AuthViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/viewmodel/AuthViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadDialog.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/fileupload/FileUploadDialog.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MainMenuFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/MainMenuFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/reactange_inside_empty.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/reactange_inside_empty.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_scan_activity_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_scan_activity_layout.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_auth.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_auth.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/RouteFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/RouteFragment.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[c4dfc47c]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -175,7 +153,6 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "SHOW_ALL_PROCESSES": "false",
     "android-custom-viewC:/Users/Ahsan/.gradle/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.5.1/ffb6d2b7e47daaa4a24b434db111ab9e411c33a0/appcompat-1.5.1-sources.jar!/androidx/appcompat/widget/AppCompatButton.java_SELECTED": "AppCompatButton",
     "android-custom-viewC:/Users/Ahsan/AppData/Local/Android/Sdk/sources/android-33/android/view/ViewGroup.java_SELECTED": "ViewGroup",
@@ -190,7 +167,7 @@
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
     "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "D:/AndroidStudioProjects/AFJ Tracking.zip",
+    "last_opened_file_path": "C:/Users/Ahsan/Desktop/admin/Sirat-E-Mustaqeem-master",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "show.migrate.to.gradle.popup": "false"
   },
@@ -210,11 +187,11 @@
       <recent name="com.example.afjtracking.utils" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\afjltd\tracking\view\adapter" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\res\layout" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\model\responses" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\view\fragment\route" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\view\fragment\ocr" />
-      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\res" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="com.example.afjtracking.view.fragment.auth" />
@@ -516,7 +493,14 @@
       <option name="project" value="LOCAL" />
       <updated>1675427103859</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="deploy to open testing in play store console">
+      <created>1675752842482</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1675752842482</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="UnloadedModulesList">
@@ -584,7 +568,8 @@
     <MESSAGE value="Fuel Receipt Scanner implemented" />
     <MESSAGE value="Route menu implemented" />
     <MESSAGE value="Version play store" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version play store" />
+    <MESSAGE value="deploy to open testing in play store console" />
+    <option name="LAST_COMMIT_MESSAGE" value="deploy to open testing in play store console" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -593,11 +578,6 @@
           <url>file://$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/forms/FormsFragment.kt</url>
           <line>101</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt</url>
-          <line>183</line>
-          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

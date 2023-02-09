@@ -4,20 +4,10 @@ import java.util.concurrent.TimeUnit
 
 object Constants {
 
-   var BASE_URL ="https://vmi808920.contaboserver.net/api/"
-   var FAILED_API_TAG = BASE_URL.replace("https://","").replace("/api/","")
+    var BASE_URL = "https://vmi808920.contaboserver.net/api/"
+    var FAILED_API_TAG = BASE_URL.replace("https://", "").replace("/api/", "")
 
-
-    //const val BASE_URL = "http://afjdev.hnhtechpk.com/api/"
-    //const val FAILED_API_TAG = "afjdev.hnhtechpk.com"
-
- //const val BASE_URL = "http://192.168.18.50:8000/api/"
-// const val FAILED_API_TAG = "192.168.18.50:8000"
-
-
-  val WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/video-call?token="
- // val WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
-
+    var WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/video-call?token="
 
     var isCallEnded: Boolean = false
     var isIntiatedNow: Boolean = true
@@ -61,18 +51,18 @@ object Constants {
     const val NULL_DEFAULT_VALUE = "N/A"
 
 
-  const val ACTION_END_CALL = "ACTION_END_CALL"
-  const val ACTION_REJECTED_CALL = "ACTION_REJECTED_CALL"
-  const val ACTION_HIDE_CALL = "ACTION_HIDE_CALL"
-  const val ACTION_SHOW_INCOMING_CALL = "ACTION_SHOW_INCOMING_CALL"
-  const val HIDE_NOTIFICATION_INCOMING_CALL = "HIDE_NOTIFICATION_INCOMING_CALL"
-  const val ACTION_PRESS_ANSWER_CALL = "ACTION_PRESS_ANSWER_CALL"
-  const val ACTION_PRESS_DECLINE_CALL = "ACTION_PRESS_DECLINE_CALL"
-  const val ACTION_START_ACTIVITY = "ACTION_START_ACTIVITY"
+    const val ACTION_END_CALL = "ACTION_END_CALL"
+    const val ACTION_REJECTED_CALL = "ACTION_REJECTED_CALL"
+    const val ACTION_HIDE_CALL = "ACTION_HIDE_CALL"
+    const val ACTION_SHOW_INCOMING_CALL = "ACTION_SHOW_INCOMING_CALL"
+    const val HIDE_NOTIFICATION_INCOMING_CALL = "HIDE_NOTIFICATION_INCOMING_CALL"
+    const val ACTION_PRESS_ANSWER_CALL = "ACTION_PRESS_ANSWER_CALL"
+    const val ACTION_PRESS_DECLINE_CALL = "ACTION_PRESS_DECLINE_CALL"
+    const val ACTION_START_ACTIVITY = "ACTION_START_ACTIVITY"
 
-  //event press answer/decline call
-  const val RNNotificationAnswerAction = "RNNotificationAnswerAction"
-  const val RNNotificationEndCallAction = "RNNotificationEndCallAction"
-  const val onPressNotification = "onPressNotification"
+    //event press answer/decline call
+    const val RNNotificationAnswerAction = "RNNotificationAnswerAction"
+    const val RNNotificationEndCallAction = "RNNotificationEndCallAction"
+    const val onPressNotification = "onPressNotification"
 
 }

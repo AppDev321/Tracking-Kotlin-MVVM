@@ -75,10 +75,10 @@ object FirebaseConfig {
     }
 
 
-    fun getLocationServiceTimeValue(): Long = mFirebaseRemoteConfig.getLong(location_service_param)
-    fun getAPIBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
-    fun getWebSocketBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
-    fun getDataQueryLimit(): Long = mFirebaseRemoteConfig.getLong(data_query_limit)
+    private fun getLocationServiceTimeValue(): Long = mFirebaseRemoteConfig.getLong(location_service_param)
+    private fun getAPIBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
+    private fun getWebSocketBaseUrl():String= mFirebaseRemoteConfig.getString(websocket_base_url)
+    private fun getDataQueryLimit(): Long = mFirebaseRemoteConfig.getLong(data_query_limit)
     fun fetchLocationServiceTime(isValueFetched : (Boolean) ->Unit) {
 
 
@@ -86,15 +86,16 @@ object FirebaseConfig {
             .addOnCompleteListener(OnCompleteListener<Boolean?> { task ->
                 if (task.isSuccessful) {
                     val timeSeconds = getLocationServiceTimeValue()
-                    AFJUtils.writeLogs("LocationTime = $timeSeconds")
+
                   //  Constants.LOCATION_SERVICE_IN_SECONDS = (timeSeconds * 1000)
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
                     Constants.BASE_URL = getAPIBaseUrl()
+                    Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
                     isValueFetched(true)
 
-
+                    AFJUtils.writeLogs("BASE URL = ${Constants.BASE_URL}")
                 }
                 else
                 {

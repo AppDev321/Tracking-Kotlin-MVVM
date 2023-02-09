@@ -176,13 +176,13 @@ class RouteFragment : Fragment() {
                     LocationApiRequest::class.java
                 )
 
-
                 val request = LoginRequest(
                     routeSheet = item,
                     deviceDetail = AFJUtils.getDeviceDetail(),
-                    latitude = locPref.latitude ?:"0",
-                    longitude = locPref.longitude ?:"0"
+                    latitude = locPref.latitude?:"0.0" ,
+                    longitude = locPref.longitude?:"0.0"
                 )
+
 
                 routeViewModel.updateRouteListStatus(mBaseActivity, request) {
                     val data = it as String
