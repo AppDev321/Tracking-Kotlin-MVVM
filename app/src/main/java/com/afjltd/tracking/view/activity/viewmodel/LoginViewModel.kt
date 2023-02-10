@@ -2,9 +2,11 @@ package com.afjltd.tracking.view.activity.viewmodel
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.afjltd.tracking.databinding.FragmentDeviceFormBinding
@@ -15,6 +17,8 @@ import com.afjltd.tracking.retrofit.ApiInterface
 import com.afjltd.tracking.retrofit.RetrofitUtil
 import com.afjltd.tracking.retrofit.SuccessCallback
 import com.afjltd.tracking.utils.AFJUtils
+import com.afjltd.tracking.view.activity.NavigationDrawerActivity
+import com.afjltd.tracking.view.activity.SplashActivity
 
 import retrofit2.Response
 
@@ -29,7 +33,7 @@ class LoginViewModel : ViewModel() {
     var vrnNumber = MutableLiveData<String>()
 
 
-    private var userMutableLiveData: MutableLiveData<LoginRequest>? = null
+     var userMutableLiveData: MutableLiveData<LoginRequest>? = null
     private var mUserToken: MutableLiveData<String>? = MutableLiveData()
     private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
 
@@ -69,13 +73,7 @@ class LoginViewModel : ViewModel() {
             return userMutableLiveData!!
         }
 
-fun onRetryClick(view:View)
-{
-    var deviceData = AFJUtils.getDeviceDetail()
-    val loginUser = LoginRequest(deviceDetail= deviceData)
 
-    userMutableLiveData!!.postValue(loginUser)
-}
 
     fun getDeviceDetailDialog(view: View)
     {

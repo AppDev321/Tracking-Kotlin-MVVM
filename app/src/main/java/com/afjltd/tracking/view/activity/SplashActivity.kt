@@ -1,13 +1,18 @@
 package com.afjltd.tracking.view.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.afjltd.tracking.R
@@ -18,7 +23,11 @@ import com.afjltd.tracking.ota.ForceUpdateChecker
 import com.afjltd.tracking.utils.AFJUtils
 import com.afjltd.tracking.utils.CustomDialog
 import com.afjltd.tracking.view.activity.viewmodel.LoginViewModel
+import com.google.gson.Gson
 import com.permissionx.guolindev.PermissionX
+import io.github.g00fy2.quickie.QRResult
+import io.github.g00fy2.quickie.ScanQRCode
+import io.github.g00fy2.quickie.content.QRContent
 
 
 class SplashActivity : BaseActivity(),
@@ -93,6 +102,7 @@ class SplashActivity : BaseActivity(),
                         })
                 }
             }
+
     }
 
 
@@ -124,6 +134,8 @@ class SplashActivity : BaseActivity(),
             binding.containerButton.visibility = View.GONE
 
             loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
+
+
         }
         loginViewModel.userToken.observe(this) { s ->
             if (s != null) {
@@ -133,14 +145,33 @@ class SplashActivity : BaseActivity(),
                 startActivity(Intent(this@SplashActivity, NavigationDrawerActivity::class.java))
             }
         }
+
+
+
         loginViewModel.errorsMsg.observe(this) { s ->
             if (s != null) {
-                //showProgressDialog(false)
-                // toast(s)
+
                 binding.pbCircular.visibility = View.GONE
                 binding.txtError.visibility = View.VISIBLE
                 binding.txtError.text = s.toString()
                 binding.containerButton.visibility = View.VISIBLE
+
+
+                   if (s.contains("not assigned")) {
+                       binding.btnLogin.text = "QR Scan"
+                   } else {
+                       binding.btnLogin.text = "Retry"
+                   }
+            }
+        }
+
+        binding.btnLogin.setOnClickListener {
+            if (binding.btnLogin.text.toString().lowercase() == "retry") {
+                val deviceData = AFJUtils.getDeviceDetail()
+                val loginUser = LoginRequest(deviceDetail = deviceData)
+                loginViewModel.userMutableLiveData!!.postValue(loginUser)
+            } else {
+                scanQrCodeLauncher.launch(null)
             }
         }
 
@@ -152,4 +183,42 @@ class SplashActivity : BaseActivity(),
         startActivity(intent)
         finish()
     }
+
+    private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
+        vibratePhone()
+        if (result is QRResult.QRSuccess) {
+            val data = result.content.rawValue
+            try {
+                val qrResponseData = Gson().fromJson(data, QRActivateDeviceData::class.java)
+                val loginUser = LoginRequest(
+                    deviceDetail = AFJUtils.getDeviceDetail(),
+                    employeID = qrResponseData.employee_id,
+                    vehicleID = qrResponseData.vehicle_id
+                )
+                loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
+            } catch (e: Exception) {
+                binding.txtError.text =
+                    "QR Response is not same as per expected, Please contact admin"
+            }
+        } else {
+            binding.txtError.text = "There is some issue in scanning QR Code, Please contact admin"
+        }
+
+
+    }
+
+    private fun vibratePhone() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.let {
+            if (Build.VERSION.SDK_INT >= 26) {
+                it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+
+                it.vibrate(100)
+            }
+        }
+    }
 }
+
+
+data class QRActivateDeviceData(val vehicle_id: String, val employee_id: String)

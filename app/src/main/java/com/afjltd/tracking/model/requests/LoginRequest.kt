@@ -13,7 +13,9 @@ class LoginRequest(
     @SerializedName("notification_id") var notificatonID:Int?= null,
     @SerializedName("sheet") var routeSheet:Sheets?=null,
     @SerializedName("longitude")   var longitude: String? = null,
-    @SerializedName("latitude")  var latitude: String? = null
+    @SerializedName("latitude")  var latitude: String? = null,
+    @SerializedName("employee_id")  var employeID: String? = null,
+    @SerializedName("vehicle_id")  var vehicleID: String? = null,
 
 ) {
 

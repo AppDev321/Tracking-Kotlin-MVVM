@@ -91,7 +91,9 @@ object FirebaseConfig {
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
-                    Constants.BASE_URL = getAPIBaseUrl()
+                   Constants.BASE_URL = getAPIBaseUrl()
+
+              //      Constants.BASE_URL = "http://192.168.18.69:8000/api/"
                     Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
                     isValueFetched(true)
 

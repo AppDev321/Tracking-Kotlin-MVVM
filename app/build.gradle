@@ -162,6 +162,8 @@ dependencies {
 
 
 
+    implementation("io.github.g00fy2.quickie:quickie-bundled:1.6.0")
+
 }
 
 configurations.all {

@@ -187,7 +187,7 @@ class RouteFragment : Fragment() {
                 routeViewModel.updateRouteListStatus(mBaseActivity, request) {
                     val data = it as String
 
-                    if (data.equals("Success")) {
+                    if (data.contains("Success")) {
                         routeViewModel.getRouteList(mBaseActivity)
                     } else {
                         mBaseActivity.writeExceptionLogs(data)
