@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afjltd.tracking.broadcast.TrackingAppBroadcast
@@ -34,6 +35,7 @@ import com.afjltd.tracking.websocket.VideoCallActivity
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentTrakingBinding
 import com.permissionx.guolindev.PermissionX
+import kotlin.math.log
 
 
 class TrackingFragment : Fragment() {
@@ -121,7 +123,7 @@ class TrackingFragment : Fragment() {
             trackingViewModel.postLocationData(request, context)
 
             //********Save this request as well for sending data to Route Sheet Status
-            AFJUtils.saveObjectPref(mBaseActivity,AFJUtils.KEY_LOCATION_REQUEST_OBJECT,request)
+            AFJUtils.saveObjectPref(mBaseActivity, AFJUtils.KEY_LOCATION_REQUEST_OBJECT, request)
 ///**************************************************************************************************
         }
 
@@ -170,14 +172,14 @@ class TrackingFragment : Fragment() {
                 AFJUtils.KEY_LOGIN_RESPONSE,
                 LoginResponse::class.java
             )
-        if(vehicleLoginResponse.data?.isSupportCallEnabled ==false)
-        {
-            binding.btnHelpLineCall.visibility = View.INVISIBLE
-        }
-        else
-        {
-            binding.btnHelpLineCall.visibility = View.VISIBLE
-        }
+        /*  if(vehicleLoginResponse.data?.isSupportCallEnabled ==false)
+          {
+              binding.btnHelpLineCall.visibility = View.INVISIBLE
+          }
+          else
+          {
+              binding.btnHelpLineCall.visibility = View.VISIBLE
+          }*/
 
         val menuFragment =
             MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
@@ -238,20 +240,40 @@ class TrackingFragment : Fragment() {
 
         binding.btnHelpLineCall.setOnClickListener {
 
-            val listUser = AFJUtils.getObjectPref(mBaseActivity, AFJUtils.KEY_CONTACT_LIST_PREF, ContactListData::class.java)
+            val listUser = AFJUtils.getObjectPref(
+                mBaseActivity,
+                AFJUtils.KEY_CONTACT_LIST_PREF,
+                ContactListData::class.java
+            )
 
-            if(listUser == null)
-            {
-                mBaseActivity.showSnackMessage("No Support Contact found",root)
+            if (listUser == null) {
+                mBaseActivity.showSnackMessage("No Support Contact found", root)
                 return@setOnClickListener
             }
 
-            if(listUser.contactUserList.size <=0)
-            {
-               mBaseActivity.showSnackMessage("No Support Contact found",root)
+            if (listUser.contactUserList.size <= 0) {
+                mBaseActivity.showSnackMessage("No Support Contact found", root)
 
-            }
-            else {
+            } else {
+
+                val userObject = AFJUtils.getObjectPref(
+                    mBaseActivity,
+                    AFJUtils.KEY_USER_DETAIL,
+                    QRFirebaseUser::class.java
+                )
+                val currentUserId =   if (userObject.id != null) {
+                    userObject.id
+                } else {
+                    val loginResponse = AFJUtils.getObjectPref(
+                        mBaseActivity,
+                        AFJUtils.KEY_LOGIN_RESPONSE,
+                        LoginResponse::class.java
+                    )
+                    loginResponse.data?.sosUser?.id!!
+
+                }
+
+                AFJUtils.writeLogs("caller user id = $currentUserId")
 
                 val mDialogView = LayoutInflater.from(mBaseActivity)
                     .inflate(R.layout.custom_dialog_contact_list, null)
@@ -262,20 +284,25 @@ class TrackingFragment : Fragment() {
                 val btnClose = mDialogView.findViewById<ImageView>(R.id.btnCancel)
                 val listContact = mDialogView.findViewById<RecyclerView>(R.id.list_contact)
                 listContact.layoutManager = LinearLayoutManager(mBaseActivity)
-                val adapter = ContactListAdapter(listUser.contactUserList, mBaseActivity ,
-                    object: ContactListAdapter.ContactListClickListener{
-                    override fun onVideoCallClick(user: User) {
-                        mAlertDialog.dismiss()
+                val adapter = ContactListAdapter(listUser.contactUserList, mBaseActivity,
+                    object : ContactListAdapter.ContactListClickListener {
+                        override fun onVideoCallClick(user: User) {
 
-                        val currentUserId = "1"
-                        val targetUserID = user.id.toString()
-                        val intent = Intent(mBaseActivity, VideoCallActivity::class.java).apply {
-                            putExtra(VideoCallActivity.currentUserID, "" + currentUserId)
-                            putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
+                            mAlertDialog.dismiss()
+
+                            val currentUserId = currentUserId
+                            val targetUserID = user.id.toString()
+                            val intent =
+                                Intent(mBaseActivity, VideoCallActivity::class.java).apply {
+                                    putExtra(
+                                        VideoCallActivity.currentUserID,
+                                        "" + currentUserId
+                                    )
+                                    putExtra(VideoCallActivity.targetUserID, "" + targetUserID)
+                                }
+                            mBaseActivity.startActivity(intent)
                         }
-                        mBaseActivity.startActivity(intent)
-                    }
-                })
+                    })
                 listContact.adapter = adapter
 
 
@@ -285,9 +312,6 @@ class TrackingFragment : Fragment() {
 
 
             }
-
-
-
 
         }
 
@@ -361,8 +385,6 @@ class TrackingFragment : Fragment() {
             locationServiceBound = false
         }
     }
-
-
 
 
     private fun setButtonsState(requestingLocationUpdates: Boolean) {

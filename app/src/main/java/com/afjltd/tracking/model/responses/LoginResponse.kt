@@ -74,7 +74,8 @@ data class Data(
     @SerializedName("vehicle") var vehicle: VehicleDetail? = VehicleDetail(),
     @SerializedName("user") var user: User? = User(),
     @SerializedName("vehicle_menu" ) var vehicleMenu : ArrayList<VehicleMenu> = arrayListOf(),
-    @SerializedName("is_call_enabled") var isSupportCallEnabled:Boolean?=false
+    @SerializedName("is_call_enabled") var isSupportCallEnabled:Boolean?=false,
+    @SerializedName("sos_user") var sosUser:QRFirebaseUser?=null
 
 )
 

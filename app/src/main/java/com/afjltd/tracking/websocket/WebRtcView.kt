@@ -437,6 +437,7 @@ class WebRtcView(
 
 
     fun onDestroy() {
+
         rtcClient.endCall(currentUserId, targetUserId)
         stopDTMFTone()
     }

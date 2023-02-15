@@ -118,8 +118,7 @@ open class BaseActivity : AppCompatActivity() {
         ) {
             AFJUtils.setUserToken(this@BaseActivity, "")
          //   finish()
-           // startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
-            loginRequired()
+           // loginRequired()
 
         } else {
 
@@ -198,7 +197,7 @@ open class BaseActivity : AppCompatActivity() {
 
     fun writeExceptionLogs(crash: String?) {
         AFJUtils.writeLogs("$crash")
-        toast("Exception Faced !!!")
+        toast("Exception Faced !!! --> $crash")
     }
 
     protected fun turnOnScreen() {

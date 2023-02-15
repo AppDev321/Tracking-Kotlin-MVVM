@@ -47,7 +47,6 @@ class LocationManager (
     private val _locationUpdates = callbackFlow<Location> {
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result
                      result.lastLocation?.let {
                      //   AFJUtils.writeLogs("New Location Received = ${it.toText()}")
 

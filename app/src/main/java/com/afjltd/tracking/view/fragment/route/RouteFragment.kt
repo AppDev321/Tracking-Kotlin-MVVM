@@ -8,9 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.afjltd.tracking.model.requests.LocationApiRequest
 import com.afjltd.tracking.model.requests.LoginRequest
 import com.afjltd.tracking.model.responses.Sheets
 import com.afjltd.tracking.model.responses.VehicleMenu
@@ -21,6 +20,10 @@ import com.afjltd.tracking.view.adapter.RouteListAdapter
 import com.afjltd.tracking.view.fragment.auth.CustomAuthenticationView
 import com.afjltd.tracking.view.fragment.route.viewmodel.RouteViewModel
 import com.afjltd.tracking.databinding.FragmentWeeklyInspectionListBinding
+import com.afjltd.tracking.service.location.LocationRepository
+import com.afjltd.tracking.service.location.toText
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.Format
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,6 +37,8 @@ class RouteFragment : Fragment() {
     lateinit var routeViewModel: RouteViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
 
+    private var latitude = "0.0"
+    private var longitude = "0.0"
 
     var identifierForm = "no_argument"
 
@@ -45,6 +50,22 @@ class RouteFragment : Fragment() {
     companion object {
         const val FORM_IDENTIFIER_ARGUMENT = "form_identifier"
     }
+
+    private fun getUpdateLocationData(context:Context)
+    {
+        val  repository = LocationRepository(context)
+      lifecycleScope.launch{
+            repository.getLocations()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collectLatest {
+                    latitude = it.latitude.toString()
+                    longitude = it.longitude.toString()
+
+
+                }
+        }
+    }
+
 
 
     override fun onCreateView(
@@ -62,7 +83,7 @@ class RouteFragment : Fragment() {
 
         val root: View = binding.root
 
-
+        getUpdateLocationData(mBaseActivity)
 
         routeViewModel.showDialog.observe(mBaseActivity) {
             mBaseActivity.showProgressDialog(it)
@@ -170,17 +191,12 @@ class RouteFragment : Fragment() {
                 item.time = formatter.format(Date())
 
 
-                val locPref = AFJUtils.getObjectPref(
-                    mBaseActivity,
-                    AFJUtils.KEY_LOCATION_REQUEST_OBJECT,
-                    LocationApiRequest::class.java
-                )
 
                 val request = LoginRequest(
                     routeSheet = item,
                     deviceDetail = AFJUtils.getDeviceDetail(),
-                    latitude = locPref.latitude?:"0.0" ,
-                    longitude = locPref.longitude?:"0.0"
+                    latitude = latitude,
+                    longitude = longitude
                 )
 
 
@@ -209,4 +225,3 @@ class RouteFragment : Fragment() {
 
 }
 
-data class Person(var name: String, var tutorial: String)

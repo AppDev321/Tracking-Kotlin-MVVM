@@ -8,10 +8,12 @@ import android.os.CountDownTimer
 import android.view.Gravity
 import android.view.View
 import androidx.activity.addCallback
+import androidx.databinding.DataBindingUtil.setContentView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -29,6 +31,7 @@ import com.afjltd.tracking.websocket.model.MessageType
 import com.afjltd.tracking.R
 import com.afjltd.tracking.broadcast.SocketBroadcast
 import com.afjltd.tracking.databinding.ActivityNavigationBinding
+import com.afjltd.tracking.model.responses.LoginResponse
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -43,7 +46,7 @@ class NavigationDrawerActivity : BaseActivity() {
     private lateinit var drawerLayout: DrawerLayout
     var dbReference: DatabaseReference? = null
     var timer: CountDownTimer? = null
-    private val socketBroadCast =SocketBroadcast()
+    private val socketBroadCast = SocketBroadcast()
     lateinit var signallingClient: SignalingClient
 
 
@@ -52,7 +55,7 @@ class NavigationDrawerActivity : BaseActivity() {
         registerReceiver(
             socketBroadCast,
             IntentFilter(
-          SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
+                SocketBroadcast.SocketBroadcast.SOCKET_BROADCAST
             )
         )
 
@@ -67,13 +70,30 @@ class NavigationDrawerActivity : BaseActivity() {
   
           }*/
 
-
-            val socketURL = Constants.WEBSOCKET_URL + AFJUtils.getDeviceDetail().deviceID + "&device=Tracking"
-            signallingClient = SignalingClient.getInstance(
-                listener = createSignallingClientListener(socketURL),
-                serverUrl = socketURL
+        val userObject = AFJUtils.getObjectPref(
+            this@NavigationDrawerActivity,
+            AFJUtils.KEY_USER_DETAIL,
+            QRFirebaseUser::class.java
+        )
+       val  currentUserId = if (userObject.id != null) {
+            userObject.id
+        } else {
+            val loginResponse = AFJUtils.getObjectPref(
+                this,
+                AFJUtils.KEY_LOGIN_RESPONSE,
+                LoginResponse::class.java
             )
+            loginResponse.data?.sosUser?.id!!
+        }
 
+        AFJUtils.writeLogs("user id = $currentUserId")
+
+        val socketURL =
+            Constants.WEBSOCKET_URL + currentUserId + "&device=${Constants.WEBSOCKET_APP_NAME}"
+             signallingClient = SignalingClient.getInstance(
+            listener = createSignallingClientListener(socketURL),
+            serverUrl = socketURL
+        )
 
 
     }
@@ -173,13 +193,13 @@ class NavigationDrawerActivity : BaseActivity() {
     }
 
     fun pressBackButton() {
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            onBackPressedDispatcher.addCallback(this) {
-                if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerLayout.closeDrawer(Gravity.LEFT)
-                }
-            }
-        else */onBackPressed()
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+             onBackPressedDispatcher.addCallback(this) {
+                 if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                     drawerLayout.closeDrawer(Gravity.LEFT)
+                 }
+             }
+         else */onBackPressed()
     }
 
     fun toolbarVisibility(isShow: Boolean) {
@@ -289,15 +309,15 @@ class NavigationDrawerActivity : BaseActivity() {
                     AFJUtils.KEY_USER_DETAIL,
                     QRFirebaseUser::class.java
                 )
-                /* if(userObject.id != null) {
-                     signallingClient = SignalingClient.
-                     getInstance(listener = this,
-                         serverUrl =
-                         socketURL)
-                 } else {
-                     signallingClient = SignalingClient.getInstance(listener =this,
-                         serverUrl = socketURL)
-                 }*/
+                /*    if(userObject.id != null) {
+                        signallingClient = SignalingClient.
+                        getInstance(listener = this,
+                            serverUrl =
+                            socketURL)
+                    } else {
+                        signallingClient = SignalingClient.getInstance(listener =this,
+                            serverUrl = socketURL)
+                    }*/
 
             }
 

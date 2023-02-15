@@ -1,16 +1,20 @@
 package com.afjltd.tracking.view.fragment.route.viewmodel
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.content.Intent
+import androidx.lifecycle.*
+import com.afjltd.tracking.broadcast.TrackingAppBroadcast
 import com.afjltd.tracking.model.requests.LoginRequest
 import com.afjltd.tracking.model.responses.GetRouteListResponse
 import com.afjltd.tracking.model.responses.Sheets
 import com.afjltd.tracking.retrofit.ApiInterface
 import com.afjltd.tracking.retrofit.RetrofitUtil
 import com.afjltd.tracking.retrofit.SuccessCallback
+import com.afjltd.tracking.service.location.ForegroundLocationService
+import com.afjltd.tracking.service.location.LocationRepository
 import com.afjltd.tracking.utils.AFJUtils
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 
@@ -133,8 +137,6 @@ class RouteViewModel : ViewModel() {
             })
 
     }
-
-
 
 
 

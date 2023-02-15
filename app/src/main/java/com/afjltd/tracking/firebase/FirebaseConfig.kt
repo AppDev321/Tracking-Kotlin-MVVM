@@ -1,5 +1,6 @@
 package com.afjltd.tracking.firebase
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import com.afjltd.tracking.broadcast.TrackingAppBroadcast
@@ -79,6 +80,7 @@ object FirebaseConfig {
     private fun getAPIBaseUrl():String= mFirebaseRemoteConfig.getString(api_base_url)
     private fun getWebSocketBaseUrl():String= mFirebaseRemoteConfig.getString(websocket_base_url)
     private fun getDataQueryLimit(): Long = mFirebaseRemoteConfig.getLong(data_query_limit)
+    @SuppressLint("SuspiciousIndentation")
     fun fetchLocationServiceTime(isValueFetched : (Boolean) ->Unit) {
 
 
@@ -91,10 +93,11 @@ object FirebaseConfig {
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
-                   Constants.BASE_URL = getAPIBaseUrl()
+                    // Constants.BASE_URL = getAPIBaseUrl()
+                  //  Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
+                   Constants.BASE_URL = "http://192.168.18.69:8000/api/"
+                    Constants.WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
 
-              //      Constants.BASE_URL = "http://192.168.18.69:8000/api/"
-                    Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
                     isValueFetched(true)
 
                     AFJUtils.writeLogs("BASE URL = ${Constants.BASE_URL}")

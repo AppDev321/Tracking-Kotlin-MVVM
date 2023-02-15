@@ -52,6 +52,7 @@ class VideoCallActivity : AppCompatActivity() {
         currentUserId = intent.extras?.getString(currentUserID).toString()
 
 
+
         if (intent.extras?.getSerializable(messageIntentValue) != null) {
             messageIntent = intent.extras?.getSerializable(messageIntentValue) as MessageModel
             targetUserID = messageIntent?.sendFrom.toString()
@@ -90,20 +91,8 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun createVideoCallView() {
 
-        var url = ""
-        val userObject =
-            AFJUtils.getObjectPref(
-                this@VideoCallActivity,
-                AFJUtils.KEY_USER_DETAIL,
-                QRFirebaseUser::class.java
-            )
-        if (userObject.id != null) {
-            url =
-                Constants.WEBSOCKET_URL + userObject.id +"&device=Tracking"
-        } else {
-            url =
-                Constants.WEBSOCKET_URL + "1"+"&device=Tracking"
-        }
+        var url =
+            Constants.WEBSOCKET_URL + AFJUtils.getDeviceDetail().deviceID +"&device=${Constants.WEBSOCKET_APP_NAME}"
 
         rtcView = WebRtcView(
             this,

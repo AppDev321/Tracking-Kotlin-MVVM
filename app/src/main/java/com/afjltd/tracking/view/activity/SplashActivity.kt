@@ -110,13 +110,14 @@ class SplashActivity : BaseActivity(),
         val dialog: AlertDialog = AlertDialog.Builder(this)
             .setTitle("New Update Available")
             .setMessage("There is a newer version of app available please update it now.")
-            .setPositiveButton("Update Now",
-                DialogInterface.OnClickListener { dialog, which -> redirectStore(updateUrl) })
+            .setPositiveButton("Update Now"
+            ) { _, _ -> redirectStore(updateUrl) }
             .setNegativeButton("Close",
-                DialogInterface.OnClickListener { dialog, which -> finish() }).create()
+            ) { _, _ -> finish() }.create()
         dialog.show()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onAppUptoDate() {
 
         val deviceData = AFJUtils.getDeviceDetail()
@@ -125,6 +126,7 @@ class SplashActivity : BaseActivity(),
         loginViewModel.getContactList(this@SplashActivity)
 
         loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
+        binding.containerButton.visibility = View.GONE
 
         loginViewModel.user.observe(this) { loginUser ->
             //    showProgressDialog(true)

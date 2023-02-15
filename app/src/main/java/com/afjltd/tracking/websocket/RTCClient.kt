@@ -333,11 +333,15 @@ class RTCClient(
         //peerConnection?.removeIceCandidates(iceCandidateArray.toTypedArray())
         val answerCall = MessageModel(MessageType.CallEnd.value, currentUserId, targetId, 0)
         signalingClient.sendMessageToWebSocket(answerCall)
+
+        videoCapturer.stopCapture()
         peerConnection?.close()
 
     }
 
     fun callClosed() {
+
+        videoCapturer.stopCapture()
         peerConnection?.close()
     }
 
