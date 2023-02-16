@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.afjltd.tracking.R;
 
+import kotlin.Unit;
+
 
 public class InternetDialog {
     private Context context;

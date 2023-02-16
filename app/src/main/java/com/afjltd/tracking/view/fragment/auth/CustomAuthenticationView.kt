@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import com.afjltd.tracking.R
 import com.afjltd.tracking.model.requests.LoginRequest
+import com.afjltd.tracking.utils.InternetDialog
 
 class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     constructor(context: Context, attributes: AttributeSet, style: Int) : super(
@@ -105,8 +106,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.containerLoginView.visibility = View.GONE
         binding.containerQrScan.visibility = View.VISIBLE
 
-        // User data change listener
-        com.afjltd.tracking.utils.InternetDialog(context).internetStatus
+     /*   // User data change listener
+      InternetDialog(context).internetStatus*/
 
         mBaseActivity.dbReference =
             FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_QR_TABLE)

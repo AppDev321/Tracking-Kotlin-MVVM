@@ -105,7 +105,8 @@ class WebRtcView(
     private fun initializeRTCClient() {
         signallingClient = SignalingClient.getInstance(
             createSignallingClientListener(),
-            webSocketURL
+            webSocketURL,
+            false
         )
         rtcClient = RTCClient(
             context,

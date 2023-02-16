@@ -10,6 +10,8 @@ interface SignalingClientListener {
     fun onConnectionClosed()
     fun onWebSocketFailure(errorMessage :String)
 
+
+
 }
 
 open class SocketMessageListener: SignalingClientListener {
@@ -21,7 +23,7 @@ open class SocketMessageListener: SignalingClientListener {
     }
     override fun onConnectionClosed(){}
     override fun onWebSocketFailure(errorMessage :String) {
-
     }
+
 
 }

@@ -33,6 +33,7 @@ class SignalingWebSocket: WebSocketListener() {
 
     var webSocket: WebSocket? = null
     private val gson = Gson()
+
     override fun onOpen(webSocket: WebSocket, response: Response) {
         this.webSocket = webSocket
 
@@ -45,11 +46,17 @@ class SignalingWebSocket: WebSocketListener() {
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-        Log.e(TAG, "WebSocket: closed")
+        Log.e(TAG, "WebSocket: try closing...")
         super.onClosing(webSocket, code, reason)
+
+
+    }
+
+    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        super.onClosed(webSocket, code, reason)
+        Log.e(TAG, "WebSocket: closed")
         this.webSocket = null
         signalingClientListener?.onConnectionClosed()
-
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {

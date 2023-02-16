@@ -12,6 +12,7 @@ import com.afjltd.tracking.utils.CustomDialog
 import com.afjltd.tracking.websocket.listners.RTCViewListener
 import com.afjltd.tracking.websocket.model.MessageModel
 import com.afjltd.tracking.R
+import com.afjltd.tracking.model.responses.LoginResponse
 import com.permissionx.guolindev.PermissionX
 import org.webrtc.SurfaceViewRenderer
 
@@ -91,15 +92,31 @@ class VideoCallActivity : AppCompatActivity() {
 
     private fun createVideoCallView() {
 
-        var url =
-            Constants.WEBSOCKET_URL + AFJUtils.getDeviceDetail().deviceID +"&device=${Constants.WEBSOCKET_APP_NAME}"
+        val userObject = AFJUtils.getObjectPref(
+            this@VideoCallActivity,
+            AFJUtils.KEY_USER_DETAIL,
+            QRFirebaseUser::class.java
+        )
+        val currentUserId = if (userObject.id != null) {
+            userObject.id
+        } else {
+            val loginResponse = AFJUtils.getObjectPref(
+                this,
+                AFJUtils.KEY_LOGIN_RESPONSE,
+                LoginResponse::class.java
+            )
+            loginResponse.data?.sosUser?.id!!
+        }
+
+        val socketURL =
+            Constants.WEBSOCKET_URL + currentUserId + "&device=${Constants.WEBSOCKET_APP_NAME}"
 
         rtcView = WebRtcView(
             this,
-            currentUserId,
+            currentUserId.toString(),
             targetUserId,
             messageIntent,
-            url,
+            socketURL,
             switch_camera_button,
             audio_output_button,
             video_button,

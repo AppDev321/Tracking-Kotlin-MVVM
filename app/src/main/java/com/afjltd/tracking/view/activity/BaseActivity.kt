@@ -118,6 +118,7 @@ open class BaseActivity : AppCompatActivity() {
         ) {
             AFJUtils.setUserToken(this@BaseActivity, "")
          //   finish()
+           // startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
            // loginRequired()
 
         } else {

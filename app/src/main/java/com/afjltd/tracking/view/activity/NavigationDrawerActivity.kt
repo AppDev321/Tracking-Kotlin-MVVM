@@ -2,13 +2,9 @@ package com.afjltd.tracking.view.activity
 
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.Gravity
 import android.view.View
-import androidx.activity.addCallback
-import androidx.databinding.DataBindingUtil.setContentView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -32,6 +28,7 @@ import com.afjltd.tracking.R
 import com.afjltd.tracking.broadcast.SocketBroadcast
 import com.afjltd.tracking.databinding.ActivityNavigationBinding
 import com.afjltd.tracking.model.responses.LoginResponse
+import com.afjltd.tracking.utils.InternetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -48,7 +45,7 @@ class NavigationDrawerActivity : BaseActivity() {
     var timer: CountDownTimer? = null
     private val socketBroadCast = SocketBroadcast()
     lateinit var signallingClient: SignalingClient
-
+    var isFirstLoad: Boolean = true
 
     override fun onResume() {
         super.onResume()
@@ -59,41 +56,6 @@ class NavigationDrawerActivity : BaseActivity() {
             )
         )
 
-        /*  if (::signallingClient.isInitialized) {
-              //Connection restart on every resume
-              Handler().postDelayed({
-                  signallingClient.destroy()
-              }, 1000)
-  
-  
-  
-  
-          }*/
-
-        val userObject = AFJUtils.getObjectPref(
-            this@NavigationDrawerActivity,
-            AFJUtils.KEY_USER_DETAIL,
-            QRFirebaseUser::class.java
-        )
-       val  currentUserId = if (userObject.id != null) {
-            userObject.id
-        } else {
-            val loginResponse = AFJUtils.getObjectPref(
-                this,
-                AFJUtils.KEY_LOGIN_RESPONSE,
-                LoginResponse::class.java
-            )
-            loginResponse.data?.sosUser?.id!!
-        }
-
-        AFJUtils.writeLogs("user id = $currentUserId")
-
-        val socketURL =
-            Constants.WEBSOCKET_URL + currentUserId + "&device=${Constants.WEBSOCKET_APP_NAME}"
-             signallingClient = SignalingClient.getInstance(
-            listener = createSignallingClientListener(socketURL),
-            serverUrl = socketURL
-        )
 
 
     }
@@ -111,7 +73,7 @@ class NavigationDrawerActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        requestSocketConnection(true)
 
 
         binding = ActivityNavigationBinding.inflate(layoutInflater)
@@ -181,10 +143,13 @@ class NavigationDrawerActivity : BaseActivity() {
             isNetWorkConnected.collectLatest {
                 if (!it) {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
-                    com.afjltd.tracking.utils.InternetDialog(this@NavigationDrawerActivity)
+                    InternetDialog(this@NavigationDrawerActivity)
                         .showNoInternetDialog()
+
                 } else {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.GONE
+
+
                 }
             }
         }
@@ -322,6 +287,7 @@ class NavigationDrawerActivity : BaseActivity() {
             }
 
             override fun onWebSocketFailure(errorMessage: String) {
+
                 AFJUtils.writeLogs("Socket Failure Dashboard => $errorMessage")
                 showSnackMessage("Socket Connection Issue: $errorMessage", binding.root)
 
@@ -330,4 +296,37 @@ class NavigationDrawerActivity : BaseActivity() {
 
         }
 
+
+    private fun requestSocketConnection(forceConnection: Boolean = false) {
+
+        val userObject = AFJUtils.getObjectPref(
+            this@NavigationDrawerActivity,
+            AFJUtils.KEY_USER_DETAIL,
+            QRFirebaseUser::class.java
+        )
+        val currentUserId = if (userObject.id != null) {
+            userObject.id
+        } else {
+            val loginResponse = AFJUtils.getObjectPref(
+                this,
+                AFJUtils.KEY_LOGIN_RESPONSE,
+                LoginResponse::class.java
+            )
+            loginResponse.data?.sosUser?.id!!
+        }
+
+        val socketURL =
+            Constants.WEBSOCKET_URL + currentUserId + "&device=${Constants.WEBSOCKET_APP_NAME}"
+        signallingClient = SignalingClient.getInstance(
+            listener = createSignallingClientListener(socketURL),
+            serverUrl = socketURL,
+            forceConnectionRecreate = forceConnection
+        )
+        signallingClient.onConnectStatusChangeListener = {
+            AFJUtils.writeLogs("Socket Status = $it")
+        }
+
+
+
+    }
 }

@@ -46,20 +46,16 @@
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/firebase/FirebaseConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/LoginResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/model/responses/LoginResponse.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/LocationManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/service/location/LocationManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/Constants.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/InternetDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/utils/InternetDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/BaseActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/BaseActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/NavigationDrawerActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/SplashActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/RouteListAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/adapter/RouteListAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/home/TrackingFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/RouteFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/RouteFragment.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/viewmodel/RouteViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/route/viewmodel/RouteViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/RTCClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/RTCClient.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingClient.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingWebSocket.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/SignalingWebSocket.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/VideoCallActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/VideoCallActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/WebRtcView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/WebRtcView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/SignalingClientListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/websocket/listners/SignalingClientListener.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +179,7 @@
     &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;last_directory_selection&quot;: &quot;D:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/AndroidStudioProjects/afj-school&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/tracking/websocket/reconnectwebsocketwrapper&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
@@ -203,11 +199,11 @@
       <recent name="com.example.afjtracking.utils" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\afjltd\tracking\websocket\reconnectwebsocketwrapper" />
+      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\afjltd\tracking\websocket" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\afjltd\tracking\view\adapter" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\res\layout" />
       <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\model\responses" />
-      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\view\fragment\route" />
-      <recent name="D:\AndroidStudioProjects\afj-tracking\app\src\main\java\com\example\afjtracking\view\fragment\ocr" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="com.example.afjtracking.view.fragment.auth" />
@@ -537,7 +533,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676039497819</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="deploy to open testing in play store console">
+      <created>1676464121259</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1676464121259</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="UnloadedModulesList">

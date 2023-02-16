@@ -92,11 +92,11 @@ object FirebaseConfig {
                   //  Constants.LOCATION_SERVICE_IN_SECONDS = (timeSeconds * 1000)
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
-                    Constants.FILE_QUERY_LIMIT = queryData.toInt()
-                    // Constants.BASE_URL = getAPIBaseUrl()
-                  //  Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
-                   Constants.BASE_URL = "http://192.168.18.69:8000/api/"
-                    Constants.WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
+                     Constants.FILE_QUERY_LIMIT = queryData.toInt()
+                     Constants.BASE_URL = getAPIBaseUrl()
+                     Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
+                 //  Constants.BASE_URL = "http://192.168.18.69:8000/api/"
+                    //Constants.WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
 
                     isValueFetched(true)
 

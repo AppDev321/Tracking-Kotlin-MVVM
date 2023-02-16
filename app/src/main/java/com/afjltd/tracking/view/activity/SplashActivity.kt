@@ -2,8 +2,8 @@ package com.afjltd.tracking.view.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -12,7 +12,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.afjltd.tracking.R
@@ -27,7 +26,6 @@ import com.google.gson.Gson
 import com.permissionx.guolindev.PermissionX
 import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanQRCode
-import io.github.g00fy2.quickie.content.QRContent
 
 
 class SplashActivity : BaseActivity(),
@@ -83,12 +81,20 @@ class SplashActivity : BaseActivity(),
 
                             ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
                         } else {
-                            CustomDialog().showSimpleAlertMsg(this, "Error",
+
+                            val dialog1 = Dialog(this, R.style.df_dialog)
+                            dialog1.setContentView(R.layout.dialog_no_internet)
+                            dialog1.setCancelable(true)
+                            dialog1.setCanceledOnTouchOutside(true)
+                            dialog1.findViewById<View>(R.id.btnSpinAndWinRedeem)
+                                .setOnClickListener {        finish() }
+                            dialog1.show()
+                          /*  CustomDialog().showSimpleAlertMsg(this, "Error",
                                 "There is some issue while getting default values, please contact to admin",
                                 textNegative = "Close",
                                 negativeListener = {
-                                    finish()
-                                })
+
+                                })*/
                         }
                     }
 
@@ -112,7 +118,8 @@ class SplashActivity : BaseActivity(),
             .setMessage("There is a newer version of app available please update it now.")
             .setPositiveButton("Update Now"
             ) { _, _ -> redirectStore(updateUrl) }
-            .setNegativeButton("Close",
+            .setNegativeButton(
+                "Close",
             ) { _, _ -> finish() }.create()
         dialog.show()
     }
