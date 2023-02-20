@@ -1,6 +1,7 @@
 package com.afjltd.tracking.view.activity
 
 import android.app.ActivityManager
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Build
@@ -17,10 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import com.afjltd.tracking.utils.AFJUtils
-import com.afjltd.tracking.utils.CustomDialog
-import com.afjltd.tracking.utils.LiveNetworkState
 import com.afjltd.tracking.R
+import com.afjltd.tracking.utils.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -29,13 +28,12 @@ import java.util.*
 open class BaseActivity : AppCompatActivity() {
     lateinit var isNetWorkConnected: Flow<Boolean>
 
-    open  fun loginRequired(){}
+    open fun loginRequired() {}
 
 
     override fun onStart() {
         super.onStart()
         AFJUtils.setPeriodicWorkRequest(this)
-
 
 
     }
@@ -53,7 +51,8 @@ open class BaseActivity : AppCompatActivity() {
 
 
     lateinit var progressDialog: ProgressDialog
-    lateinit var customProgressDialog: com.afjltd.tracking.utils.LottieDialog
+    lateinit var customProgressDialog: LottieDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -117,17 +116,18 @@ open class BaseActivity : AppCompatActivity() {
                 .contains(resources.getString(R.string.unauthenticated))
         ) {
             AFJUtils.setUserToken(this@BaseActivity, "")
-         //   finish()
-           // startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
-           // loginRequired()
+            //   finish()
+            // startActivity(Intent(this@BaseActivity, LoginActivity::class.java))
+            // loginRequired()
 
         } else {
 
             if (showToast) {
                 if (msg.lowercase().contains("unable to resolve host")) {
-                    com.afjltd.tracking.utils.InternetDialog(this).showNoInternetDialog()
+                InternetDialog(this).showNoInternetDialog()
                 } else {
                     Toast.makeText(this@BaseActivity, msg, Toast.LENGTH_SHORT).show()
+
                 }
             }
         }
@@ -202,20 +202,20 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     protected fun turnOnScreen() {
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            this.setShowWhenLocked(true)
-            this.setTurnScreenOn(true)
-            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-            keyguardManager.requestDismissKeyguard(this, null)
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+             this.setShowWhenLocked(true)
+             this.setTurnScreenOn(true)
+             val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+             keyguardManager.requestDismissKeyguard(this, null)
 
-        } else {
-            window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-            )
-        }*/
+         } else {
+             window.addFlags(
+                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                         or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                         or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                         or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+             )
+         }*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)

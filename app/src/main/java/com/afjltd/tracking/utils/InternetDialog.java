@@ -21,7 +21,7 @@ public class InternetDialog {
         this.context = context;
     }
 
-    public void showNoInternetDialog(){
+    public Dialog showNoInternetDialog(){
         final Dialog dialog1 = new Dialog(context, R.style.df_dialog);
         dialog1.setContentView(R.layout.dialog_no_internet);
         dialog1.setCancelable(true);
@@ -33,6 +33,7 @@ public class InternetDialog {
             }
         });
         dialog1.show();
+        return dialog1;
     }
     public  boolean getInternetStatus() {
 

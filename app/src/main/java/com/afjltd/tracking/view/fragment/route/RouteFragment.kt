@@ -60,14 +60,9 @@ class RouteFragment : Fragment() {
                 .collectLatest {
                     latitude = it.latitude.toString()
                     longitude = it.longitude.toString()
-
-
                 }
         }
     }
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,7 +91,6 @@ class RouteFragment : Fragment() {
 
 
         mBaseActivity.supportActionBar?.title = menuObject.name
-
         if (menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
             binding.root.addView(authView)
@@ -112,10 +106,8 @@ class RouteFragment : Fragment() {
                     } else {
                         binding.root.removeAllViews()
                         binding.root.addView(authView)
-
                     }
                 }
-
                 override fun onAuthForceClose(boolean: Boolean) {
                     mBaseActivity.pressBackButton()
                 }
@@ -127,9 +119,6 @@ class RouteFragment : Fragment() {
             binding.baseLayout.visibility = View.VISIBLE
             routeViewModel.getRouteList(mBaseActivity)
         }
-
-
-
 
         routeViewModel.getRouteList.observe(viewLifecycleOwner) {
             if (it != null) {

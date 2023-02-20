@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.schedule
 
 
@@ -46,13 +45,9 @@ class SignalingClient : CoroutineScope {
         fun getInstance(
             listener: SocketMessageListener?,
             serverUrl: String,
-            forceConnectionRecreate: Boolean
         ): SignalingClient {
             this.listener = listener
             this.serverUrl = serverUrl
-            if (forceConnectionRecreate) {
-                INSTANCE = null
-            }
             return INSTANCE ?: synchronized(this) {
                 INSTANCE = SignalingClient()
                 return INSTANCE as SignalingClient
@@ -113,11 +108,11 @@ class SignalingClient : CoroutineScope {
         AFJUtils.writeLogs("socket connect = $serverUrl")
         onConnectStatusChangeListener?.invoke(status)
         val request = Request.Builder().url(serverUrl).build()
-
         client.newWebSocket(request, signalingWebSocket)
-
         signalingWebSocket.setSignalingClientListener(webSocketListener)
-
+        onConnectStatusChangeListener = {
+            AFJUtils.writeLogs("Socket Status = $it")
+        }
     }
 
 
@@ -165,7 +160,7 @@ class SignalingClient : CoroutineScope {
 data class Config(
     val isAllowReconnect: Boolean = true,
     val reconnectCount: Int = Int.MAX_VALUE,
-    val reconnectInterval: Long = 5000
+    val reconnectInterval: Long = 8000
 )
 
 enum class Status {

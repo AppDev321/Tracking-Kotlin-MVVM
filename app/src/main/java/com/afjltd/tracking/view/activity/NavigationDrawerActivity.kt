@@ -1,5 +1,6 @@
 package com.afjltd.tracking.view.activity
 
+import android.app.Dialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -45,8 +46,7 @@ class NavigationDrawerActivity : BaseActivity() {
     var timer: CountDownTimer? = null
     private val socketBroadCast = SocketBroadcast()
     lateinit var signallingClient: SignalingClient
-    var isFirstLoad: Boolean = true
-
+    var internetDialog: Dialog? = null
     override fun onResume() {
         super.onResume()
         registerReceiver(
@@ -73,7 +73,7 @@ class NavigationDrawerActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestSocketConnection(true)
+        requestSocketConnection()
 
 
         binding = ActivityNavigationBinding.inflate(layoutInflater)
@@ -143,12 +143,15 @@ class NavigationDrawerActivity : BaseActivity() {
             isNetWorkConnected.collectLatest {
                 if (!it) {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.VISIBLE
-                    InternetDialog(this@NavigationDrawerActivity)
-                        .showNoInternetDialog()
+                    internetDialog = InternetDialog(this@NavigationDrawerActivity).showNoInternetDialog()
 
                 } else {
                     binding.appBarMain.contentMain.txtNetworkDesc.visibility = View.GONE
-
+                    if (internetDialog != null) {
+                        if (internetDialog?.isShowing == true) {
+                            internetDialog?.dismiss()
+                        }
+                    }
 
                 }
             }
@@ -289,7 +292,7 @@ class NavigationDrawerActivity : BaseActivity() {
             override fun onWebSocketFailure(errorMessage: String) {
 
                 AFJUtils.writeLogs("Socket Failure Dashboard => $errorMessage")
-                showSnackMessage("Socket Connection Issue: $errorMessage", binding.root)
+               // showSnackMessage("Socket Connection Issue: $errorMessage", binding.root)
 
 
             }
@@ -297,7 +300,7 @@ class NavigationDrawerActivity : BaseActivity() {
         }
 
 
-    private fun requestSocketConnection(forceConnection: Boolean = false) {
+    private fun requestSocketConnection() {
 
         val userObject = AFJUtils.getObjectPref(
             this@NavigationDrawerActivity,
@@ -319,12 +322,9 @@ class NavigationDrawerActivity : BaseActivity() {
             Constants.WEBSOCKET_URL + currentUserId + "&device=${Constants.WEBSOCKET_APP_NAME}"
         signallingClient = SignalingClient.getInstance(
             listener = createSignallingClientListener(socketURL),
-            serverUrl = socketURL,
-            forceConnectionRecreate = forceConnection
+            serverUrl = socketURL
         )
-        signallingClient.onConnectStatusChangeListener = {
-            AFJUtils.writeLogs("Socket Status = $it")
-        }
+
 
 
 

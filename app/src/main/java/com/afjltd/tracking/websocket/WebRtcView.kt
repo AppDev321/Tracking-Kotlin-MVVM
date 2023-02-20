@@ -105,8 +105,7 @@ class WebRtcView(
     private fun initializeRTCClient() {
         signallingClient = SignalingClient.getInstance(
             createSignallingClientListener(),
-            webSocketURL,
-            false
+            webSocketURL
         )
         rtcClient = RTCClient(
             context,
@@ -236,13 +235,6 @@ class WebRtcView(
 
 
     private fun createSignallingClientListener() = object : SocketMessageListener() {
-        override fun onWebSocketFailure(errorMessage: String) {
-            super.onWebSocketFailure(errorMessage)
-            context.runOnUiThread{
-                Toast.makeText(context,"Socket Issue: $errorMessage",Toast.LENGTH_LONG).show()
-            }
-
-        }
         override fun onConnectionEstablished() {
         }
 
