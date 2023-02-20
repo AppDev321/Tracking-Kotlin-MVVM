@@ -2,6 +2,7 @@ package com.afjltd.tracking.retrofit
 
 import com.afjltd.tracking.model.requests.*
 import com.afjltd.tracking.model.responses.*
+import okhttp3.Request
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -91,4 +92,6 @@ interface ApiInterface {
     fun fetchRouteList(@Body body: LoginRequest): Call<GetRouteListResponse?>
     @POST("vehicles/routes/update-status")
     fun updateRouteStatus(@Body body: LoginRequest): Call<GetRouteListResponse?>
+    @POST("calculate-distance")
+    fun getDistanceBtwLocation(@Body body: DistanceRequest): Call<DistanceResponse?>
 }

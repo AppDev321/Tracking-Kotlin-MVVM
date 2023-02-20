@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -225,6 +226,22 @@ class CustomDialog {
 
     }
 
+    fun showInputDialog(context: Context, title: String, message: String,
+                        positiveButton: String, negativeButton: String, onPositive: (String) -> Unit) {
+        val input = EditText(context)
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setView(input)
+            .setPositiveButton(positiveButton) { _, _ ->
+                onPositive(input.text.toString())
+            }
+            .setNegativeButton(negativeButton) { dialog, _ ->
+                dialog.cancel()
+            }
+            .create()
+        dialog.show()
+    }
 
 }
 

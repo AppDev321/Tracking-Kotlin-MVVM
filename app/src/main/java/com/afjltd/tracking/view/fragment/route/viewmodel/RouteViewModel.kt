@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.*
 import com.afjltd.tracking.broadcast.TrackingAppBroadcast
+import com.afjltd.tracking.model.requests.DistanceRequest
 import com.afjltd.tracking.model.requests.LoginRequest
+import com.afjltd.tracking.model.responses.DistanceResponse
 import com.afjltd.tracking.model.responses.GetRouteListResponse
 import com.afjltd.tracking.model.responses.Sheets
 import com.afjltd.tracking.retrofit.ApiInterface
@@ -139,5 +141,43 @@ class RouteViewModel : ViewModel() {
     }
 
 
+    fun getDistance(context: Context?,request: DistanceRequest,responseCallback:(Any)->Unit) {
+        getInstance(context)
+        _dialogShow.postValue(true)
+        apiInterface!!.getDistanceBtwLocation(request)
+            .enqueue(object : SuccessCallback<DistanceResponse?>() {
+                override fun loadingDialog(show: Boolean) {
+                    super.loadingDialog(show)
+                    _dialogShow.postValue(show)
+                }
+
+                override fun onSuccess(
+                    response: Response<DistanceResponse?>
+                ) {
+                    super.onSuccess(response)
+                    var res = response.body()
+                    responseCallback(res?.data!!)
+
+                }
+                override fun onFailure(response: Response<DistanceResponse?>) {
+                    super.onFailure(response)
+                    var errors = ""
+                    for (i in response.body()!!.errors.indices) {
+                        errors = """
+                                $errors${response.body()!!.errors[i].message}
+                                
+                                """.trimIndent()
+                    }
+                    responseCallback(errors)
+                }
+                override fun onAPIError(t: String) {
+                    val exception = t.toString()
+                    _dialogShow.postValue(false)
+                    responseCallback(exception)
+
+                }
+            })
+
+    }
 
 }

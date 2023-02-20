@@ -32,6 +32,7 @@ data class Sheets(
     @SerializedName("actual_departure_time") var actualDepartureTime: String? = null,
     @SerializedName("status") var status: String? = null,
     @SerializedName("notes") var notes: String? = null,
+    @SerializedName("driverNote") var driverNote: String? = null,
     @SerializedName("action") var action: String? = null,
     @SerializedName("time") var time: String? = null,
     @SerializedName("label") var label: String? = null,

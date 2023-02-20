@@ -2,6 +2,7 @@ package com.afjltd.tracking.view.fragment.route
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,18 +11,23 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import com.afjltd.tracking.databinding.FragmentWeeklyInspectionListBinding
+import com.afjltd.tracking.model.requests.DistanceRequest
+import com.afjltd.tracking.model.requests.LocationData
 import com.afjltd.tracking.model.requests.LoginRequest
+import com.afjltd.tracking.model.responses.Calculation
+import com.afjltd.tracking.model.responses.DistanceResponse
 import com.afjltd.tracking.model.responses.Sheets
 import com.afjltd.tracking.model.responses.VehicleMenu
+import com.afjltd.tracking.service.location.LocationRepository
 import com.afjltd.tracking.utils.AFJUtils
+import com.afjltd.tracking.utils.CustomDialog
 import com.afjltd.tracking.view.activity.NavigationDrawerActivity
 import com.afjltd.tracking.view.adapter.ClickListenerInterface
 import com.afjltd.tracking.view.adapter.RouteListAdapter
 import com.afjltd.tracking.view.fragment.auth.CustomAuthenticationView
 import com.afjltd.tracking.view.fragment.route.viewmodel.RouteViewModel
-import com.afjltd.tracking.databinding.FragmentWeeklyInspectionListBinding
-import com.afjltd.tracking.service.location.LocationRepository
-import com.afjltd.tracking.service.location.toText
+import kotlinx.android.synthetic.main.fragment_maps.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.Format
@@ -51,10 +57,9 @@ class RouteFragment : Fragment() {
         const val FORM_IDENTIFIER_ARGUMENT = "form_identifier"
     }
 
-    private fun getUpdateLocationData(context:Context)
-    {
-        val  repository = LocationRepository(context)
-      lifecycleScope.launch{
+    private fun getUpdateLocationData(context: Context) {
+        val repository = LocationRepository(context)
+        lifecycleScope.launch {
             repository.getLocations()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collectLatest {
@@ -63,6 +68,7 @@ class RouteFragment : Fragment() {
                 }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -108,6 +114,7 @@ class RouteFragment : Fragment() {
                         binding.root.addView(authView)
                     }
                 }
+
                 override fun onAuthForceClose(boolean: Boolean) {
                     mBaseActivity.pressBackButton()
                 }
@@ -170,6 +177,7 @@ class RouteFragment : Fragment() {
             @SuppressLint("SimpleDateFormat")
             override fun <T> handleContinueButtonClick(data: T) {
                 val item = data as Sheets
+
                 if (item.pick == true) {
                     item.action = "picked"
                 } else {
@@ -180,7 +188,6 @@ class RouteFragment : Fragment() {
                 item.time = formatter.format(Date())
 
 
-
                 val request = LoginRequest(
                     routeSheet = item,
                     deviceDetail = AFJUtils.getDeviceDetail(),
@@ -189,15 +196,78 @@ class RouteFragment : Fragment() {
                 )
 
 
-                routeViewModel.updateRouteListStatus(mBaseActivity, request) {
-                    val data = it as String
+                val childrenLoc = LocationData()
+                childrenLoc.latitude = item.latitude ?: 0.0
+                childrenLoc.longitude = item.longitude ?: 0.0
 
-                    if (data.contains("Success")) {
-                        routeViewModel.getRouteList(mBaseActivity)
-                    } else {
-                        mBaseActivity.writeExceptionLogs(data)
+                val vehicleLocation = LocationData()
+                vehicleLocation.latitude = latitude.toDouble()
+                vehicleLocation.longitude = longitude.toDouble()
+
+             //   val distance = childrenLoc.distanceTo(vehicleLocation)
+               // AFJUtils.writeLogs("The distance between the two points is ${distance / 1000} km")
+
+                val distanceRequest = DistanceRequest(
+                    location = arrayListOf(
+                        vehicleLocation,childrenLoc
+                    )
+                )
+                routeViewModel.getDistance(mBaseActivity,distanceRequest){
+                    if(it is String)
+                    {
+                        mBaseActivity.writeExceptionLogs(it.toString())
                     }
+                    else
+                    {
+                        val distance = it as Calculation
+                       val distanceCalculate= distance.distanceValue!!.toInt()
+                        if(distanceCalculate > 100 || distanceCalculate <0)
+                        {
+                            CustomDialog().showInputDialog(mBaseActivity, "Note Required",
+                                "Please mention your reason because child not pick from his location",
+                                positiveButton = "Save",
+                                negativeButton = "Cancel") {msg->
+                                if(msg.isNotEmpty() && msg.length >10) {
+                                    //add note here
+                                    request.routeSheet?.driverNote = msg
+                                    //***************************
+                                    routeViewModel.updateRouteListStatus(mBaseActivity, request) {
+                                        val data = it as String
+
+                                        if (data.contains("Success")) {
+                                            routeViewModel.getRouteList(mBaseActivity)
+                                        } else {
+                                            mBaseActivity.writeExceptionLogs(data)
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    mBaseActivity.showSnackMessage("Please enter valid reason",binding.root)
+                                }
+                            }
+                        }
+                        else
+                        {
+                            routeViewModel.updateRouteListStatus(mBaseActivity, request) {
+                                val data = it as String
+
+                                if (data.contains("Success")) {
+                                    routeViewModel.getRouteList(mBaseActivity)
+                                } else {
+                                    mBaseActivity.writeExceptionLogs(data)
+                                }
+                            }
+                        }
+
+                    }
+
                 }
+
+
+
+
+
             }
         })
 
