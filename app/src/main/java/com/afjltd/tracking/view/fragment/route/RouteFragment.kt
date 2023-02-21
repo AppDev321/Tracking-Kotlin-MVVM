@@ -45,7 +45,7 @@ class RouteFragment : Fragment() {
 
     private var latitude = "0.0"
     private var longitude = "0.0"
-
+    private var minLocationDistance = 100
     var identifierForm = "no_argument"
 
     override fun onAttach(context: Context) {
@@ -221,7 +221,7 @@ class RouteFragment : Fragment() {
                     {
                         val distance = it as Calculation
                        val distanceCalculate= distance.distanceValue!!.toInt()
-                        if(distanceCalculate > 100 || distanceCalculate <0)
+                        if(distanceCalculate > minLocationDistance || distanceCalculate < 0)
                         {
                             CustomDialog().showInputDialog(mBaseActivity, "Note Required",
                                 "Please mention your reason because child not pick from his location",
