@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.afjltd.tracking.model.requests.LoginRequest
 import com.afjltd.tracking.model.responses.LocationResponse
 import com.afjltd.tracking.model.responses.NotificationDataResponse
@@ -13,27 +14,23 @@ import com.afjltd.tracking.retrofit.RetrofitUtil
 import com.afjltd.tracking.retrofit.SuccessCallback
 import com.afjltd.tracking.utils.Constants
 import com.afjltd.tracking.R
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class NotificationViewModel : ViewModel() {
 
-    private val _dialogShow = MutableLiveData<Boolean>()
-    val showDialog: LiveData<Boolean> = _dialogShow
+    private val _dialogShow = MutableSharedFlow<Boolean>(1)
+    val showDialog= _dialogShow.asSharedFlow()
 
 
-    private val _notification = MutableLiveData<List<Notifications>>()
-    val notificationData :LiveData<List<Notifications>> = _notification
+    private val _notification = MutableSharedFlow<List<Notifications>>()
+    val notificationData  = _notification.asSharedFlow()
 
 
-    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
-    val errorsMsg: MutableLiveData<String>
-        get() {
-            if (mErrorsMsg == null) {
-                mErrorsMsg = MutableLiveData()
-            }
-            return mErrorsMsg!!
-        }
-
+    private var mErrorsMsg=MutableSharedFlow<String>()
+    val errorsMsg=mErrorsMsg.asSharedFlow()
 
     companion object {
         private var instance: NotificationViewModel? = null
@@ -52,12 +49,19 @@ class NotificationViewModel : ViewModel() {
 
     fun getNotifications(context: Context) {
         getInstance(context)
-        _dialogShow.postValue(true)
+        viewModelScope.launch {
+            _dialogShow.emit(true)
+        }
+
         apiInterface!!.getNotificationData(LoginRequest(deviceID = Constants.DEVICE_ID))
             .enqueue(object : SuccessCallback<NotificationDataResponse?>() {
                 override fun loadingDialog(show: Boolean) {
                     super.loadingDialog(show)
-                    _dialogShow.postValue(show)
+
+
+                    viewModelScope.launch {
+                        _dialogShow.emit(show)
+                    }
                 }
 
                 override fun onFailure(response: Response<NotificationDataResponse?>) {
@@ -70,7 +74,11 @@ class NotificationViewModel : ViewModel() {
                                 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
+
+
+                    viewModelScope.launch {
+                        mErrorsMsg.emit(errors)
+                    }
                 }
 
                 override fun onSuccess(
@@ -78,17 +86,30 @@ class NotificationViewModel : ViewModel() {
                     response: Response<NotificationDataResponse?>
                 ) {
                     val data =response.body()!!.data!!.notifications
-                    if(data.size >0)
-                    _notification.postValue(data)
+                    if(data.isNotEmpty())
+
+                    {
+
+                        viewModelScope.launch {
+                            _notification.emit(data)
+                        }
+                    }
                     else
-                        mErrorsMsg!!.postValue(context.resources.getString(R.string.no_data_found))
+                        {
+                            viewModelScope.launch {
+                                mErrorsMsg.emit(context.resources.getString(R.string.no_data_found))
+                            }
+                        }
 
                 }
 
                 override fun onAPIError(error: String) {
                     super.onAPIError(error)
-                    val exception = error
-                    mErrorsMsg!!.postValue(exception)
+
+                        viewModelScope.launch {
+                            mErrorsMsg.emit(error)
+                        }
+
 
 
                 }
@@ -138,12 +159,17 @@ class NotificationViewModel : ViewModel() {
 
     fun deleteNotification(context: Context?,notificationId:Int) {
         getInstance(context)
-        _dialogShow.postValue(true)
+        viewModelScope.launch {
+            _dialogShow.emit(true)
+        }
         apiInterface!!.deleteNotification(LoginRequest(deviceID = Constants.DEVICE_ID, notificatonID = notificationId))
             .enqueue(object : SuccessCallback<LocationResponse?>() {
                 override fun loadingDialog(show: Boolean) {
                     super.loadingDialog(show)
-                    _dialogShow.postValue(show)
+
+                    viewModelScope.launch {
+                        _dialogShow.emit(show)
+                    }
                 }
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)

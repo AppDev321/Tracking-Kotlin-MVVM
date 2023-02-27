@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,11 @@ import com.afjltd.tracking.view.fragment.forms.viewmodel.FormsViewModel
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentFormsBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -42,8 +48,9 @@ class FormsFragment : Fragment() {
 
     lateinit var formsViewModel: FormsViewModel
     private lateinit var mBaseActivity: NavigationDrawerActivity
-   // val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
-   val uniqueUploadId =  "" + System.currentTimeMillis()
+
+    // val uniqueUploadId = Constants.FILE_UPLOAD_UNIQUE_ID
+    val uniqueUploadId = "" + System.currentTimeMillis()
     var requestType = ""
 
     var formAttachments: ArrayList<Form> = arrayListOf()
@@ -52,7 +59,7 @@ class FormsFragment : Fragment() {
     lateinit var txtErrorMsg: TextView
 
     var vehicle: Vehicle = Vehicle()
-var formName = ""
+    var formName = ""
 
     var fileForm: ArrayList<Form> = arrayListOf()
 
@@ -85,14 +92,16 @@ var formName = ""
         txtErrorMsg = binding.txtErrorMsg
 
 
-        formsViewModel.showDialog.observe(mBaseActivity) {
-            mBaseActivity.showProgressDialog(it)
-        }
+
 
         binding.baseLayout.visibility = View.GONE
 
 
-        if(menuObject.qrStatus == true) {
+
+
+
+
+        if (menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
             binding.root.addView(authView)
             authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
@@ -110,13 +119,11 @@ var formName = ""
                 }
 
                 override fun onAuthForceClose(boolean: Boolean) {
-                    mBaseActivity . pressBackButton()
+                    mBaseActivity.pressBackButton()
                 }
             })
 
-        }
-        else
-        {
+        } else {
             binding.root.removeAllViews()
             binding.root.addView(binding.baseLayout)
             formsViewModel.getReportFormRequest(mBaseActivity, identifierForm)
@@ -125,57 +132,66 @@ var formName = ""
 
 
 
-
-        formsViewModel.getFormData.observe(viewLifecycleOwner)
-        {
-            requestType = it.requestName!!
-            //  binding.txtInspectionTitle.text = it.formName
-            mBaseActivity.supportActionBar?.title = it.formName
-            formName= it.formName!!
-        }
-
-
-        formsViewModel.getReportForm.observe(viewLifecycleOwner) {
-            if (it != null) {
-                try {
-                    showReportFormField(it)
-                } catch (e: Exception) {
-                    mBaseActivity.writeExceptionLogs(e.toString())
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch {
+                formsViewModel.showDialog.onStart {
+                    emit(   formsViewModel.showDialog.firstOrNull() ?:    formsViewModel.showDialog.first())
+                }.collectLatest {
+                    mBaseActivity.showProgressDialog(it)
                 }
-                formsViewModel._reportForm.value = null
             }
+            launch {
+                formsViewModel.getFormData.collectLatest {
+                    requestType = it.requestName!!
+                    //  binding.txtInspectionTitle.text = it.formName
+                    mBaseActivity.supportActionBar?.title = it.formName
+                    formName = it.formName!!
+                }
+
+            }
+            launch {
+                formsViewModel.getReportForm.collectLatest {
+
+                    try {
+                        showReportFormField(it)
+                    } catch (e: Exception) {
+                        mBaseActivity.writeExceptionLogs(e.toString())
+                    }
+
+                }
+            }
+
+
+            launch {
+                formsViewModel.getVehicle.collectLatest {
+                    vehicle = it
+                }
+
+            }
+            launch {
+                formsViewModel.errorsMsg.collectLatest {
+                    mBaseActivity.toast(it, true)
+                    mBaseActivity.showProgressDialog(false)
+                    binding.layoutVdiForm.visibility = View.GONE
+                    binding.txtErrorMsg.visibility = View.VISIBLE
+                    binding.txtErrorMsg.text = it.toString()
+                }
+
+            }
+
+            launch {
+                formsViewModel.apiUploadStatus.collectLatest {
+                    if (it) {
+                        mBaseActivity.pressBackButton()
+                        mBaseActivity.showSnackMessage(
+                            "Request saved", requireView()
+                        )
+                    }
+                }
+            }
+
+
         }
-
-        formsViewModel.getVehicle.observe(viewLifecycleOwner) {
-            if (it != null) {
-                vehicle = it
-                formsViewModel._vehicle.value = null
-            }
-        }
-
-        // Add observer for score
-        formsViewModel.errorsMsg.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-
-                mBaseActivity.toast(it, true)
-                mBaseActivity.showProgressDialog(false)
-                binding.layoutVdiForm.visibility = View.GONE
-                binding.txtErrorMsg.visibility = View.VISIBLE
-                binding.txtErrorMsg.text = it.toString()
-                formsViewModel.errorsMsg.value = null
-            }
-        })
-
-        formsViewModel.apiUploadStatus.observe(viewLifecycleOwner) {
-            if (it) {
-                mBaseActivity . pressBackButton()
-                mBaseActivity.showSnackMessage(
-                    "Request saved", requireView()
-                )
-            }
-        }
-
-
 
 
         return root
@@ -300,7 +316,7 @@ var formName = ""
                 view = layoutInflater.inflate(R.layout.layout_recycler_veiw, null)
                 val layoutManager = GridLayoutManager(mBaseActivity, 3)
                 val recImageContainer = view.findViewById<RecyclerView>(R.id.rec_image_container)
-                  recImageContainer.layoutManager = layoutManager
+                recImageContainer.layoutManager = layoutManager
                 val imageFormAdapter =
                     ImageFormAdapter(
                         requestType,
@@ -310,11 +326,15 @@ var formName = ""
                         true
                     )
                 imageFormAdapter.setImageFormListner(object : ImageFormAdapter.ImageFormListner {
-                    override fun onPreviewGenerated(uploadForm: Form, positon: Int,filePath:String) {
+                    override fun onPreviewGenerated(
+                        uploadForm: Form,
+                        positon: Int,
+                        filePath: String
+                    ) {
                         formData.attachmentList?.set(positon, uploadForm)
-                        formData.value= uploadForm.value
+                        formData.value = uploadForm.value
 
-                        if(formName.equals("Fuel Form")) {
+                        if (formName.equals("Fuel Form")) {
                             if (filePath.isNotEmpty() && formData.fieldName.toString().lowercase()
                                     .contains("receipt")
                             ) {
@@ -387,7 +407,7 @@ var formName = ""
                 fileFormAdapter.setImageFormListner(object : FileFormAdapter.ImageFormListner {
                     override fun onPreviewGenerated(uploadForm: Form, positon: Int) {
                         formData.attachmentList?.set(positon, uploadForm)
-                        formData.value= uploadForm.value
+                        formData.value = uploadForm.value
                     }
                 })
 
@@ -433,20 +453,18 @@ var formName = ""
     }
 
     private fun checkIfItsFuelFormReciept(filePath: String) {
-        formsViewModel.getTextFromFuelSlip(File(filePath),mBaseActivity, callback = {
-            if(it is String)
-            {
-              mBaseActivity.showSnackMessage(it, binding.root)
-            }
-            else {
+        formsViewModel.getTextFromFuelSlip(File(filePath), mBaseActivity, callback = {
+            if (it is String) {
+                mBaseActivity.showSnackMessage(it, binding.root)
+            } else {
 
                 val dataMap = it as Map<String, String>
                 AFJUtils.writeLogs(dataMap.toString())
 
-                val liter = dataMap["per_liter"] ?:""
-                val qty = dataMap["total_liter"] ?:""
-                val totalPrice =dataMap["total_price"] ?:""
-                val cardNumber = dataMap["card_number"] ?:""
+                val liter = dataMap["per_liter"] ?: ""
+                val qty = dataMap["total_liter"] ?: ""
+                val totalPrice = dataMap["total_price"] ?: ""
+                val cardNumber = dataMap["card_number"] ?: ""
 
                 if (liter.isNotEmpty() && qty.isNotEmpty() && totalPrice.isNotEmpty()) {
                     for (data in storedData) {
@@ -460,12 +478,11 @@ var formName = ""
                         } else if (fieldName.contains("total fuel")) {
                             data.formData!!.value = totalPrice
                             data.editText?.setText(data.formData!!.value.toString())
-                        }
-                        else if (fieldName.contains("card")) {
+                        } else if (fieldName.contains("card")) {
                             data.formData!!.value = cardNumber
                             data.editText?.setText(data.formData!!.value.toString())
+                        } else {
                         }
-                        else{}
                     }
                 }
             }

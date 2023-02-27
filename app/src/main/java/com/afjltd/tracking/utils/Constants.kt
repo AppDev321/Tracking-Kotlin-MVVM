@@ -67,3 +67,19 @@ object Constants {
     const val onPressNotification = "onPressNotification"
 
 }
+
+object ErrorCodes{
+    const val errorMessage = "Oops! Something went wrong, Please contact to admin (Code:"
+    private const val closeTag= ")"
+    const val webRTCViewError = "0045$closeTag"
+    const val deviceGettingError = "0012$closeTag"
+    const val splashLoginButton = "0011$closeTag"
+    const val authParsingIssue = "0025$closeTag"
+
+
+    const val qrNotValid =  "QR Response is not same as per expected, Please contact admin"
+    const val qrScanningIssue = "There is some issue in scanning QR Code, Please contact admin"
+    const val receiptScanInfo = "Please rescan picture there is an issue in reading data"
+    const val receiptScanMsg = "Please match value after scan receipt"
+
+}

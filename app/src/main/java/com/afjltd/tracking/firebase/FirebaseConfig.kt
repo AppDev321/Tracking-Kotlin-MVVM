@@ -47,7 +47,6 @@ object FirebaseConfig {
                         val trackingSetting =  dataSnapshot.getValue(TrackingSettingFirebase::class.java) ?: return
 
                         AFJUtils.setRequestingLocationUpdates(context, trackingSetting.tracking!!)
-                       AFJUtils.writeLogs("Tracking status =${AFJUtils.getRequestingLocationUpdates(context)}")
                         Intent().also { intent ->
                             intent.action=
                                 TrackingAppBroadcast.TrackingBroadCastObject.NOTIFICATION_BROADCAST
@@ -69,7 +68,6 @@ object FirebaseConfig {
             .setMinimumFetchIntervalInSeconds(5)
             .build()
         mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings)
-        //  mFirebaseRemoteConfig.setDefaultsAsync(DEFAULT)//(com.afjltd.tracking.R.xml.remote_config_defaults);
         mFirebaseRemoteConfig.fetchAndActivate().addOnCanceledListener {
             AFJUtils.writeLogs("Remote config complete")
         }
@@ -97,10 +95,7 @@ object FirebaseConfig {
                      Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
                  //  Constants.BASE_URL = "http://192.168.18.69:8000/api/"
                     //Constants.WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
-
                     isValueFetched(true)
-
-                    AFJUtils.writeLogs("BASE URL = ${Constants.BASE_URL}")
                 }
                 else
                 {

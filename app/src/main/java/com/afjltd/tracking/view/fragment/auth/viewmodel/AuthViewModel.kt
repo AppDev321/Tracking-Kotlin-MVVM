@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.afjltd.tracking.model.requests.FCMRegistrationRequest
 import com.afjltd.tracking.model.responses.LocationResponse
 import com.afjltd.tracking.retrofit.ApiInterface
@@ -23,6 +24,10 @@ import com.afjltd.tracking.view.activity.viewmodel.LoginViewModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 
@@ -32,21 +37,15 @@ class AuthViewModel : ViewModel() {
     private val _dialogShow = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _dialogShow
 
-    var _attendanceResponse = MutableLiveData<AttendanceReponse>()
-    var attendanceReponse: LiveData<AttendanceReponse> = _attendanceResponse
+    var _attendanceResponse = MutableSharedFlow<AttendanceReponse>()
+    var attendanceReponse = _attendanceResponse.asSharedFlow()
 
 
     private var mUserToken: MutableLiveData<String>? = MutableLiveData()
 
 
-    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
-    val errorsMsg: MutableLiveData<String>
-        get() {
-            if (mErrorsMsg == null) {
-                mErrorsMsg = MutableLiveData()
-            }
-            return mErrorsMsg!!
-        }
+    private var mErrorsMsg = MutableSharedFlow<String>()
+    val errorsMsg = mErrorsMsg.asSharedFlow()
 
 
     companion object {
@@ -89,11 +88,19 @@ class AuthViewModel : ViewModel() {
 
                                 """.trimIndent()
                 }
-                mErrorsMsg!!.postValue(errors)
+
+                viewModelScope.launch {
+                    mErrorsMsg.emit(errors)
+                }
+
                 response(errors)
             }
             override fun onAPIError(error: String) {
-                mErrorsMsg!!.postValue(error)
+
+                _dialogShow.postValue(false)
+                viewModelScope.launch {
+                    mErrorsMsg.emit(error)
+                }
                 response(error)
             }
         })
@@ -118,7 +125,10 @@ class AuthViewModel : ViewModel() {
                         response.body()!!.data!!.attendanceCode!!,
                         response.body()!!.data!!.expireCodeSecond!!
                     )
-                   _attendanceResponse.postValue(res)
+
+                    viewModelScope.launch {
+                        _attendanceResponse.emit(res)
+                    }
                     if(codeFetched != null) {
                         codeFetched(res)
                     }
@@ -132,13 +142,16 @@ class AuthViewModel : ViewModel() {
 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
 
+                    viewModelScope.launch {
+                        mErrorsMsg.emit(errors)
+                    }
                 }
                 override fun onAPIError(error: String) {
 
-                    mErrorsMsg!!.postValue(error)
-
+                    viewModelScope.launch {
+                        mErrorsMsg.emit(error)
+                    }
                 }
             })
 

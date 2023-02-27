@@ -376,13 +376,12 @@ class FileUploadDialog : DialogFragment(), FileUploadProgressListener {
 
             )
             uploadTableData.apiRequestTime = AFJUtils.getCurrentDateTime()
-
-           // fileUploadVM.insertDataToTable(mBaseActivity, uploadTableData)
+            fileUploadVM.insertDataToTable(mBaseActivity, uploadTableData)
 
 
             fileUploadVM.fileUploadedSuccessfull.postValue(true)
             //Now call Background
-            // AFJUtils.setPeriodicWorkRequest(mBaseActivity)
+             AFJUtils.setPeriodicWorkRequest(mBaseActivity)
 
 
         } catch (ex: java.lang.Exception) {

@@ -9,6 +9,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.afjltd.tracking.model.requests.FormRequest
 import com.afjltd.tracking.model.requests.SaveFormRequest
 import com.afjltd.tracking.model.responses.*
@@ -29,46 +30,43 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 import java.io.File
 import com.afjltd.tracking.R
+import com.afjltd.tracking.utils.ErrorCodes
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.io.FileInputStream
 import java.io.OutputStream
 import java.text.DecimalFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.Error
 
 
 class FormsViewModel : ViewModel() {
 
 
-    val _vehicle = MutableLiveData<Vehicle>()
-    val getVehicle: LiveData<Vehicle> = _vehicle
+    val _vehicle = MutableSharedFlow<Vehicle>()
+    val getVehicle=_vehicle.asSharedFlow()
 
 
-    private val _dialogShow = MutableLiveData<Boolean>()
-    val showDialog: LiveData<Boolean> = _dialogShow
+    private val _dialogShow = MutableSharedFlow<Boolean>(1)
+    val showDialog=_dialogShow.asSharedFlow()
 
 
-    private val _dataUploaded = MutableLiveData<Boolean>()
-    val apiUploadStatus: LiveData<Boolean> = _dataUploaded
+    private val _dataUploaded = MutableSharedFlow<Boolean>()
+    val apiUploadStatus= _dataUploaded.asSharedFlow()
 
 
-    val _reportForm = MutableLiveData<List<Form>>()
-    val getReportForm: LiveData<List<Form>> = _reportForm
+    val _reportForm = MutableSharedFlow<List<Form>>()
+    val getReportForm= _reportForm.asSharedFlow()
 
 
-    val _formData = MutableLiveData<FormData>()
-    val getFormData: LiveData<FormData> = _formData
+    val _formData = MutableSharedFlow<FormData>()
+    val getFormData= _formData.asSharedFlow()
 
 
-    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
-    val errorsMsg: MutableLiveData<String>
-        get() {
-            if (mErrorsMsg == null) {
-                mErrorsMsg = MutableLiveData()
-            }
-            return mErrorsMsg!!
-        }
-
+    private var mErrorsMsg = MutableSharedFlow<String>()
+    val errorsMsg=mErrorsMsg.asSharedFlow()
 
     companion object {
         private var instance: FormsViewModel? = null
@@ -86,12 +84,18 @@ class FormsViewModel : ViewModel() {
 
     fun getReportFormRequest(context: Context?,formIdentifer:String) {
         getInstance(context)
-        _dialogShow.postValue(true)
+        viewModelScope.launch {
+            _dialogShow.emit(true)
+        }
+
         apiInterface!!.getFormData(FormRequest(formIdentifer,AFJUtils.getDeviceDetail()))
             .enqueue(object : SuccessCallback<GetFormResponse?>() {
                 override fun loadingDialog(show: Boolean) {
                     super.loadingDialog(show)
-                    _dialogShow.postValue(show)
+
+                    viewModelScope.launch {
+                        _dialogShow.emit(show)
+                    }
                 }
 
                 override fun onSuccess(
@@ -117,17 +121,20 @@ class FormsViewModel : ViewModel() {
                     )
                     ApiDataRepo.insertData(context!!, apiTableAPIData)
 
-                    _formData.postValue(response.body()!!.data!!)
-                    _vehicle.postValue(response.body()!!.data!!.vehicle!!)
 
-                    _reportForm.postValue(response.body()!!.data!!.formList)
-
+                    viewModelScope.launch {
+                        _formData.emit(response.body()!!.data!!)
+                        _vehicle.emit(response.body()!!.data!!.vehicle!!)
+                        _reportForm.emit(response.body()!!.data!!.formList)
+                    }
 
                 }
 
                 override fun onFailure(response: Response<GetFormResponse?>) {
                     super.onFailure(response)
-                    _dataUploaded.postValue(false)
+
+
+
                     var errors = ""
                     for (i in response.body()!!.errors.indices) {
                         errors = """
@@ -135,21 +142,35 @@ class FormsViewModel : ViewModel() {
                                 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
+                    viewModelScope.launch {
+                        _dataUploaded.emit(false)
+                        mErrorsMsg.emit(errors)
+                    }
+
                 }
 
 
                 override fun onAPIError(t: String) {
 
-                    _dataUploaded.postValue(false)
+                    viewModelScope.launch {
+                        _dataUploaded.emit(false)
+                        _dialogShow.emit(false)
+                    }
                     val exception = t.toString()
-                    _dialogShow.postValue(false)
+
                     // mErrorsMsg!!.postValue(exception)
                     if (exception.lowercase().contains(Constants.FAILED_API_TAG)) {
                         fetchReportFromDBLastStore(context!!)
                     } else {
-                        mErrorsMsg!!.postValue(exception)
+                        viewModelScope.launch {
+                            mErrorsMsg.emit(exception)
+
+                        }
                     }
+
+
+
+
 
                 }
             })
@@ -167,10 +188,11 @@ class FormsViewModel : ViewModel() {
 
                 if (response.code == 200) {
                     val resp = response.data!!
-
-                    _vehicle.postValue(resp.vehicle!!)
-                    _reportForm.postValue(resp.formList)
-                    _formData.postValue(resp)
+                    viewModelScope.launch {
+                        _vehicle.emit(resp.vehicle!!)
+                        _reportForm.emit(resp.formList)
+                        _formData.emit(resp)
+                    }
 
                 } else {
                     var errors = ""
@@ -181,10 +203,18 @@ class FormsViewModel : ViewModel() {
                                 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
+                    viewModelScope.launch {
+                        mErrorsMsg.emit(errors)
+                    }
+
+
                 }
             } else {
-                mErrorsMsg!!.postValue(context.resources.getString(R.string.no_data_found))
+
+                viewModelScope.launch {
+                    mErrorsMsg.emit(context.resources.getString(R.string.no_data_found))
+                }
+
             }
         }
     }
@@ -192,24 +222,33 @@ class FormsViewModel : ViewModel() {
 
     fun saveReportForm(form: SaveFormRequest, context: Context?) {
         getInstance(context)
-        _dialogShow.postValue(true)
+
+        viewModelScope.launch {
+            _dialogShow.emit(true)
+        }
         apiInterface!!.saveForms(form)
             .enqueue(object : SuccessCallback<LocationResponse?>() {
 
                 override fun loadingDialog(show: Boolean) {
                     super.loadingDialog(show)
-                    _dialogShow.postValue(show)
+                    viewModelScope.launch {
+                        _dialogShow.emit(show)
+                    }
                 }
 
                 override fun onSuccess(
                     response: Response<LocationResponse?>
                 ) {
-                    _dataUploaded.postValue(true)
+
+
+                    viewModelScope.launch {
+                        _dialogShow.emit(true)
+                    }
                     super.onSuccess(response)
                 }
                 override fun onFailure(response: Response<LocationResponse?>) {
                     super.onFailure(response)
-                    _dataUploaded.postValue(false)
+
                     var errors = ""
                     for (i in response.body()!!.errors.indices) {
                         errors = """
@@ -217,14 +256,23 @@ class FormsViewModel : ViewModel() {
                                 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
+
+
+                    viewModelScope.launch {
+                        _dataUploaded.emit(false)
+                        mErrorsMsg.emit(errors)
+                    }
                 }
 
                 override fun onAPIError(error: String) {
                     val exception =error
-                    _dataUploaded.postValue(false)
-                    mErrorsMsg!!.postValue(exception)
-                    _dialogShow.postValue(false)
+
+
+                    viewModelScope.launch {
+                        _dataUploaded.emit(false)
+                        mErrorsMsg.emit(exception)
+                        _dialogShow.emit(false)
+                    }
                     super.onAPIError(error)
 
                 }
@@ -402,7 +450,7 @@ class FormsViewModel : ViewModel() {
                 }
                 catch (e:Exception)
                 {
-                    callback("Please rescan picture there is an issue in reading data")
+                    callback(ErrorCodes.receiptScanInfo)
                 }
             }
 
@@ -428,7 +476,7 @@ class FormsViewModel : ViewModel() {
 
         }
 
-        callback("Please match value after scan receipt")
+        callback(ErrorCodes.receiptScanMsg)
     }
 
 }

@@ -112,6 +112,8 @@ class LoginViewModel : ViewModel() {
     }
 
     fun loginApiRequest(request: LoginRequest?, context: Context?) {
+
+
         getInstance(context)
         apiInterface!!.getVehicleData(request).enqueue(object : SuccessCallback<LoginResponse?>() {
                 override fun onSuccess(
@@ -120,16 +122,12 @@ class LoginViewModel : ViewModel() {
                     super.onSuccess(response)
                     // mUserToken!!.postValue(response.body()!!.data!!.token!!)
                     mUserToken!!.postValue("0")
-
-
                     //Save LognigREsponse object
                     AFJUtils.saveObjectPref(
                         context!!,
                         AFJUtils.KEY_LOGIN_RESPONSE,
                         response.body()!!
                     )
-
-
                     //Save vehicle object
                     AFJUtils.saveObjectPref(
                         context,
@@ -142,12 +140,7 @@ class LoginViewModel : ViewModel() {
                         AFJUtils.KEY_USER_DETAIL,
                         response.body()!!.data!!.user
                     )
-
-
-
                     getContactList(context)
-
-
                 }
                 override fun onFailure(response: Response<LoginResponse?>) {
                     super.onFailure(response)
@@ -173,15 +166,11 @@ class LoginViewModel : ViewModel() {
                 response: Response<GetContactListResponse?>
             ) {
                 super.onSuccess(response)
-
-
                 AFJUtils.saveObjectPref(
                     context!!,
                     AFJUtils.KEY_CONTACT_LIST_PREF,
                     response.body()?.data
                 )
-
-
             }
             override fun onFailure(response: Response<GetContactListResponse?>) {
                 super.onFailure(response)
@@ -199,4 +188,9 @@ class LoginViewModel : ViewModel() {
             }
         })
     }
+
+
+
+
+
 }

@@ -14,10 +14,8 @@ import com.afjltd.tracking.utils.AFJUtils
 import com.afjltd.tracking.view.activity.NavigationDrawerActivity
 import com.afjltd.tracking.view.fragment.auth.viewmodel.AuthViewModel
 import com.afjltd.tracking.databinding.FragmentAttandenceScanBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 
 
 class AttendanceFragment : Fragment() {
@@ -28,8 +26,8 @@ class AttendanceFragment : Fragment() {
     private var _attendanceVM: AuthViewModel? = null
     private val attendanceVM get() = _attendanceVM!!
     private var qrCodeType = ""
-    companion object
-    {
+
+    companion object {
         const val ARG_ACTION_TYPE = "action_argument"
     }
 
@@ -52,31 +50,24 @@ class AttendanceFragment : Fragment() {
         val root: View = binding.root
 
 
-        qrCodeType= arguments?.getString(ARG_ACTION_TYPE)!!
+        qrCodeType = arguments?.getString(ARG_ACTION_TYPE)!!
 
 
 
-        attendanceVM.getQRCode(mBaseActivity,qrCodeType)
+        attendanceVM.getQRCode(mBaseActivity, qrCodeType)
         attendanceVM.showDialog.observe(viewLifecycleOwner) {
-         //   mBaseActivity.showProgressDialog(it)
+            //   mBaseActivity.showProgressDialog(it)
         }
-
-        attendanceVM.errorsMsg.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                mBaseActivity.toast(it, true)
-                mBaseActivity.showProgressDialog(false)
-
-                attendanceVM.errorsMsg.value = null
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch {
+                attendanceVM.errorsMsg.collectLatest {
+                    mBaseActivity.toast(it, true)
+                    mBaseActivity.showProgressDialog(false)
+                }
             }
-        })
-
-
-        try {
-            attendanceVM.attendanceReponse.observe(viewLifecycleOwner, Observer {
-
-                val response  = it
-                if (response != null) {
-
+            launch {
+                attendanceVM.attendanceReponse.collectLatest {
+                    val response = it
                     lifecycleScope.async(onPre = {
                         binding.txtTimeExpire.text = "Please wait QR Code is generating"
                         binding.idIVQrcode.setImageBitmap(null)
@@ -84,17 +75,18 @@ class AttendanceFragment : Fragment() {
                         attendanceVM.getQrCodeBitmap(
                             response.qrCode,
                             mBaseActivity,
-                            )
-                    }, onPost = {it->
-                        if(it != null)
-                        binding.idIVQrcode.setImageBitmap(it)
-                        timer =   object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
+                        )
+                    }, onPost = { it ->
+                        if (it != null)
+                            binding.idIVQrcode.setImageBitmap(it)
+                        timer = object : CountDownTimer(1000 * response.timeOut.toLong(), 1000) {
                             override fun onTick(millisUntilFinished: Long) {
                                 binding.txtTimeExpire.text =
                                     "Your QR Code will refresh in ${millisUntilFinished / 1000} seconds"
                             }
+
                             override fun onFinish() {
-                                attendanceVM.getQRCode(mBaseActivity,qrCodeType)
+                                attendanceVM.getQRCode(mBaseActivity, qrCodeType)
                                 timer = null
                             }
                         }
@@ -104,14 +96,13 @@ class AttendanceFragment : Fragment() {
                     })
 
 
-                    attendanceVM._attendanceResponse.value = null
-
                 }
+            }
 
-            })
-        } catch (e: Exception) {
-            AFJUtils.writeLogs(e.toString())
+
         }
+
+
         return root
     }
 
@@ -124,11 +115,17 @@ class AttendanceFragment : Fragment() {
         }
     }
 
-    private fun <R> CoroutineScope.async(onPre:() -> Unit, background: () -> R, onPost: (R) -> Unit) = launch(
-        Dispatchers.Main) {
+    private fun <R> CoroutineScope.async(
+        onPre: () -> Unit,
+        background: () -> R,
+        onPost: (R) -> Unit
+    ) = launch(
+        Dispatchers.Main
+    ) {
         onPre()
-        withContext(Dispatchers.IO){
-            background() }.let(onPost)
+        withContext(Dispatchers.IO) {
+            background()
+        }.let(onPost)
     }
 
 }

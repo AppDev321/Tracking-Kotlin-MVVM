@@ -28,6 +28,7 @@ import com.afjltd.tracking.view.adapter.RouteListAdapter
 import com.afjltd.tracking.view.fragment.auth.CustomAuthenticationView
 import com.afjltd.tracking.view.fragment.route.viewmodel.RouteViewModel
 import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.Format
@@ -127,34 +128,22 @@ class RouteFragment : Fragment() {
             routeViewModel.getRouteList(mBaseActivity)
         }
 
-        routeViewModel.getRouteList.observe(viewLifecycleOwner) {
-            if (it != null) {
-                try {
-                    showRouteList(it)
-                } catch (e: Exception) {
-                    AFJUtils.writeLogs("route sheet exception")
-                    mBaseActivity.writeExceptionLogs(e.toString())
-                }
-                routeViewModel._routeList.value = null
+
+        lifecycleScope.launch{
+            routeViewModel.getRouteList.collectLatest {
+                showRouteList(it)
+
+            }
+            routeViewModel.errorsMsg.collectLatest {
+                    mBaseActivity.toast(it, true)
+                    mBaseActivity.showProgressDialog(false)
+                    binding.recWeeklyInspectionList.visibility = View.GONE
+                    binding.txtNoData.visibility = View.VISIBLE
+                    binding.txtNoData.text = it
+                    AFJUtils.writeLogs("route error  $it")
+
             }
         }
-
-
-        // Add observer for score
-        routeViewModel.errorsMsg.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-
-                mBaseActivity.toast(it, true)
-                mBaseActivity.showProgressDialog(false)
-                binding.recWeeklyInspectionList.visibility = View.GONE
-                binding.txtNoData.visibility = View.VISIBLE
-                binding.txtNoData.text = it.toString()
-                routeViewModel.errorsMsg.value = null
-
-                AFJUtils.writeLogs("route error  $it")
-            }
-        })
-
 
 
 
@@ -204,30 +193,28 @@ class RouteFragment : Fragment() {
                 vehicleLocation.latitude = latitude.toDouble()
                 vehicleLocation.longitude = longitude.toDouble()
 
-             //   val distance = childrenLoc.distanceTo(vehicleLocation)
-               // AFJUtils.writeLogs("The distance between the two points is ${distance / 1000} km")
+                //   val distance = childrenLoc.distanceTo(vehicleLocation)
+                // AFJUtils.writeLogs("The distance between the two points is ${distance / 1000} km")
 
                 val distanceRequest = DistanceRequest(
                     location = arrayListOf(
-                        vehicleLocation,childrenLoc
+                        vehicleLocation, childrenLoc
                     )
                 )
-                routeViewModel.getDistance(mBaseActivity,distanceRequest){
-                    if(it is String)
-                    {
+                routeViewModel.getDistance(mBaseActivity, distanceRequest) {
+                    if (it is String) {
                         mBaseActivity.writeExceptionLogs(it.toString())
-                    }
-                    else
-                    {
+                    } else {
                         val distance = it as Calculation
-                       val distanceCalculate= distance.distanceValue!!.toInt()
-                        if(distanceCalculate > minLocationDistance || distanceCalculate < 0)
-                        {
-                            CustomDialog().showInputDialog(mBaseActivity, "Note Required",
+                        val distanceCalculate = distance.distanceValue!!.toInt()
+                        if (distanceCalculate > minLocationDistance || distanceCalculate < 0) {
+                            CustomDialog().showInputDialog(
+                                mBaseActivity, "Note Required",
                                 "Please mention your reason because child not pick from his location",
                                 positiveButton = "Save",
-                                negativeButton = "Cancel") {msg->
-                                if(msg.isNotEmpty() && msg.length >10) {
+                                negativeButton = "Cancel"
+                            ) { msg ->
+                                if (msg.isNotEmpty() && msg.length > 10) {
                                     //add note here
                                     request.routeSheet?.driverNote = msg
                                     //***************************
@@ -240,15 +227,14 @@ class RouteFragment : Fragment() {
                                             mBaseActivity.writeExceptionLogs(data)
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    mBaseActivity.showSnackMessage("Please enter valid reason",binding.root)
+                                } else {
+                                    mBaseActivity.showSnackMessage(
+                                        "Please enter valid reason",
+                                        binding.root
+                                    )
                                 }
                             }
-                        }
-                        else
-                        {
+                        } else {
                             routeViewModel.updateRouteListStatus(mBaseActivity, request) {
                                 val data = it as String
 
@@ -263,9 +249,6 @@ class RouteFragment : Fragment() {
                     }
 
                 }
-
-
-
 
 
             }

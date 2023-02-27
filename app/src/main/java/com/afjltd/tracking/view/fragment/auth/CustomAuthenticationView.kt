@@ -21,14 +21,13 @@ import com.afjltd.tracking.view.fragment.auth.viewmodel.AuthViewModel
 import com.afjltd.tracking.databinding.DialogChooseSigninBinding
 import com.afjltd.tracking.databinding.FragmentAuthBinding
 import com.google.firebase.database.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import com.afjltd.tracking.R
 import com.afjltd.tracking.model.requests.LoginRequest
+import com.afjltd.tracking.utils.ErrorCodes
 import com.afjltd.tracking.utils.InternetDialog
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 
 class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     constructor(context: Context, attributes: AttributeSet, style: Int) : super(
@@ -106,8 +105,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.containerLoginView.visibility = View.GONE
         binding.containerQrScan.visibility = View.VISIBLE
 
-     /*   // User data change listener
-      InternetDialog(context).internetStatus*/
+        /*   // User data change listener
+         InternetDialog(context).internetStatus*/
 
         mBaseActivity.dbReference =
             FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_QR_TABLE)
@@ -162,7 +161,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
 
                         } catch (e: Exception) {
                             mBaseActivity.showSnackMessage(
-                                "There is some issue in parsing data of authentication",
+                                ErrorCodes.errorMessage + ErrorCodes.authParsingIssue,
                                 binding.root
                             )
                         }
@@ -221,15 +220,12 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
             })
         }
 
-
-        authViewModel.errorsMsg.observe(this, Observer { it ->
-            if (it != null) {
+        lifecycleScope.launch {
+            authViewModel.errorsMsg.collectLatest {
                 mBaseActivity.toast(it, true)
                 mBaseActivity.showProgressDialog(false)
-                authViewModel.errorsMsg.value = null
             }
-
-        })
+        }
 
 
     }
@@ -289,13 +285,13 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         binding.layoutScan.txtTimeExpire.text = ""
 
 
-        if(!isQRScanSelected)
-        {
+        if (!isQRScanSelected) {
             var from = 0
             val choice = arrayOf<CharSequence>("via QR Scan", "via Credentials")
             val alert: AlertDialog.Builder = AlertDialog.Builder(mBaseActivity)
             alert.setTitle("Choose Authentication Option")
-            alert.setSingleChoiceItems(choice, 0
+            alert.setSingleChoiceItems(
+                choice, 0
             ) { _, which ->
                 if (choice[which] === "via QR Scan") {
                     from = 0
@@ -313,14 +309,11 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                 }
             }
             alert.show()
-        }
-        else
-        {
+        } else {
             binding.containerLoginView.visibility = View.GONE
             binding.containerQrScan.visibility = View.VISIBLE
             attendanceViewModel()
         }
-
 
 
 /*
@@ -373,9 +366,9 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
                 ) {
                     mBaseActivity.showProgressDialog(false)
                     if (it is String) {
-                        mBaseActivity.showSnackMessage(it,binding.root)
-                    } else if(it is Boolean) {
-                        if(it) {
+                        mBaseActivity.showSnackMessage(it, binding.root)
+                    } else if (it is Boolean) {
+                        if (it) {
                             authListeners.onAuthCompletionListener(true)
                             mBaseActivity.updateUserNavItem()
                         }
@@ -447,9 +440,7 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
         onPre: () -> Unit,
         background: () -> R,
         onPost: (R) -> Unit
-    ) = launch(
-        Dispatchers.Main
-    ) {
+    ) = launch(Dispatchers.Main) {
         onPre()
         withContext(Dispatchers.IO) {
             background()

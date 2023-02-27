@@ -97,55 +97,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
         val myLoc = view.findViewById(R.id.currentLocationImageButton) as ImageButton
         myLoc.setOnClickListener(clickListener)
-        if (!Places.isInitialized()) {
-            Places.initialize(requireContext().applicationContext, resources.getString(R.string.map_key))
-        }
-
-        // Create a new Places client instance.
-
-        // Create a new Places client instance.
-        val placesClient = Places.createClient(requireContext())
-        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
-        // and once again when the user makes a selection (for afjltd when calling fetchPlace()).
-        // Create a new token for the autocomplete session. Pass this to FindAutocompletePredictionsRequest,
-        // and once again when the user makes a selection (for afjltd when calling fetchPlace()).
-        val token = AutocompleteSessionToken.newInstance()
-        // Create a RectangularBounds object.
-        // Create a RectangularBounds object.
-        val bounds = RectangularBounds.newInstance(
-            LatLng(-33.880490, 151.184363),  //dummy lat/lng
-            LatLng(-33.858754, 151.229596)
-        )
-        // Use the builder to create a FindAutocompletePredictionsRequest.
-        // Use the builder to create a FindAutocompletePredictionsRequest.
-        val request =
-            FindAutocompletePredictionsRequest.builder() // Call either setLocationBias() OR setLocationRestriction().
-                .setLocationBias(bounds) //.setLocationRestriction(bounds)
-                .setTypeFilter(TypeFilter.ADDRESS)
-                .setSessionToken(token)
-                .setQuery("Lahore")
-                .build()
-
-
-        placesClient.findAutocompletePredictions(request)
-            .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
-            var    mResult = StringBuilder()
-                for (prediction in response.autocompletePredictions) {
-                    mResult.append(" ").append(
-                        """
-                            ${prediction.getFullText(null)}
-                            
-                            """.trimIndent()
-                    )
-                }
-                AFJUtils.writeLogs(java.lang.String.valueOf(mResult))
-            }.addOnFailureListener { exception: Exception? ->
-            if (exception is ApiException) {
-                val apiException = exception
-                AFJUtils.writeLogs("Places exception:$apiException")
-            }
-        }
-
     }
 
     @Override

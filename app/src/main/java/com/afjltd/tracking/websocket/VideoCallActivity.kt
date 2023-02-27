@@ -13,6 +13,7 @@ import com.afjltd.tracking.websocket.listners.RTCViewListener
 import com.afjltd.tracking.websocket.model.MessageModel
 import com.afjltd.tracking.R
 import com.afjltd.tracking.model.responses.LoginResponse
+import com.afjltd.tracking.utils.ErrorCodes
 import com.permissionx.guolindev.PermissionX
 import org.webrtc.SurfaceViewRenderer
 
@@ -79,9 +80,15 @@ class VideoCallActivity : AppCompatActivity() {
                 Manifest.permission.CAMERA
             ).request { allGranted, _, _ ->
                 if (allGranted) {
-                    createVideoCallView()
+                    try {
+                        createVideoCallView()
+                    }
+                    catch (e:Exception)
+                    {
+                        Toast.makeText(this, ErrorCodes.webRTCViewError, Toast.LENGTH_LONG).show()
+                    }
                 } else {
-                    Toast.makeText(this, "you should accept all permissions", Toast.LENGTH_LONG)
+                    Toast.makeText(this, "You should accept all permissions", Toast.LENGTH_LONG)
                         .show()
                 }
             }

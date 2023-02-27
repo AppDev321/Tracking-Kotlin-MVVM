@@ -18,7 +18,7 @@ android {
         applicationId "com.afjltd.hnhtech.tracking"
         minSdk 21
         targetSdk 33
-        versionCode 1
+        versionCode 6
         versionName "1.0.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -73,7 +73,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     //****************WebRTC dependency
-    implementation 'org.webrtc:google-webrtc:1.0.32006'
+   // implementation 'org.webrtc:google-webrtc:1.0.32006'
+    implementation 'com.dafruits:webrtc:106.0.0'
     //*****************************************************
 
 

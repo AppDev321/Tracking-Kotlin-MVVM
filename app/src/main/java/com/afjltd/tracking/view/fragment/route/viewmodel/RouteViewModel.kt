@@ -15,6 +15,9 @@ import com.afjltd.tracking.retrofit.SuccessCallback
 import com.afjltd.tracking.service.location.ForegroundLocationService
 import com.afjltd.tracking.service.location.LocationRepository
 import com.afjltd.tracking.utils.AFJUtils
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -26,15 +29,16 @@ class RouteViewModel : ViewModel() {
     val showDialog: LiveData<Boolean> = _dialogShow
 
 
-    val _routeList = MutableLiveData<List<Sheets>>()
-    val getRouteList: LiveData<List<Sheets>> = _routeList
+    val _routeList = MutableSharedFlow<List<Sheets>>()
+
+    val getRouteList = _routeList.asSharedFlow()
 
 
-    private var mErrorsMsg: MutableLiveData<String>? = MutableLiveData()
-    val errorsMsg: MutableLiveData<String>
+    private var mErrorsMsg: MutableSharedFlow<String>? = MutableSharedFlow()
+    val errorsMsg: MutableSharedFlow<String>
         get() {
             if (mErrorsMsg == null) {
-                mErrorsMsg = MutableLiveData()
+                mErrorsMsg = MutableSharedFlow()
             }
             return mErrorsMsg!!
         }
@@ -71,9 +75,16 @@ class RouteViewModel : ViewModel() {
 
                     val res = response.body()?.data?.sheets ?: arrayListOf()
                     if (res.size > 0) {
-                        _routeList.postValue(res)
+                        viewModelScope.launch {
+                            _routeList.emit(res)
+                        }
+
+
                     } else {
-                        mErrorsMsg!!.postValue("No Route Found")
+                        viewModelScope.launch {
+                            mErrorsMsg!!.emit("No Route Found")
+                        }
+
                     }
                 }
 
@@ -86,13 +97,19 @@ class RouteViewModel : ViewModel() {
                                 
                                 """.trimIndent()
                     }
-                    mErrorsMsg!!.postValue(errors)
+
+                    viewModelScope.launch {
+                        mErrorsMsg!!.emit(errors)
+                    }
                 }
 
                 override fun onAPIError(t: String) {
                     val exception = t.toString()
                     _dialogShow.postValue(false)
-                    mErrorsMsg!!.postValue(exception)
+                    viewModelScope.launch {
+                        mErrorsMsg!!.emit(exception)
+                    }
+
 
 
                 }

@@ -1,6 +1,7 @@
 package com.afjltd.tracking.retrofit
 
 import android.content.Context
+import com.afjltd.tracking.BuildConfig
 import com.afjltd.tracking.utils.AFJUtils.getUserToken
 import com.afjltd.tracking.utils.Constants
 import com.google.gson.GsonBuilder
@@ -20,7 +21,9 @@ object RetrofitUtil {
 
     fun getRetrofitInstance(context: Context?): Retrofit {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
+        if (BuildConfig.DEBUG) {
+            interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
+        }
         val client: OkHttpClient = Builder().addInterceptor(interceptor)
             .readTimeout(1, TimeUnit.MINUTES)
             .connectTimeout(1, TimeUnit.MINUTES)
@@ -34,7 +37,9 @@ object RetrofitUtil {
 
     fun getRetrofitHeaderInstance(context: Context?, showContentType: Boolean = true): Retrofit {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
+        if (BuildConfig.DEBUG) {
+            interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
+        }
         val client: OkHttpClient = Builder().addInterceptor(interceptor)
             .readTimeout(1, TimeUnit.MINUTES)
             .connectTimeout(1, TimeUnit.MINUTES)

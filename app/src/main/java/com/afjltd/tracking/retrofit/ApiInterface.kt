@@ -87,11 +87,15 @@ interface ApiInterface {
     @GET("contact-list")
     fun getContactList(): Call<GetContactListResponse?>
 
-
+    @GET("app-check")
+    fun checkApiStatus(): Call<ApiVersionResponse?>
     @POST("vehicles/routes/list")
     fun fetchRouteList(@Body body: LoginRequest): Call<GetRouteListResponse?>
     @POST("vehicles/routes/update-status")
     fun updateRouteStatus(@Body body: LoginRequest): Call<GetRouteListResponse?>
     @POST("calculate-distance")
     fun getDistanceBtwLocation(@Body body: DistanceRequest): Call<DistanceResponse?>
+
+
+
 }

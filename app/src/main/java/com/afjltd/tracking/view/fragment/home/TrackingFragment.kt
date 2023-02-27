@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.content.*
 import android.content.Context.ACTIVITY_SERVICE
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -16,8 +17,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afjltd.tracking.broadcast.TrackingAppBroadcast
@@ -29,13 +30,15 @@ import com.afjltd.tracking.model.responses.*
 import com.afjltd.tracking.service.location.ForegroundLocationService
 import com.afjltd.tracking.utils.*
 import com.afjltd.tracking.view.activity.NavigationDrawerActivity
-import com.afjltd.tracking.view.fragment.contactList.ContactListAdapter
+import com.afjltd.tracking.view.adapter.ContactListAdapter
 import com.afjltd.tracking.view.fragment.home.viewmodel.TrackingViewModel
 import com.afjltd.tracking.websocket.VideoCallActivity
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentTrakingBinding
+import com.afjltd.tracking.view.fragment.home.viewmodel.OnUpdateNeededListener
 import com.permissionx.guolindev.PermissionX
-import kotlin.math.log
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class TrackingFragment : Fragment() {
@@ -165,21 +168,21 @@ class TrackingFragment : Fragment() {
 
         mBaseActivity.addChildFragment(MapsFragment(), this, R.id.frame_map)
 
+        checkUpdateAppVersion()
 
-        val vehicleLoginResponse =
-            AFJUtils.getObjectPref(
+        val vehicleLoginResponse =  AFJUtils.getObjectPref(
                 mBaseActivity,
                 AFJUtils.KEY_LOGIN_RESPONSE,
                 LoginResponse::class.java
             )
-        /*  if(vehicleLoginResponse.data?.isSupportCallEnabled ==false)
+          if(vehicleLoginResponse.data?.isSupportCallEnabled ==false)
           {
               binding.btnHelpLineCall.visibility = View.INVISIBLE
           }
           else
           {
               binding.btnHelpLineCall.visibility = View.VISIBLE
-          }*/
+          }
 
         val menuFragment =
             MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
@@ -224,11 +227,16 @@ class TrackingFragment : Fragment() {
         binding.txtNotificationCount.visibility = View.GONE
         trackingViewModel.getNotificationCount(mBaseActivity)
 
-        trackingViewModel.notificationCount.observe(viewLifecycleOwner) {
-            binding.txtNotificationCount.visibility = View.VISIBLE
-            binding.txtNotificationCount.text = it.toString()
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            trackingViewModel.notificationCount.collectLatest {
+                binding.txtNotificationCount.visibility = View.VISIBLE
+                binding.txtNotificationCount.text = it.toString()
+            }
         }
+
+
+
 
         binding.btnNotification.setOnClickListener {
             mBaseActivity.moveFragmentToNextFragment(
@@ -273,7 +281,6 @@ class TrackingFragment : Fragment() {
 
                 }
 
-                AFJUtils.writeLogs("caller user id = $currentUserId")
 
                 val mDialogView = LayoutInflater.from(mBaseActivity)
                     .inflate(R.layout.custom_dialog_contact_list, null)
@@ -440,4 +447,29 @@ class TrackingFragment : Fragment() {
             .getRunningServices(Integer.MAX_VALUE)
             .any { it -> it.service.className == service.name }
     }
+
+    private fun checkUpdateAppVersion()
+    {
+        trackingViewModel.checkApiVersion(mBaseActivity,object: OnUpdateNeededListener {
+            override fun onUpdateNeeded(updateUrl: String) {
+                val dialog: AlertDialog = AlertDialog.Builder(mBaseActivity)
+                    .setTitle("New Update Available")
+                    .setMessage("There is a newer version of app available please update it now.")
+                    .setPositiveButton("Update Now"
+                    ) { _, _ -> redirectStore(updateUrl) }
+                    .setNegativeButton(
+                        "Close",
+                    ) { _, _ -> mBaseActivity.pressBackButton() }.create()
+                dialog.show()
+            }
+
+        })
+    }
+    private fun redirectStore(updateUrl: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+      mBaseActivity.finish()
+    }
+
 }

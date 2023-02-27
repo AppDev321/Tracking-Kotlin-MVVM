@@ -5,22 +5,21 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.ActivitySplashBinding
 import com.afjltd.tracking.firebase.FirebaseConfig
 import com.afjltd.tracking.model.requests.LoginRequest
-import com.afjltd.tracking.ota.ForceUpdateChecker
 import com.afjltd.tracking.utils.AFJUtils
 import com.afjltd.tracking.utils.CustomDialog
+import com.afjltd.tracking.utils.ErrorCodes
 import com.afjltd.tracking.view.activity.viewmodel.LoginViewModel
 import com.google.gson.Gson
 import com.permissionx.guolindev.PermissionX
@@ -28,8 +27,7 @@ import io.github.g00fy2.quickie.QRResult
 import io.github.g00fy2.quickie.ScanQRCode
 
 
-class SplashActivity : BaseActivity(),
-    ForceUpdateChecker.OnUpdateNeededListener {
+class SplashActivity : BaseActivity() {
     lateinit var loginViewModel: LoginViewModel
     lateinit var binding: ActivitySplashBinding
 
@@ -42,19 +40,23 @@ class SplashActivity : BaseActivity(),
         FirebaseConfig.setTokenFirebase(this)
 
 
-        // val token = AFJUtils.getUserToken(this@SplashActivity)
-        //if (! token!!.isEmpty()) {
-        /*val vehicleDetail = AFJUtils.getObjectPref(
-            this,
-            AFJUtils.KEY_VEHICLE_DETAIL,
-            VehicleDetail::class.java
+        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        binding = DataBindingUtil.setContentView(
+            this@SplashActivity,
+            R.layout.activity_splash
         )
-        if (vehicleDetail != null) {
-            finish()
-            startActivity(Intent(this@SplashActivity, NavigationDrawerActivity::class.java))
-        }*/
+        binding.lifecycleOwner = this
+        binding.loginViewModel = loginViewModel
+        try {
+            supportActionBar?.hide()
+        } catch (e: Exception) {
+        }
 
 
+
+        binding.pbCircular.visibility = View.VISIBLE
+        binding.txtError.visibility = View.GONE
+        binding.containerButton.visibility = View.GONE
 
         PermissionX.init(this)
             .permissions(
@@ -71,15 +73,11 @@ class SplashActivity : BaseActivity(),
                     FirebaseConfig.fetchLocationServiceTime()
                     {
                         if (it) {
-                            loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-                            binding = DataBindingUtil.setContentView(
-                                this@SplashActivity,
-                                R.layout.activity_splash
-                            )
-                            binding.lifecycleOwner = this
-                            binding.loginViewModel = loginViewModel
-
-                            ForceUpdateChecker.with(this).onUpdateNeeded(this).check()
+                            try {
+                                moveToNextScreen()
+                            } catch (e: Exception) {
+                                AFJUtils.writeLogs("Exception while moving to next screen")
+                            }
                         } else {
 
                             val dialog1 = Dialog(this, R.style.df_dialog)
@@ -87,14 +85,14 @@ class SplashActivity : BaseActivity(),
                             dialog1.setCancelable(true)
                             dialog1.setCanceledOnTouchOutside(true)
                             dialog1.findViewById<View>(R.id.btnSpinAndWinRedeem)
-                                .setOnClickListener {        finish() }
+                                .setOnClickListener { finish() }
                             dialog1.show()
-                          /*  CustomDialog().showSimpleAlertMsg(this, "Error",
-                                "There is some issue while getting default values, please contact to admin",
-                                textNegative = "Close",
-                                negativeListener = {
+                            /*  CustomDialog().showSimpleAlertMsg(this, "Error",
+                                  "There is some issue while getting default values, please contact to admin",
+                                  textNegative = "Close",
+                                  negativeListener = {
 
-                                })*/
+                                  })*/
                         }
                     }
 
@@ -112,86 +110,61 @@ class SplashActivity : BaseActivity(),
     }
 
 
-    override fun onUpdateNeeded(updateUrl: String) {
-        val dialog: AlertDialog = AlertDialog.Builder(this)
-            .setTitle("New Update Available")
-            .setMessage("There is a newer version of app available please update it now.")
-            .setPositiveButton("Update Now"
-            ) { _, _ -> redirectStore(updateUrl) }
-            .setNegativeButton(
-                "Close",
-            ) { _, _ -> finish() }.create()
-        dialog.show()
-    }
-
     @SuppressLint("SuspiciousIndentation")
-    override fun onAppUptoDate() {
+    private fun moveToNextScreen() {
 
         val deviceData = AFJUtils.getDeviceDetail()
         val loginUser = LoginRequest(deviceDetail = deviceData)
-        //Support Contact List
-        loginViewModel.getContactList(this@SplashActivity)
-
         loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
         binding.containerButton.visibility = View.GONE
-
-        loginViewModel.user.observe(this) { loginUser ->
-            //    showProgressDialog(true)
-
-            binding.pbCircular.visibility = View.VISIBLE
-            binding.txtError.visibility = View.GONE
-            binding.containerButton.visibility = View.GONE
-
-            loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
-
-
-        }
         loginViewModel.userToken.observe(this) { s ->
             if (s != null) {
-                //  showProgressDialog(false)
-                //  AFJUtils.setUserToken(this@SplashActivity, s)
                 finish()
                 startActivity(Intent(this@SplashActivity, NavigationDrawerActivity::class.java))
             }
         }
-
-
-
         loginViewModel.errorsMsg.observe(this) { s ->
-            if (s != null) {
+            if (s != null ) {
 
                 binding.pbCircular.visibility = View.GONE
                 binding.txtError.visibility = View.VISIBLE
-                binding.txtError.text = s.toString()
                 binding.containerButton.visibility = View.VISIBLE
 
+                if(s.toString().lowercase().contains("null")) {
+                    binding.txtError.text = ErrorCodes.errorMessage + ErrorCodes.deviceGettingError
+                    binding.btnLogin.text = "Retry"
+                }
+                else
+                {
 
-                   if (s.contains("not assigned")) {
-                       binding.btnLogin.text = "QR Scan"
-                   } else {
-                       binding.btnLogin.text = "Retry"
-                   }
+                    binding.txtError.text = s.toString()
+                    if (s.contains("not assigned")) {
+                        binding.btnLogin.text = "QR Scan"
+                    } else {
+                        binding.btnLogin.text = "Retry"
+                    }
+
+                }
             }
         }
 
         binding.btnLogin.setOnClickListener {
-            if (binding.btnLogin.text.toString().lowercase() == "retry") {
-                val deviceData = AFJUtils.getDeviceDetail()
-                val loginUser = LoginRequest(deviceDetail = deviceData)
-                loginViewModel.userMutableLiveData!!.postValue(loginUser)
-            } else {
-                scanQrCodeLauncher.launch(null)
+            try {
+                if (binding.btnLogin.text.toString().lowercase() == "retry") {
+                    val deviceData = AFJUtils.getDeviceDetail()
+                    val loginUser = LoginRequest(deviceDetail = deviceData)
+                    loginViewModel.userMutableLiveData!!.postValue(loginUser)
+                } else {
+                    scanQrCodeLauncher.launch(null)
+                }
+            } catch (e: Exception) {
+                binding.txtError.text = ErrorCodes.errorMessage + ErrorCodes.splashLoginButton
+                binding.btnLogin.text = "Retry"
             }
         }
 
     }
 
-    private fun redirectStore(updateUrl: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        finish()
-    }
 
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
         vibratePhone()
@@ -206,11 +179,10 @@ class SplashActivity : BaseActivity(),
                 )
                 loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
             } catch (e: Exception) {
-                binding.txtError.text =
-                    "QR Response is not same as per expected, Please contact admin"
+                binding.txtError.text =   ErrorCodes.qrNotValid
             }
         } else {
-            binding.txtError.text = "There is some issue in scanning QR Code, Please contact admin"
+            binding.txtError.text = ErrorCodes.qrScanningIssue
         }
 
 

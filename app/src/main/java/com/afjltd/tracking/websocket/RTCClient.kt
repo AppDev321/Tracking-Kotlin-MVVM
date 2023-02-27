@@ -144,9 +144,10 @@ class RTCClient(
 
      fun buildPeerConnection(observer: PeerConnection.Observer) =
         peerConnectionFactory.createPeerConnection(
-            PeerConnection.RTCConfiguration(iceServer).apply {
 
-             continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+            PeerConnection.RTCConfiguration(iceServer).apply {
+                sdpSemantics =  PeerConnection.SdpSemantics.PLAN_B
+                continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
             },
            // iceServer,
             observer
