@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -114,7 +115,9 @@ class SplashActivity : BaseActivity() {
     private fun moveToNextScreen() {
 
         val deviceData = AFJUtils.getDeviceDetail()
-        val loginUser = LoginRequest(deviceDetail = deviceData)
+        val loginUser = LoginRequest()
+        loginUser.deviceDetail= deviceData
+
         loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
         binding.containerButton.visibility = View.GONE
         loginViewModel.userToken.observe(this) { s ->
@@ -153,7 +156,10 @@ class SplashActivity : BaseActivity() {
                 if (binding.btnLogin.text.toString().lowercase() == "retry") {
                     val deviceData = AFJUtils.getDeviceDetail()
                     val loginUser = LoginRequest(deviceDetail = deviceData)
-                    loginViewModel.userMutableLiveData!!.postValue(loginUser)
+                    loginViewModel.loginApiRequest(loginUser, this@SplashActivity)
+                    binding.pbCircular.visibility = View.VISIBLE
+                    binding.txtError.visibility = View.GONE
+                    binding.containerButton.visibility = View.GONE
                 } else {
                     scanQrCodeLauncher.launch(null)
                 }
@@ -162,9 +168,7 @@ class SplashActivity : BaseActivity() {
                 binding.btnLogin.text = "Retry"
             }
         }
-
     }
-
 
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
         vibratePhone()
@@ -184,8 +188,6 @@ class SplashActivity : BaseActivity() {
         } else {
             binding.txtError.text = ErrorCodes.qrScanningIssue
         }
-
-
     }
 
     private fun vibratePhone() {
@@ -194,7 +196,6 @@ class SplashActivity : BaseActivity() {
             if (Build.VERSION.SDK_INT >= 26) {
                 it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
             } else {
-
                 it.vibrate(100)
             }
         }

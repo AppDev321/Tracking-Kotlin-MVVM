@@ -127,7 +127,6 @@ class TrackingViewModel : ViewModel() {
 
                 for (app in appList) {
                     if (app.appName.toString().uppercase() == APP_NAME.uppercase()) {
-                        AFJUtils.writeLogs("${BuildConfig.VERSION_NAME} ==${app.version.toString()} ")
                         if (app.version.toString() != BuildConfig.VERSION_NAME) {
                             if(app.downloadUrl.toString().isNotEmpty()) {
                                 callbackListener.onUpdateNeeded(app.downloadUrl.toString())

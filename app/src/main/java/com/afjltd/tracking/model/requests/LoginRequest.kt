@@ -8,7 +8,7 @@ class LoginRequest(
     @SerializedName("email") var strEmailAddress: String?=null,
     @SerializedName("password") var strPassword: String?=null,
     @SerializedName("registration_number") var vrnNumber: String?=null,
-    @SerializedName("device_detail") var deviceDetail:DeviceDetail?= DeviceDetail(),
+    @SerializedName("device_detail") var deviceDetail:DeviceDetail?= null,
     @SerializedName("device_id") var deviceID:String?= null,
     @SerializedName("notification_id") var notificatonID:Int?= null,
     @SerializedName("sheet") var routeSheet:Sheets?=null,

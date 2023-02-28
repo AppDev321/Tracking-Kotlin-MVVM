@@ -21,7 +21,7 @@ object RetrofitUtil {
 
     fun getRetrofitInstance(context: Context?): Retrofit {
         val interceptor = HttpLoggingInterceptor()
-        if (BuildConfig.DEBUG) {
+       if (BuildConfig.DEBUG) {
             interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
         }
         val client: OkHttpClient = Builder().addInterceptor(interceptor)
@@ -39,7 +39,7 @@ object RetrofitUtil {
         val interceptor = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
             interceptor.apply { interceptor.level = HttpLoggingInterceptor.Level.BODY }
-        }
+       }
         val client: OkHttpClient = Builder().addInterceptor(interceptor)
             .readTimeout(1, TimeUnit.MINUTES)
             .connectTimeout(1, TimeUnit.MINUTES)

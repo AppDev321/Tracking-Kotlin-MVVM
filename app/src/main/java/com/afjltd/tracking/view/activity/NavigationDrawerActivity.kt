@@ -79,17 +79,17 @@ class NavigationDrawerActivity : BaseActivity() {
         binding = ActivityNavigationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        setSupportActionBar(binding.appBarMain.toolbar)
-
+        try {
+            setSupportActionBar(binding.appBarMain.toolbar)
+        }
+        catch (e :java.lang.Exception)
+        {
+                AFJUtils.writeLogs("actionbar exception")
+        }
         toolbarVisibility(false)
-
         drawerLayout = binding.drawerLayout
-
-
         val navView: NavigationView = binding.navView
-
-
+       /*
         try {
             val userObject =
                 AFJUtils.getObjectPref(this, AFJUtils.KEY_USER_DETAIL, QRFirebaseUser::class.java)
@@ -97,18 +97,15 @@ class NavigationDrawerActivity : BaseActivity() {
                 navView.getHeaderView(0)
                     .txt_nav_head_designation.text =
                     userObject.official_email ?: Constants.NULL_DEFAULT_VALUE
-
                 navView.getHeaderView(0)
-                    .txt_nav_head_name.text = userObject.full_name
+                    .txt_nav_head_name.text = userObject.full_name ?: Constants.NULL_DEFAULT_VALUE
             }
 
         } catch (e: Exception) {
             writeExceptionLogs("Header Exception:\n${e}")
-        }
+        }*/
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-
-
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 /* R.id.tracking,
@@ -124,12 +121,8 @@ class NavigationDrawerActivity : BaseActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-
-
-
 
         navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener {
             AFJUtils.setUserToken(this, "")
@@ -137,7 +130,6 @@ class NavigationDrawerActivity : BaseActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             true
         }
-
 
         lifecycleScope.launch {
             isNetWorkConnected.collectLatest {
@@ -156,8 +148,6 @@ class NavigationDrawerActivity : BaseActivity() {
                 }
             }
         }
-
-
     }
 
     fun pressBackButton() {
@@ -307,8 +297,9 @@ class NavigationDrawerActivity : BaseActivity() {
             AFJUtils.KEY_USER_DETAIL,
             QRFirebaseUser::class.java
         )
-        val currentUserId = if (userObject.id != null) {
-            userObject.id
+
+        val currentUserId = if (userObject != null) {
+            userObject.id  ?:1
         } else {
             val loginResponse = AFJUtils.getObjectPref(
                 this,
@@ -324,9 +315,5 @@ class NavigationDrawerActivity : BaseActivity() {
             listener = createSignallingClientListener(socketURL),
             serverUrl = socketURL
         )
-
-
-
-
     }
 }

@@ -209,9 +209,9 @@ object AFJUtils {
 
 
     fun writeLogs(msg: String) {
-        if (BuildConfig.DEBUG) {
+     if (BuildConfig.DEBUG) {
             Log.e("AFJ Logs", msg)
-        }
+     }
     }
 
     fun launchFileIntent(url: String, context: Context) {

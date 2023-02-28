@@ -104,8 +104,8 @@ class VideoCallActivity : AppCompatActivity() {
             AFJUtils.KEY_USER_DETAIL,
             QRFirebaseUser::class.java
         )
-        val currentUserId = if (userObject.id != null) {
-            userObject.id
+        val currentUserId = if (userObject != null) {
+            userObject.id ?:1
         } else {
             val loginResponse = AFJUtils.getObjectPref(
                 this,

@@ -239,10 +239,8 @@ class FormsViewModel : ViewModel() {
                 override fun onSuccess(
                     response: Response<LocationResponse?>
                 ) {
-
-
                     viewModelScope.launch {
-                        _dialogShow.emit(true)
+                        _dataUploaded.emit(true)
                     }
                     super.onSuccess(response)
                 }

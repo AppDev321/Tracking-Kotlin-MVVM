@@ -90,12 +90,8 @@ class LoginViewModel : ViewModel() {
 
         builder.setCancelable(false)
         builder.setView(mView)
-        builder.setNegativeButton(android.R.string.no, object: DialogInterface.OnClickListener{
-            override fun onClick(dialog: DialogInterface, p1: Int) {
-                dialog.dismiss()
-            }
-
-        })
+        builder.setNegativeButton(android.R.string.no
+        ) { dialog, _ -> dialog.dismiss() }
         val alertDialog = builder.create()
         alertDialog.show()
 
@@ -120,27 +116,23 @@ class LoginViewModel : ViewModel() {
                     response: Response<LoginResponse?>
                 ) {
                     super.onSuccess(response)
-                    // mUserToken!!.postValue(response.body()!!.data!!.token!!)
-                    mUserToken!!.postValue("0")
-                    //Save LognigREsponse object
+
                     AFJUtils.saveObjectPref(
                         context!!,
                         AFJUtils.KEY_LOGIN_RESPONSE,
                         response.body()!!
                     )
-                    //Save vehicle object
+
                     AFJUtils.saveObjectPref(
                         context,
                         AFJUtils.KEY_VEHICLE_DETAIL,
                         response.body()!!.data!!.vehicle
                     )
-                    //Save User object
-                    AFJUtils.saveObjectPref(
-                        context,
-                        AFJUtils.KEY_USER_DETAIL,
-                        response.body()!!.data!!.user
-                    )
+
                     getContactList(context)
+
+                    // mUserToken!!.postValue(response.body()!!.data!!.token!!)
+                    mUserToken!!.postValue("0")
                 }
                 override fun onFailure(response: Response<LoginResponse?>) {
                     super.onFailure(response)

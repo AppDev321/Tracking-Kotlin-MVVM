@@ -170,19 +170,16 @@ class TrackingFragment : Fragment() {
 
         checkUpdateAppVersion()
 
-        val vehicleLoginResponse =  AFJUtils.getObjectPref(
-                mBaseActivity,
-                AFJUtils.KEY_LOGIN_RESPONSE,
-                LoginResponse::class.java
-            )
-          if(vehicleLoginResponse.data?.isSupportCallEnabled ==false)
-          {
-              binding.btnHelpLineCall.visibility = View.INVISIBLE
-          }
-          else
-          {
-              binding.btnHelpLineCall.visibility = View.VISIBLE
-          }
+        val vehicleLoginResponse = AFJUtils.getObjectPref(
+            mBaseActivity,
+            AFJUtils.KEY_LOGIN_RESPONSE,
+            LoginResponse::class.java
+        )
+        if (vehicleLoginResponse.data?.isSupportCallEnabled == false) {
+            binding.btnHelpLineCall.visibility = View.INVISIBLE
+        } else {
+            binding.btnHelpLineCall.visibility = View.VISIBLE
+        }
 
         val menuFragment =
             MainMenuFragment.getInstance(menuItemsList = vehicleLoginResponse.data!!.vehicleMenu)
@@ -210,8 +207,11 @@ class TrackingFragment : Fragment() {
             AFJUtils.KEY_USER_DETAIL,
             QRFirebaseUser::class.java
         )
-        binding.txtDriver.text = userObject.full_name ?: "N/A"
-
+        if (userObject != null) {
+            binding.txtDriver.text = userObject.full_name ?: Constants.NULL_DEFAULT_VALUE
+        } else {
+            binding.txtDriver.text =  Constants.NULL_DEFAULT_VALUE
+        }
 
         //Send token to server
         trackingViewModel.postFCMTokenToServer(
@@ -269,8 +269,8 @@ class TrackingFragment : Fragment() {
                     AFJUtils.KEY_USER_DETAIL,
                     QRFirebaseUser::class.java
                 )
-                val currentUserId =   if (userObject.id != null) {
-                    userObject.id
+                val currentUserId = if (userObject != null) {
+                    userObject.id ?: 1
                 } else {
                     val loginResponse = AFJUtils.getObjectPref(
                         mBaseActivity,
@@ -338,8 +338,6 @@ class TrackingFragment : Fragment() {
         val serviceIntent = Intent(mBaseActivity, ForegroundLocationService::class.java)
         mBaseActivity.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
-
-
         mBaseActivity.registerReceiver(
             notificationBroadCast,
             IntentFilter(
@@ -353,34 +351,13 @@ class TrackingFragment : Fragment() {
                 AFJUtils.KEY_USER_DETAIL,
                 QRFirebaseUser::class.java
             )
-            binding.txtDriver.text = userObject.full_name ?: "N/A"
+            if (userObject == null) {
+                binding.txtDriver.text = Constants.NULL_DEFAULT_VALUE
+            } else {
+                binding.txtDriver.text = userObject.full_name ?: Constants.NULL_DEFAULT_VALUE
+            }
         }
     }
-
-/*
-    override fun onResume() {
-        super.onResume()
-
-
-
-        mBaseActivity.registerReceiver(
-            notificationBroadCast,
-            IntentFilter(
-                NOTIFICATION_BROADCAST
-            )
-        )
-
-        if (binding != null) {
-            val userObject = AFJUtils.getObjectPref(
-                mBaseActivity,
-                AFJUtils.KEY_USER_DETAIL,
-                QRFirebaseUser::class.java
-            )
-            binding.txtDriver.text = userObject.full_name ?: "N/A"
-
-
-    }
-     }*/
 
     override fun onDestroy() {
         super.onDestroy()
@@ -448,14 +425,14 @@ class TrackingFragment : Fragment() {
             .any { it -> it.service.className == service.name }
     }
 
-    private fun checkUpdateAppVersion()
-    {
-        trackingViewModel.checkApiVersion(mBaseActivity,object: OnUpdateNeededListener {
+    private fun checkUpdateAppVersion() {
+        trackingViewModel.checkApiVersion(mBaseActivity, object : OnUpdateNeededListener {
             override fun onUpdateNeeded(updateUrl: String) {
                 val dialog: AlertDialog = AlertDialog.Builder(mBaseActivity)
                     .setTitle("New Update Available")
                     .setMessage("There is a newer version of app available please update it now.")
-                    .setPositiveButton("Update Now"
+                    .setPositiveButton(
+                        "Update Now"
                     ) { _, _ -> redirectStore(updateUrl) }
                     .setNegativeButton(
                         "Close",
@@ -465,11 +442,12 @@ class TrackingFragment : Fragment() {
 
         })
     }
+
     private fun redirectStore(updateUrl: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-      mBaseActivity.finish()
+        mBaseActivity.finish()
     }
 
 }

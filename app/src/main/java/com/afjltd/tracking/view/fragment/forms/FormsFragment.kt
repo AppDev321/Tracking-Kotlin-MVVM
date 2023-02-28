@@ -92,13 +92,7 @@ class FormsFragment : Fragment() {
         txtErrorMsg = binding.txtErrorMsg
 
 
-
-
         binding.baseLayout.visibility = View.GONE
-
-
-
-
 
 
         if (menuObject.qrStatus == true) {
