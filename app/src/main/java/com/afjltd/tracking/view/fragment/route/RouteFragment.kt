@@ -97,6 +97,10 @@ class RouteFragment : Fragment() {
 
 
 
+
+
+
+
         mBaseActivity.supportActionBar?.title = menuObject.name
         if (menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
@@ -129,12 +133,17 @@ class RouteFragment : Fragment() {
         }
 
 
-        lifecycleScope.launch{
-            routeViewModel.getRouteList.collectLatest {
-                showRouteList(it)
 
+        lifecycleScope.launch{
+
+            launch {
+                routeViewModel.getRouteList.collectLatest {
+                    showRouteList(it)
+
+                }
             }
-            routeViewModel.errorsMsg.collectLatest {
+            launch {
+                routeViewModel.errorsMsg.collectLatest {
                     mBaseActivity.toast(it, true)
                     mBaseActivity.showProgressDialog(false)
                     binding.recWeeklyInspectionList.visibility = View.GONE
@@ -142,10 +151,13 @@ class RouteFragment : Fragment() {
                     binding.txtNoData.text = it
                     AFJUtils.writeLogs("route error  $it")
 
+                }
             }
+
+
+
+
         }
-
-
 
 
         return root

@@ -34,14 +34,8 @@ class RouteViewModel : ViewModel() {
     val getRouteList = _routeList.asSharedFlow()
 
 
-    private var mErrorsMsg: MutableSharedFlow<String>? = MutableSharedFlow()
-    val errorsMsg: MutableSharedFlow<String>
-        get() {
-            if (mErrorsMsg == null) {
-                mErrorsMsg = MutableSharedFlow()
-            }
-            return mErrorsMsg!!
-        }
+    private var mErrorsMsg = MutableSharedFlow<String>()
+    val errorsMsg =mErrorsMsg.asSharedFlow()
 
 
     companion object {
@@ -78,11 +72,9 @@ class RouteViewModel : ViewModel() {
                         viewModelScope.launch {
                             _routeList.emit(res)
                         }
-
-
                     } else {
                         viewModelScope.launch {
-                            mErrorsMsg!!.emit("No Route Found")
+                            mErrorsMsg.emit("No Route Found")
                         }
 
                     }
@@ -99,7 +91,7 @@ class RouteViewModel : ViewModel() {
                     }
 
                     viewModelScope.launch {
-                        mErrorsMsg!!.emit(errors)
+                        mErrorsMsg.emit(errors)
                     }
                 }
 
@@ -107,7 +99,7 @@ class RouteViewModel : ViewModel() {
                     val exception = t.toString()
                     _dialogShow.postValue(false)
                     viewModelScope.launch {
-                        mErrorsMsg!!.emit(exception)
+                        mErrorsMsg.emit(exception)
                     }
 
 
