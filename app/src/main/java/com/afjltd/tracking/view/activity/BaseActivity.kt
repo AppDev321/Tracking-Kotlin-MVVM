@@ -247,7 +247,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
+/*    override fun onPause() {
         super.onPause()
         try {
             (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
@@ -255,5 +255,5 @@ open class BaseActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.w("", e.toString())
         }
-    }
+    }*/
 }
