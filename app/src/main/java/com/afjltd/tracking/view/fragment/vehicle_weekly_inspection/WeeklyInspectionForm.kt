@@ -57,7 +57,7 @@ class WeeklyInspectionForm : Fragment() {
             //  AFJUtils.writeLogs(data.toString())
             mSensorData.add(data)
             //   AFJUtils.writeLogs(convertObjectToJson(mSensorData))
-            AFJUtils.writeLogs(mSensorData.toString())
+
         }
 
     }
@@ -65,28 +65,6 @@ class WeeklyInspectionForm : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mBaseActivity = context as NavigationDrawerActivity
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        mSensorManager = mBaseActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also { accelerometer ->
-            mSensorManager!!.registerListener(
-                inspectionSensor,
-                accelerometer,
-                SensorManager.SENSOR_DELAY_FASTEST,
-                SensorManager.SENSOR_DELAY_UI
-            )
-        }
-        mSensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also { magneticField ->
-            mSensorManager!!.registerListener(
-                inspectionSensor,
-                magneticField,
-                SensorManager.SENSOR_DELAY_NORMAL,
-                SensorManager.SENSOR_DELAY_UI
-            )
-        }
     }
 
 
@@ -208,7 +186,7 @@ class WeeklyInspectionForm : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        mSensorManager!!.unregisterListener(inspectionSensor)
+//      mSensorManager!!.unregisterListener(inspectionSensor)
     }
 
 

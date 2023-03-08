@@ -36,15 +36,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4660dcb4-a467-434c-a7b1-3c97776a647e" name="Changes" comment="Move App to Production">
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/BaseActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/activity/BaseActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/DailyInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PSVInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PSVInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_daily_inspection/PTSInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/afjltd/tracking/view/fragment/vehicle_weekly_inspection/WeeklyInspectionForm.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[QWOB899DP7ZD75QO]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -101,7 +117,7 @@
   </component>
   <component name="GenerateSignedApkSettings">
     <option name="EXPORT_PRIVATE_KEY" value="false" />
-    <option name="KEY_STORE_PATH" value="D:\AndroidStudioProjects\afj-tracking\keystore.jks" />
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/keystore.jks" />
     <option name="KEY_ALIAS" value="afj_tracking" />
     <option name="REMEMBER_PASSWORDS" value="true" />
   </component>
@@ -133,51 +149,52 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ApkExportedModule&quot;: &quot;AFJ_Tracking.app&quot;,
-    &quot;BundleExportedModule&quot;: &quot;AFJ_Tracking.app&quot;,
-    &quot;DEBUGGABLE_DEVICE&quot;: &quot;lenovo_tb_8703x-c4dfc47c&quot;,
-    &quot;DEBUGGABLE_PROCESS&quot;: &quot;com.afjltd.hnhtech.tracking&quot;,
-    &quot;DEBUGGER_ID&quot;: &quot;Auto&quot;,
-    &quot;ExportApk.ApkPathForAFJ_Tracking.app&quot;: &quot;D:\\AndroidStudioProjects\\afj-tracking\\app&quot;,
-    &quot;ExportBundle.BundlePathForAFJ_Tracking.app&quot;: &quot;D:\\AndroidStudioProjects\\afj-tracking\\app&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;SHOW_ALL_PROCESSES&quot;: &quot;false&quot;,
-    &quot;android-custom-viewC:/Users/Ahsan/.gradle/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.5.1/ffb6d2b7e47daaa4a24b434db111ab9e411c33a0/appcompat-1.5.1-sources.jar!/androidx/appcompat/widget/AppCompatButton.java_SELECTED&quot;: &quot;AppCompatButton&quot;,
-    &quot;android-custom-viewC:/Users/Ahsan/.gradle/caches/modules-2/files-2.1/com.budiyev.android/code-scanner/2.1.0/ef5085691e7e1b7df451210b4a9a48095872c9e9/code-scanner-2.1.0-sources.jar!/com/budiyev/android/codescanner/CodeScannerView.java_SELECTED&quot;: &quot;CodeScannerView&quot;,
-    &quot;android-custom-viewC:/Users/Ahsan/AppData/Local/Android/Sdk/sources/android-33/android/view/ViewGroup.java_SELECTED&quot;: &quot;ViewGroup&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/DotsIndicator.kt_SELECTED&quot;: &quot;DotsIndicator&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/TimerView.kt_SELECTED&quot;: &quot;TimerView&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/foldingcell/FoldingCell.java_SELECTED&quot;: &quot;FoldingCell&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/foldingcell/views/FoldingCellView.java_SELECTED&quot;: &quot;FoldingCellView&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED&quot;: &quot;CustomAuthenticationView&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/widgets/RippleRelativeLayout.kt_SELECTED&quot;: &quot;RippleRelativeLayout&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED&quot;: &quot;CustomAuthenticationView&quot;,
-    &quot;android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/example/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED&quot;: &quot;CustomAuthenticationView&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;last_directory_selection&quot;: &quot;D:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/AndroidStudioProjects/afj-tracking&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ApkExportedModule": "AFJ_Tracking.app",
+    "BundleExportedModule": "AFJ_Tracking.app",
+    "DEBUGGABLE_DEVICE": "vivo-v2061-e24f3ce5",
+    "DEBUGGABLE_PROCESS": "com.afjltd.hnhtech.tracking",
+    "DEBUGGER_ID": "Auto",
+    "ExportApk.ApkPathForAFJ_Tracking.app": "D:\\AndroidStudioProjects\\afj-tracking\\app",
+    "ExportBundle.BundlePathForAFJ_Tracking.app": "/Users/mac/Documents/afj-tracking/app/build/outputs/apk",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHOW_ALL_PROCESSES": "false",
+    "android-custom-viewC:/Users/Ahsan/.gradle/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.5.1/ffb6d2b7e47daaa4a24b434db111ab9e411c33a0/appcompat-1.5.1-sources.jar!/androidx/appcompat/widget/AppCompatButton.java_SELECTED": "AppCompatButton",
+    "android-custom-viewC:/Users/Ahsan/.gradle/caches/modules-2/files-2.1/com.budiyev.android/code-scanner/2.1.0/ef5085691e7e1b7df451210b4a9a48095872c9e9/code-scanner-2.1.0-sources.jar!/com/budiyev/android/codescanner/CodeScannerView.java_SELECTED": "CodeScannerView",
+    "android-custom-viewC:/Users/Ahsan/AppData/Local/Android/Sdk/sources/android-33/android/view/ViewGroup.java_SELECTED": "ViewGroup",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/DotsIndicator.kt_SELECTED": "DotsIndicator",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/TimerView.kt_SELECTED": "TimerView",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/foldingcell/FoldingCell.java_SELECTED": "FoldingCell",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/utils/foldingcell/views/FoldingCellView.java_SELECTED": "FoldingCellView",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/afjtracking/widgets/RippleRelativeLayout.kt_SELECTED": "RippleRelativeLayout",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/afjltd/tracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
+    "android-custom-viewD:/AndroidStudioProjects/afj-tracking/app/src/main/java/com/example/afjtracking/view/fragment/auth/CustomAuthenticationView.kt_SELECTED": "CustomAuthenticationView",
+    "cidr.known.project.marker": "true",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "last_directory_selection": "D:/AndroidStudioProjects/afj-tracking/app/src/main/res/drawable",
+    "last_opened_file_path": "D:/AndroidStudioProjects/afj-tracking",
+    "memory.settings.postsync.last.time.stamp": "1678275377933",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "show.migrate.to.gradle.popup": "false"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ExportApk.BuildVariants&quot;: [
-      &quot;release&quot;
+  "keyToStringList": {
+    "ExportApk.BuildVariants": [
+      "release"
     ],
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;kotlin&quot;
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "kotlin"
     ]
   }
-}</component>
+}]]></component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Signing Configs" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="release" />

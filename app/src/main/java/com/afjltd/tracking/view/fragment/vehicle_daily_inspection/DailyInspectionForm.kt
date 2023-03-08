@@ -92,12 +92,12 @@ class DailyInspectionForm : Fragment() {
         txtErrorMsg = binding.txtErrorMsg
         binding.baseLayout.visibility = View.GONE
 
-        val menuObject = arguments?.let {
+      /*  val menuObject = arguments?.let {
             it.getSerializable(FormsFragment.FORM_IDENTIFIER_ARGUMENT) as VehicleMenu
 
-        }
+        }*/
 
-        if (menuObject?.qrStatus == true) {
+       // if (menuObject?.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
             binding.root.addView(authView)
             authView.addAuthListener(object : CustomAuthenticationView.AuthListeners {
@@ -119,12 +119,12 @@ class DailyInspectionForm : Fragment() {
                     mBaseActivity.pressBackButton()
                 }
             })
-        } else {
+      /*  } else {
             binding.root.removeAllViews()
             binding.root.addView(binding.baseLayout)
             binding.root.addView(binding.txtErrorMsg)
             inspectionViewModel.getDailyVehicleInspectionCheckList(mBaseActivity)
-        }
+        }*/
 
         inspectionViewModel.showDialog.observe(mBaseActivity) {
             mBaseActivity.showProgressDialog(it)
