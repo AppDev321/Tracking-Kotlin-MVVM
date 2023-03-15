@@ -1,6 +1,8 @@
 package com.afjltd.tracking.model.responses
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 class GetRouteListResponse
     (
@@ -17,6 +19,7 @@ data class RouteData(
 
 )
 
+@Parcelize
 data class Sheets(
 
     @SerializedName("id") var id: Int? = null,
@@ -41,5 +44,5 @@ data class Sheets(
     @SerializedName("visibility") var visibility: Boolean? = null,
     @SerializedName("is_absent") var isChildAbsent: Int? = 0,
     @SerializedName("label_color") var labelColor:String? =null
-)
+): Parcelable
 

@@ -7,7 +7,7 @@ object Constants {
     var BASE_URL = "https://vmi808920.contaboserver.net/api/"
     var FAILED_API_TAG = BASE_URL.replace("https://", "").replace("/api/", "")
 
-    var WEBSOCKET_URL = "ws://vmi808920.contaboserver.net:6001/video-call?token="
+    var WEBSOCKET_URL = "wss://vmi808920.contaboserver.net:6001/video-call?token="
     var WEBSOCKET_APP_NAME = "TRACKING"
 
     var isCallEnded: Boolean = false

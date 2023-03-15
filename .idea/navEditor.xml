@@ -140,6 +140,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="nav_rout">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="nav_route_list">
                     <value>
                       <LayoutPositions>

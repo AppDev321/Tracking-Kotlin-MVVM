@@ -1,17 +1,15 @@
 package com.afjltd.tracking.view.adapter
 
 
-import android.animation.ValueAnimator
-import android.content.res.ColorStateList
+import android.R
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.afjltd.tracking.R
+
 import com.afjltd.tracking.databinding.ItemRouteListBinding
 import com.afjltd.tracking.model.responses.Sheets
 import com.afjltd.tracking.utils.PaginatedAdapter
@@ -32,7 +30,7 @@ class RouteListAdapter(
 
     override fun createCustomViewHolder(parent: ViewGroup, viewType: Int): RouteListItem {
         val itemView = DataBindingUtil.inflate(
-            LayoutInflater.from(mContext), R.layout.item_route_list,
+            LayoutInflater.from(mContext), com.afjltd.tracking.R.layout.item_route_list,
             parent, false
         ) as ItemRouteListBinding
         return RouteListItem(itemView)
@@ -52,7 +50,16 @@ class RouteListAdapter(
             listners.handleContinueButtonClick(data)
         }
 
-        if (data.visibility == true) {
+
+        val content = SpannableString(data.address)
+        content.setSpan(UnderlineSpan(), 0, content.length, 0)
+        holder.itemRouteList.txtLoc.text = content
+        holder.itemRouteList.txtLoc.setOnClickListener{
+            listners.routeLocationDirectionClick(data)
+        }
+
+
+     /*   if (data.visibility == true) {
             val anim = ValueAnimator.ofFloat(1.0f, 0.95f)
             anim.duration = 1000
             anim.addUpdateListener { animation ->
@@ -72,7 +79,7 @@ class RouteListAdapter(
             holder.itemView.backgroundTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.blue_light))
 
-        }
+        }*/
 
     }
 

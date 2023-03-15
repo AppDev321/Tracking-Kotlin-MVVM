@@ -2,6 +2,9 @@ package com.afjltd.tracking.view.fragment.route.viewmodel
 
 import android.content.Context
 import android.content.Intent
+import android.location.Location
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.*
 import com.afjltd.tracking.broadcast.TrackingAppBroadcast
 import com.afjltd.tracking.model.requests.DistanceRequest
@@ -15,12 +18,18 @@ import com.afjltd.tracking.retrofit.SuccessCallback
 import com.afjltd.tracking.service.location.ForegroundLocationService
 import com.afjltd.tracking.service.location.LocationRepository
 import com.afjltd.tracking.utils.AFJUtils
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.lang.StrictMath.cos
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class RouteViewModel : ViewModel() {
@@ -186,6 +195,52 @@ class RouteViewModel : ViewModel() {
 
                 }
             })
+
+    }
+
+
+    fun distanceBetween(location1: Location, location2: Sheets): Double {
+        val R = 6371 // Earth's radius in kilometers
+        val lat1 = location1.latitude.toRadians()
+        val lat2 = location2.latitude!!.toRadians()
+        val dLat = (lat2 - lat1).toRadians()
+        val dLng = (location2.longitude!! - location1.longitude).toRadians()
+
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(lat1) * cos(lat2) *
+                sin(dLng / 2) * sin(dLng / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return R * c
+    }
+
+    fun Double.toRadians(): Double {
+        return this * PI / 180
+    }
+
+    fun rearrangeByDistance(currentLatLng: Location, routeSheet: List<Sheets>): List<Sheets> {
+        return routeSheet.sortedBy { distanceBetween(currentLatLng, it) }
+    }
+    fun openDirectionUsingGoogleMap(currentLocation: Location, routeSheet:List<Sheets>?=null,destination:Location?=null,context:Context)
+    {
+
+        val current = LatLng(currentLocation.latitude,currentLocation.longitude).let {
+            "${it.latitude},${it.longitude}"
+
+        }
+        val stops =
+            routeSheet?.joinToString("/") { "${it.latitude},${it.longitude}" }
+                ?: destination.let{
+                    "${it?.latitude},${it?.longitude}"
+                }
+
+        val uri = Uri.parse("https://www.google.com/maps/dir/$current/$stops")
+
+        AFJUtils.writeLogs(uri.toString())
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.google.android.apps.maps")
+        context.startActivity(intent)
+
 
     }
 

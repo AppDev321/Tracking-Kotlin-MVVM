@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import com.afjltd.tracking.R
 import com.afjltd.tracking.databinding.FragmentWeeklyInspectionListBinding
 import com.afjltd.tracking.model.requests.DistanceRequest
 import com.afjltd.tracking.model.requests.LocationData
@@ -26,7 +28,10 @@ import com.afjltd.tracking.view.activity.NavigationDrawerActivity
 import com.afjltd.tracking.view.adapter.ClickListenerInterface
 import com.afjltd.tracking.view.adapter.RouteListAdapter
 import com.afjltd.tracking.view.fragment.auth.CustomAuthenticationView
+import com.afjltd.tracking.view.fragment.home.MapsFragment
 import com.afjltd.tracking.view.fragment.route.viewmodel.RouteViewModel
+import com.afjltd.tracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.fragment_maps.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -98,9 +103,6 @@ class RouteFragment : Fragment() {
 
 
 
-
-
-
         mBaseActivity.supportActionBar?.title = menuObject.name
         if (menuObject.qrStatus == true) {
             val authView = CustomAuthenticationView(requireContext())
@@ -134,12 +136,32 @@ class RouteFragment : Fragment() {
 
 
 
-        lifecycleScope.launch{
+        viewLifecycleOwner.lifecycleScope.launch {
 
             launch {
                 routeViewModel.getRouteList.collectLatest {
-                    showRouteList(it)
+                    val currentLocation = Location("current Location")
+                    currentLocation.latitude = latitude.toDouble()
+                    currentLocation.longitude = longitude.toDouble()
+                    val sortedListByRoute = routeViewModel.rearrangeByDistance(currentLocation, it)
 
+
+                    showRouteList(sortedListByRoute)
+                    if (it.isNotEmpty()) {
+
+                        binding.txtShowMap.visibility = View.VISIBLE
+                        binding.txtShowMap.setOnClickListener { _ ->
+
+
+                            val bundle = bundleOf(RouteMapFragment.argumentParams to it)
+                            mBaseActivity.moveFragmentToNextFragment(
+                                binding.root,
+                                R.id.nav_route_map, bundle
+                            )
+
+
+                        }
+                    }
                 }
             }
             launch {
@@ -154,10 +176,8 @@ class RouteFragment : Fragment() {
                 }
             }
 
-
-
-
         }
+
 
 
         return root
@@ -175,6 +195,24 @@ class RouteFragment : Fragment() {
         adapter.setDefaultRecyclerView(mBaseActivity, binding.recWeeklyInspectionList)
         adapter.submitItems(listRoutes)
         adapter.setListnerClick(object : ClickListenerInterface {
+            override fun <T> routeLocationDirectionClick(data: T) {
+                val item = data as Sheets
+                val currentLocation = Location("current Location")
+                currentLocation.latitude = latitude.toDouble()
+                currentLocation.longitude = longitude.toDouble()
+
+                val destinationLocation = Location("destination Location")
+                destinationLocation.latitude = item.latitude!!
+                destinationLocation.longitude = item.longitude!!
+
+                routeViewModel.openDirectionUsingGoogleMap(
+                    currentLocation = currentLocation,
+                    context = mBaseActivity,
+                    destination = destinationLocation
+                )
+
+            }
+
             @SuppressLint("SimpleDateFormat")
             override fun <T> handleContinueButtonClick(data: T) {
                 val item = data as Sheets

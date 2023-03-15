@@ -22,7 +22,13 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_route_map"
+        android:name="com.afjltd.tracking.view.fragment.route.RouteMapFragment"
+        android:label="@string/navigation"
+        tools:layout="@layout/fragment_maps" >
 
+    </fragment>
     <fragment
         android:id="@+id/nav_pts_inspection_form"
         android:name="com.afjltd.tracking.view.fragment.vehicle_daily_inspection.PTSInspectionForm"

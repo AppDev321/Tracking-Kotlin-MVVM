@@ -8,6 +8,7 @@ import com.afjltd.tracking.model.responses.TrackingSettingFirebase
 import com.afjltd.tracking.utils.AFJUtils
 import com.afjltd.tracking.utils.Constants
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.database.BuildConfig
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -91,10 +92,20 @@ object FirebaseConfig {
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                      Constants.FILE_QUERY_LIMIT = queryData.toInt()
-                     Constants.BASE_URL = getAPIBaseUrl()
-                     Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
-                 //  Constants.BASE_URL = "http://192.168.18.69:8000/api/"
-                    //Constants.WEBSOCKET_URL = "ws://192.168.18.69:6001/video-call?token="
+                    if (com.afjltd.tracking.BuildConfig.DEBUG) {
+
+                    }
+                    else
+                    {
+
+
+
+                        Constants.BASE_URL = getAPIBaseUrl()
+                        Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
+
+
+                    }
+
                     isValueFetched(true)
                 }
                 else

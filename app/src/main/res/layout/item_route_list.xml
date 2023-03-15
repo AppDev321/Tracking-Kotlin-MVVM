@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
-<data>
-    <import type="android.view.View" />
-    <import type="android.graphics.Color"/>
-    <variable
-        name="routSheet"
-        type="com.afjltd.tracking.model.responses.Sheets" />
 
-</data>
+    <data>
 
-    <androidx.cardview.widget.CardView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        <import type="android.view.View" />
+
+        <import type="android.graphics.Color" />
+
+        <variable
+            name="routSheet"
+            type="com.afjltd.tracking.model.responses.Sheets" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,104 +26,131 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/_10sdp">
 
-            <TextView
-                android:id="@+id/txt1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name:"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-
-                android:id="@+id/txt_name"
-
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/leftContainer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:paddingLeft="@dimen/_5sdp"
-                android:singleLine="true"
-                android:text="@{routSheet.name}"
-                app:layout_constraintBottom_toBottomOf="@+id/txt1"
+                app:layout_constraintRight_toLeftOf="@+id/rightContianer"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                app:layout_constraintLeft_toRightOf="@+id/txt1"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/txt1" />
+                <TextView
+                    android:id="@+id/txt1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name:"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/txt2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="Arrival Time:"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                <TextView
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt1" />
+                    android:id="@+id/txt_name"
 
-            <TextView
-                android:id="@+id/txt_arrival"
-                android:layout_width="0dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:singleLine="true"
+                    android:text="@{routSheet.name}"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt1"
 
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/_5sdp"
-                android:text="@{routSheet.sheetArrivalTime}"
+                    app:layout_constraintLeft_toRightOf="@+id/txt1"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txt1" />
 
-                app:layout_constraintBottom_toBottomOf="@+id/txt2"
-                app:layout_constraintLeft_toRightOf="@+id/txt2"
-                app:layout_constraintTop_toTopOf="@+id/txt2" />
+                <TextView
+                    android:id="@+id/txt2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="Arrival Time:"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
 
-            <TextView
-                android:id="@+id/txt3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="Departure Time:"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt1" />
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt2" />
+                <TextView
+                    android:id="@+id/txt_arrival"
+                    android:layout_width="0dp"
 
-            <TextView
-                android:id="@+id/txt_departure"
-                android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:text="@{routSheet.sheetArrivalTime}"
 
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/_5sdp"
-                android:text="@{routSheet.sheetDepartureTime}"
-                app:layout_constraintBottom_toBottomOf="@+id/txt3"
-                app:layout_constraintLeft_toRightOf="@+id/txt3"
-                app:layout_constraintTop_toTopOf="@+id/txt3" />
+                    app:layout_constraintBottom_toBottomOf="@+id/txt2"
+                    app:layout_constraintLeft_toRightOf="@+id/txt2"
+                    app:layout_constraintTop_toTopOf="@+id/txt2" />
+
+                <TextView
+                    android:id="@+id/txt3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="Departure Time:"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt2" />
+
+                <TextView
+                    android:id="@+id/txt_departure"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:text="@{routSheet.sheetDepartureTime}"
+                    app:layout_constraintBottom_toBottomOf="@+id/txt3"
+                    app:layout_constraintLeft_toRightOf="@+id/txt3"
+                    app:layout_constraintTop_toTopOf="@+id/txt3" />
 
 
-            <TextView
-                android:id="@+id/txt4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="Location:"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                <TextView
+                    android:id="@+id/txt4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:text="Location:"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt3" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt3" />
 
-            <TextView
-                android:id="@+id/txt_loc"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/txt_loc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:textColor="@color/blue"
 
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/_5sdp"
-                android:text="@{routSheet.address}"
-                app:layout_constraintLeft_toRightOf="@+id/txt4"
+                    app:layout_constraintLeft_toRightOf="@+id/txt4"
 
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/txt4" />
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txt4" />
+                <!--android:text="@{routSheet.address}"-->
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rightContianer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+           app:layout_constraintRight_toRightOf="parent"
+
+            app:layout_constraintBottom_toBottomOf="@+id/leftContainer"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:src="@drawable/ic_default_avatar"
+                app:layout_constraintBottom_toBottomOf="parent"
+
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -128,51 +158,52 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="right|center"
                 android:orientation="horizontal"
+                android:visibility="@{routSheet.visibility ?  View.VISIBLE  : View.GONE}"
                 android:weightSum="2"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_loc"
-                android:visibility="@{routSheet.visibility ?  View.VISIBLE  : View.GONE}">
+                app:layout_constraintTop_toBottomOf="@+id/leftContainer">
+
                 <Button
                     android:id="@+id/btn_absent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Child Absent"
                     android:backgroundTint="@color/red"
+                    android:text="Child Absent"
                     android:textColor="@color/white"
-                    android:visibility="@{routSheet.pick ?  View.VISIBLE  : View.GONE}"
-                    />
+                    android:textSize="@dimen/_8sdp"
+                    android:visibility="@{routSheet.pick ?  View.VISIBLE  : View.GONE}" />
+
                 <Button
-                    android:layout_marginLeft="@dimen/_5sdp"
                     android:id="@+id/btn_action"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_5sdp"
                     android:text="@{routSheet.label}"
-                />
-
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp" />
 
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="right|center"
                 android:orientation="horizontal"
+                android:visibility="@{(routSheet.visibility==false &amp; routSheet.drop==false &amp; routSheet.visibility==false &amp; routSheet.label != ``) ?  View.VISIBLE  : View.GONE}"
                 android:weightSum="2"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_loc"
 
-                android:visibility="@{(routSheet.visibility==false &amp; routSheet.drop==false &amp; routSheet.visibility==false &amp; routSheet.label != ``) ?  View.VISIBLE  : View.GONE}">
+                app:layout_constraintTop_toBottomOf="@+id/leftContainer">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@{Color.parseColor(routSheet.labelColor)}"
                     android:text="@{routSheet.label}"
-                    />
-
+                    android:textColor="@{Color.parseColor(routSheet.labelColor)}" />
 
 
             </LinearLayout>

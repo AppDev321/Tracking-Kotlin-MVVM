@@ -306,7 +306,8 @@ class NavigationDrawerActivity : BaseActivity() {
                 AFJUtils.KEY_LOGIN_RESPONSE,
                 LoginResponse::class.java
             )
-            loginResponse.data?.sosUser?.id!!
+
+            loginResponse.data?.sosUser?.id ?:1
         }
 
         val socketURL =

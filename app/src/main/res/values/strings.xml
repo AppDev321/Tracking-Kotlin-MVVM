@@ -62,6 +62,7 @@
     <string name="search">Search</string>
 
     <string name="map_key">AIzaSyCMKV0Yz1tY-tliMVuyd-rstHlvjt6WkGA</string>
+    <string name="map_debug_key">AIzaSyCMKV0Yz1tY-tliMVuyd-rstHlvjt6WkGA</string>
     <string name="request_msg">Your %s request has been submitted successfully</string>
     <string name="request_submited">Request Completed</string>
     <string name="request_inspection_completed">Inspection Completed</string>

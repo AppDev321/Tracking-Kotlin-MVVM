@@ -1,74 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/all_app_bg">
+
 <androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/base_layout"
+    android:background="@color/all_app_bg"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/txtInspectionTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/title_bg_margin_top"
-        android:background="@drawable/round_two_sides_top_right"
-        android:paddingLeft="@dimen/title_bg_padding_other"
-        android:paddingTop="@dimen/title_bg_padding_other"
-        android:paddingRight="@dimen/title_bg_padding_right"
-        android:paddingBottom="@dimen/title_bg_padding_other"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_heading_body_size"
-       />
-    <RelativeLayout
-    android:layout_marginTop="@dimen/_10sdp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <RelativeLayout
 
-        android:padding="@dimen/_5sdp"
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/base_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rec_weekly_inspection_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="right" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:visibility="visible"
-            android:id="@+id/txtNoData"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/no_data_found"
+            android:id="@+id/txtInspectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/round_two_sides_top_right"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+            android:text=""
+            android:textColor="@color/white"
             android:textSize="@dimen/text_heading_body_size" />
 
-    </RelativeLayout>
 
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnAddInspection"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
+        <Button
+            android:gravity="center"
             android:layout_gravity="right"
-            android:layout_margin="@dimen/_10sdp"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:id="@+id/txtShowMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_bg_margin_top"
+            android:background="@drawable/box_round_corner"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingLeft="@dimen/title_bg_padding_other"
+            android:paddingTop="@dimen/title_bg_padding_other"
+            android:paddingRight="@dimen/title_bg_padding_right"
+            android:paddingBottom="@dimen/title_bg_padding_other"
+            android:drawableLeft="@drawable/ic_loc"
+            android:drawableTint="@color/white"
+            android:text="Click to Map View"
             android:textColor="@color/white"
-            app:lottie_autoPlay="true"
-            app:lottie_rawRes="@raw/add_button"
-            app:lottie_loop="true" />
+            android:textSize="@dimen/_10sdp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_5sdp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rec_weekly_inspection_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right" />
+
+                <TextView
+                    android:id="@+id/txtNoData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/no_data_found"
+                    android:textSize="@dimen/text_heading_body_size"
+                    android:visibility="visible" />
+
+            </RelativeLayout>
 
 
-</RelativeLayout>
-</androidx.appcompat.widget.LinearLayoutCompat>
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/btnAddInspection"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="right"
+                android:layout_margin="@dimen/_10sdp"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textColor="@color/white"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/add_button" />
+
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <FrameLayout
+        android:id="@+id/route_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
 </androidx.appcompat.widget.LinearLayoutCompat>
