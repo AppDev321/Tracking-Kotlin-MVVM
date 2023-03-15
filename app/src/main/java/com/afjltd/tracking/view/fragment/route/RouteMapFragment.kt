@@ -122,10 +122,12 @@ class RouteMapFragment : Fragment(), OnMapReadyCallback {
     @Override
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        googleMap.uiSettings.isZoomControlsEnabled = true
-        googleMap.uiSettings.isCompassEnabled = true
-        googleMap.uiSettings.isMyLocationButtonEnabled = true
+       /*
+            googleMap.uiSettings.isZoomControlsEnabled = true
+            googleMap.uiSettings.isCompassEnabled = true
+            googleMap.uiSettings.isMyLocationButtonEnabled = true
 
+        */
 
     }
 
