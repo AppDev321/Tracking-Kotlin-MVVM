@@ -92,20 +92,10 @@ object FirebaseConfig {
                     Constants.LOCATION_SERVICE_IN_SECONDS = timeSeconds
                     val queryData= getDataQueryLimit()
                      Constants.FILE_QUERY_LIMIT = queryData.toInt()
-                    if (com.afjltd.tracking.BuildConfig.DEBUG) {
-
-                    }
-                    else
-                    {
-
-
-
+                    if (!com.afjltd.tracking.BuildConfig.DEBUG){
                         Constants.BASE_URL = getAPIBaseUrl()
                         Constants.WEBSOCKET_URL = getWebSocketBaseUrl()
-
-
                     }
-
                     isValueFetched(true)
                 }
                 else

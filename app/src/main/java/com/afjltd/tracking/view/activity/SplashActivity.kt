@@ -77,7 +77,7 @@ class SplashActivity : BaseActivity() {
                             try {
                                 moveToNextScreen()
                             } catch (e: Exception) {
-                                AFJUtils.writeLogs("Exception while moving to next screen")
+                                AFJUtils.writeLogs("Exception while moving to next screen--> $e")
                             }
                         } else {
 

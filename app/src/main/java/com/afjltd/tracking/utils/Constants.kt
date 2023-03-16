@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 object Constants {
 
-    var BASE_URL = "https://vmi808920.contaboserver.net/api/"
+    var BASE_URL = "http://192.168.18.50:8000/api/"//"https://vmi808920.contaboserver.net/api/"
     var FAILED_API_TAG = BASE_URL.replace("https://", "").replace("/api/", "")
 
     var WEBSOCKET_URL = "wss://vmi808920.contaboserver.net:6001/video-call?token="

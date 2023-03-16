@@ -343,8 +343,8 @@ class CustomAuthenticationView : FrameLayout, LifecycleOwner {
     private fun loginEmailPassword() {
         binding.containerQrScan.visibility = View.GONE
         binding.containerLoginView.visibility = View.VISIBLE
-        //binding.txtEmailAddress.setText("admin@afj.com")
-        //binding.txtPassword.setText("admin")
+      binding.txtEmailAddress.setText("admin@afj.com")
+        binding.txtPassword.setText("admin")
 
         binding.loginBtn.setOnClickListener {
             val email = binding.txtEmailAddress.text.toString()
